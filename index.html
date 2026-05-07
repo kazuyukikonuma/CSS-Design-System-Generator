@@ -1343,20 +1343,26 @@ function bindInputs() {
     el.addEventListener('change', handler);
   });
 
-  // テキスト個別調整
-  TEXT_KEYS.forEach(key => {
-    const el = document.getElementById('ts_' + key);
-    if (!el) return;
-    el.addEventListener('change', () => {
-      const val = el.value;
-      if (val === 'auto') {
-        delete state.textOverrides[key];
-      } else {
-        state.textOverrides[key] = parseInt(val, 10);
-      }
-      updatePreview();
-    });
-  });
+  // テキスト個別調整：親要素にイベント委譲（innerHTML書き換えに強い）
+  const handleTextChange = (e) => {
+    const el = e.target;
+    if (!el || el.tagName !== 'SELECT' || !el.id.startsWith('ts_')) return;
+    const key = el.id.slice(3); // 'ts_kpiValue' -> 'kpiValue'
+    if (!TEXT_KEYS.includes(key)) return;
+    const val = el.value;
+    if (val === 'auto' || val === '') {
+      delete state.textOverrides[key];
+    } else {
+      state.textOverrides[key] = parseInt(val, 10);
+    }
+    updatePreview();
+  };
+  // settings-panel 全体で受ける（details 内の select も拾う）
+  const panel = document.querySelector('.settings-panel');
+  if (panel) {
+    panel.addEventListener('change', handleTextChange);
+    panel.addEventListener('input', handleTextChange);
+  }
 }
 
 // テキストselect生成（autoオプション + 各レンジ）
