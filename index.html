@@ -636,6 +636,20 @@
     flex-wrap: wrap;
     max-width: 280px;
   }
+  /* multi-row レイアウト（V-1: size + weight） */
+  #token-popover.multi { align-items: stretch; }
+  #token-popover .tp-stack {
+    display: flex; flex-direction: column; gap: 4px;
+    align-items: stretch;
+  }
+  #token-popover .tp-stack .tp-line {
+    display: flex; align-items: center; gap: 4px;
+  }
+  #token-popover .tp-stack .tp-line .tp-label {
+    border-right: none;
+    min-width: 64px;
+    padding: 0 2px;
+  }
 
   @media (max-width: 960px) {
     .app-layout { grid-template-columns: 1fr; }
@@ -880,6 +894,28 @@
               <select id="ts_tableBody" data-text></select>
             </div>
           </details>
+        </div>
+      </details>
+
+      <details class="sub-section">
+        <summary>ウェイト個別調整</summary>
+        <div class="sub-body">
+          <div class="form-row">
+            <label for="fw_title">タイトル</label>
+            <select id="fw_title" data-weight></select>
+          </div>
+          <div class="form-row">
+            <label for="fw_kpiValue">KPI数値</label>
+            <select id="fw_kpiValue" data-weight></select>
+          </div>
+          <div class="form-row">
+            <label for="fw_cardTitle">カードタイトル</label>
+            <select id="fw_cardTitle" data-weight></select>
+          </div>
+          <div class="form-row">
+            <label for="fw_tableBody">テーブル本文</label>
+            <select id="fw_tableBody" data-weight></select>
+          </div>
         </div>
       </details>
     </section>
@@ -1632,7 +1668,25 @@ const DEFAULT_STATE = {
   styleVariant: 'standard',
   cardAccent: 'none',
   mode: 'light',
-  textOverrides: {} // { kpiValue: 36, ... } 個別上書き（数値, px）
+  textOverrides: {}, // { kpiValue: 36, ... } 個別上書き（数値, px）
+  weightOverrides: {} // { title: 700, kpiValue: 700, ... } V-1
+};
+
+// V-1: ウェイトを上書きできるキーと、未指定時のフォールバック
+const WEIGHT_KEYS = ['title','kpiValue','cardTitle','tableBody'];
+const WEIGHT_OPTIONS = [300, 400, 500, 600, 700, 800, 900];
+const WEIGHT_LABELS = {
+  title:     'タイトル',
+  kpiValue:  'KPI数値',
+  cardTitle: 'カードタイトル',
+  tableBody: 'テーブル本文'
+};
+// 未上書き時の表示用「自動」値（heading-weight に追従するキーは後で variant から決定）
+const WEIGHT_DEFAULTS = {
+  title:     null,   // null = var(--font-heading-weight)
+  kpiValue:  700,
+  cardTitle: null,   // null = var(--font-heading-weight)
+  tableBody: 400
 };
 let state = JSON.parse(JSON.stringify(DEFAULT_STATE));
 
@@ -1695,6 +1749,16 @@ function generateCSS() {
   TEXT_KEYS.forEach(k => {
     ts[k] = (s.textOverrides[k] || auto[k]) + 'px';
   });
+
+  // V-1: 個別ウェイト上書き → --fw-* を出力（未上書きキーは出力せずフォールバック）
+  const fwLines = [];
+  const fwVarMap = { title:'--fw-title', kpiValue:'--fw-kpi-value',
+                     cardTitle:'--fw-card-title', tableBody:'--fw-table-body' };
+  WEIGHT_KEYS.forEach(k => {
+    const v = s.weightOverrides[k];
+    if (v !== undefined) fwLines.push(`  ${fwVarMap[k]}: ${v};`);
+  });
+  const fwBlock = fwLines.length ? '\n' + fwLines.join('\n') : '';
 
   // 装飾スタイル別
   const variants = {
@@ -1793,7 +1857,7 @@ function generateCSS() {
   --fs-chart-text:   ${ts.chartText};
   --fs-chart-legend: ${ts.chartLegend};
   --fs-table-head:   ${ts.tableHead};
-  --fs-table-body:   ${ts.tableBody};
+  --fs-table-body:   ${ts.tableBody};${fwBlock}
 
   /* Layout */
   --radius: ${radiusFinal};
@@ -1845,6 +1909,7 @@ function generateCSS() {
 .ds-root .dashboard-header { margin-bottom: var(--space-xl); }
 .ds-root .dashboard-title {
   font-size: var(--fs-title);
+  font-weight: var(--fw-title, var(--font-heading-weight));
   color: var(--color-text);
   margin-bottom: var(--space-xs);
   letter-spacing: -0.01em;
@@ -1876,7 +1941,7 @@ function generateCSS() {
 ${gradientCSS}
 .ds-root .card-title {
   font-size: var(--fs-card-title);
-  font-weight: var(--font-heading-weight);
+  font-weight: var(--fw-card-title, var(--font-heading-weight));
   font-family: var(--font-heading-family);
   color: var(--color-text);
   margin-bottom: var(--space-md);
@@ -1892,7 +1957,7 @@ ${gradientCSS}
 }
 .ds-root .kpi-value {
   font-size: var(--fs-kpi-value);
-  font-weight: 700;
+  font-weight: var(--fw-kpi-value, 700);
   color: var(--color-text);
   line-height: 1.1;
   letter-spacing: -0.02em;
@@ -1946,6 +2011,7 @@ ${gradientCSS}
   border-bottom: 1px solid var(--color-border);
   text-align: left;
 }
+.ds-root .data-table tbody td { font-weight: var(--fw-table-body, 400); }
 .ds-root .data-table th {
   font-size: var(--fs-table-head);
   color: var(--color-muted);
@@ -2291,13 +2357,45 @@ function ensurePopover() {
 }
 
 function renderTextPopoverContent() {
-  popoverEl.innerHTML = `
-    <span class="tp-label"></span>
-    <button class="tp-btn" data-act="dec" type="button" aria-label="小さく">−</button>
-    <span class="tp-size"></span>
-    <button class="tp-btn" data-act="inc" type="button" aria-label="大きく">+</button>
-    <button class="tp-btn" data-act="reset" type="button" aria-label="自動に戻す" title="自動に戻す">↺</button>
+  const key = popoverEl.dataset.tokenKey;
+  const supportsWeight = WEIGHT_KEYS.includes(key);
+  const labelText = TOKEN_LABELS[key] || key || '';
+
+  // 1行目（サイズ）
+  const sizeRow = `
+    <div class="tp-line">
+      <span class="tp-label">${labelText}</span>
+      <button class="tp-btn" data-act="dec" type="button" aria-label="小さく">−</button>
+      <span class="tp-size"></span>
+      <button class="tp-btn" data-act="inc" type="button" aria-label="大きく">+</button>
+      <button class="tp-btn" data-act="reset" type="button" aria-label="自動に戻す" title="自動に戻す">↺</button>
+    </div>
   `;
+
+  // 2行目（ウェイト）— 4要素のみ
+  const weightRow = supportsWeight ? `
+    <div class="tp-line">
+      <span class="tp-label">weight</span>
+      <button class="tp-btn" data-act="dec-w" type="button" aria-label="細く">−</button>
+      <span class="tp-weight"></span>
+      <button class="tp-btn" data-act="inc-w" type="button" aria-label="太く">+</button>
+      <button class="tp-btn" data-act="reset-w" type="button" aria-label="自動に戻す" title="自動に戻す">↺</button>
+    </div>
+  ` : '';
+
+  if (supportsWeight) {
+    popoverEl.classList.add('multi');
+    popoverEl.innerHTML = `<div class="tp-stack">${sizeRow}${weightRow}</div>`;
+  } else {
+    popoverEl.classList.remove('multi');
+    popoverEl.innerHTML = `
+      <span class="tp-label">${labelText}</span>
+      <button class="tp-btn" data-act="dec" type="button" aria-label="小さく">−</button>
+      <span class="tp-size"></span>
+      <button class="tp-btn" data-act="inc" type="button" aria-label="大きく">+</button>
+      <button class="tp-btn" data-act="reset" type="button" aria-label="自動に戻す" title="自動に戻す">↺</button>
+    `;
+  }
 }
 
 function renderRadiusPopoverContent() {
@@ -2326,6 +2424,28 @@ function renderDensityPopoverContent() {
     chip('comfortable', 'comfortable');
 }
 
+// V-1: 表示用に「現在のウェイト」と「未上書き時のフォールバック数値」を解決
+function resolveWeight(key) {
+  if (state.weightOverrides[key] !== undefined) {
+    return { value: state.weightOverrides[key], overridden: true };
+  }
+  const fb = WEIGHT_DEFAULTS[key];
+  if (fb !== null) return { value: fb, overridden: false };
+  // null = heading-weight に依存 → variant ごと
+  const headingMap = { standard: 600, editorial: 700, soft: 600, glass: 600 };
+  return { value: headingMap[state.styleVariant] || 600, overridden: false };
+}
+
+function refreshPopoverWeight() {
+  if (!popoverEl) return;
+  if (popoverEl.dataset.type !== 'text') return;
+  const w = popoverEl.querySelector('.tp-weight');
+  if (!w) return;
+  const key = popoverEl.dataset.tokenKey;
+  const r = resolveWeight(key);
+  w.textContent = r.value + (r.overridden ? '' : ' (auto)');
+}
+
 function refreshPopoverSize() {
   if (!popoverEl) return;
   if (popoverEl.dataset.type !== 'text') return;
@@ -2345,8 +2465,8 @@ function showPopoverFor(targetEl, tokenKey) {
   pop.dataset.type = 'text';
   pop.dataset.tokenKey = tokenKey;
   renderTextPopoverContent();
-  pop.querySelector('.tp-label').textContent = TOKEN_LABELS[tokenKey] || tokenKey;
   refreshPopoverSize();
+  refreshPopoverWeight();
 
   const rect = targetEl.getBoundingClientRect();
   const top  = window.scrollY + rect.top - 36;
@@ -2366,6 +2486,7 @@ function showDensityPopover(anchorEl) {
   const pop = ensurePopover();
   pop.dataset.type = 'density';
   delete pop.dataset.tokenKey;
+  pop.classList.remove('multi');
   renderDensityPopoverContent();
 
   const rect = anchorEl.getBoundingClientRect();
@@ -2382,6 +2503,7 @@ function showRadiusPopover(anchorEl) {
   const pop = ensurePopover();
   pop.dataset.type = 'radius';
   delete pop.dataset.tokenKey;
+  pop.classList.remove('multi');
   renderRadiusPopoverContent();
 
   const rect = anchorEl.getBoundingClientRect();
@@ -2438,7 +2560,28 @@ function handlePopoverClick(e) {
   e.stopPropagation();
   const act = btn.dataset.act;
   const key = popoverEl.dataset.tokenKey;
-  if (!key || !TEXT_KEYS.includes(key)) return;
+  if (!key) return;
+
+  // V-1: ウェイト系
+  if (act === 'dec-w' || act === 'inc-w' || act === 'reset-w') {
+    if (!WEIGHT_KEYS.includes(key)) return;
+    if (act === 'reset-w') {
+      delete state.weightOverrides[key];
+    } else {
+      const cur = resolveWeight(key).value;
+      const dir = act === 'inc-w' ? 1 : -1;
+      const min = WEIGHT_OPTIONS[0];
+      const max = WEIGHT_OPTIONS[WEIGHT_OPTIONS.length - 1];
+      const next = Math.max(min, Math.min(max, cur + dir * 100));
+      state.weightOverrides[key] = next;
+    }
+    updatePreview();
+    rebuildWeightSelectOptions();
+    refreshPopoverWeight();
+    return;
+  }
+
+  if (!TEXT_KEYS.includes(key)) return;
 
   const auto = computeAutoTextSizes();
   const cur = state.textOverrides[key] !== undefined
@@ -2723,16 +2866,33 @@ function bindInputs() {
   // テキスト個別調整：親要素にイベント委譲（innerHTML書き換えに強い）
   const handleTextChange = (e) => {
     const el = e.target;
-    if (!el || el.tagName !== 'SELECT' || !el.id.startsWith('ts_')) return;
-    const key = el.id.slice(3); // 'ts_kpiValue' -> 'kpiValue'
-    if (!TEXT_KEYS.includes(key)) return;
-    const val = el.value;
-    if (val === 'auto' || val === '') {
-      delete state.textOverrides[key];
-    } else {
-      state.textOverrides[key] = parseInt(val, 10);
+    if (!el || el.tagName !== 'SELECT') return;
+    if (el.id.startsWith('ts_')) {
+      const key = el.id.slice(3);
+      if (!TEXT_KEYS.includes(key)) return;
+      const val = el.value;
+      if (val === 'auto' || val === '') {
+        delete state.textOverrides[key];
+      } else {
+        state.textOverrides[key] = parseInt(val, 10);
+      }
+      updatePreview();
+      return;
     }
-    updatePreview();
+    if (el.id.startsWith('fw_')) {
+      const key = el.id.slice(3);
+      if (!WEIGHT_KEYS.includes(key)) return;
+      const val = el.value;
+      if (val === 'auto' || val === '') {
+        delete state.weightOverrides[key];
+      } else {
+        state.weightOverrides[key] = parseInt(val, 10);
+      }
+      updatePreview();
+      // popover 開いていれば値を更新
+      refreshPopoverWeight();
+      return;
+    }
   };
   // settings-panel 全体で受ける（details 内の select も拾う）
   const panel = document.querySelector('.settings-panel');
@@ -2768,12 +2928,28 @@ function rebuildTextSelectOptions() {
   });
 }
 
+// V-1: ウェイト個別調整 select の構築（左パネル）
+function rebuildWeightSelectOptions() {
+  WEIGHT_KEYS.forEach(key => {
+    const el = document.getElementById('fw_' + key);
+    if (!el) return;
+    const fallback = resolveWeight(key); // overridden なし時の値
+    const overridden = state.weightOverrides[key];
+    const value = overridden !== undefined ? String(overridden) : 'auto';
+    el.innerHTML =
+      `<option value="auto">自動 (${WEIGHT_DEFAULTS[key] === null ? 'heading' : WEIGHT_DEFAULTS[key]})</option>` +
+      WEIGHT_OPTIONS.map(v => `<option value="${v}">${v}</option>`).join('');
+    el.value = value;
+  });
+}
+
 function syncInputsFromState() {
   FREE_KEYS.forEach(key => {
     const el = document.getElementById(key);
     if (el) el.value = state[key];
   });
   rebuildTextSelectOptions();
+  rebuildWeightSelectOptions();
   document.querySelectorAll('.theme-card').forEach(c => {
     c.classList.toggle('active', c.dataset.theme === state.themeKey);
   });
