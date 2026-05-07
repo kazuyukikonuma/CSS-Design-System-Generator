@@ -345,6 +345,92 @@
     background: #f9fafb;
     border-bottom: 1px solid #e5e7eb;
   }
+
+  /* プレビューパターン切替タブ */
+  .preview-tabs {
+    display: flex; gap: 2px;
+    padding: 6px 8px;
+    background: #f9fafb;
+    border-bottom: 1px solid #e5e7eb;
+    overflow-x: auto;
+  }
+  .ptab {
+    padding: 6px 12px;
+    border: 1px solid transparent;
+    background: transparent;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    color: #6b7280;
+    white-space: nowrap;
+  }
+  .ptab:hover { background: #f3f4f6; color: #1f2933; }
+  .ptab.active {
+    background: #fff;
+    color: #1f2933;
+    border-color: #d1d5db;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+  }
+
+  /* モーダル（AIテーマ生成 / URL取り込み）共通 */
+  .modal-backdrop {
+    position: fixed; inset: 0;
+    background: rgba(15,23,42,0.55);
+    display: none;
+    align-items: center; justify-content: center;
+    z-index: 9500;
+    padding: 16px;
+  }
+  .modal-backdrop.show { display: flex; }
+  .modal {
+    background: #fff;
+    border-radius: 12px;
+    padding: 24px;
+    max-width: 480px; width: 100%;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+  }
+  .modal-header {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 12px;
+  }
+  .modal-header h3 { font-size: 16px; font-weight: 700; margin: 0; }
+  .modal-close {
+    background: transparent; border: none;
+    font-size: 20px; cursor: pointer;
+    color: #6b7280; padding: 0; line-height: 1;
+  }
+  .modal-close:hover { color: #1f2933; }
+  .modal-body { font-size: 13px; color: #374151; }
+  .modal textarea, .modal input[type="text"] {
+    width: 100%; padding: 10px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 13px;
+    font-family: inherit;
+    margin: 8px 0;
+  }
+  .modal textarea { resize: vertical; min-height: 70px; }
+  .modal-actions { display: flex; gap: 8px; margin-top: 12px; }
+  .modal-actions button { padding: 8px 16px; }
+  .ai-result {
+    margin-top: 14px; padding: 12px;
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    border-radius: 6px;
+    font-size: 12px;
+    display: none;
+  }
+  .ai-result.show { display: block; }
+  .ai-result.fail { background: #fef2f2; border-color: #fecaca; }
+  .ai-result strong { color: #065f46; }
+  .ai-result.fail strong { color: #991b1b; }
+  .modal small {
+    display: block;
+    color: #6b7280; font-size: 11px;
+    line-height: 1.5;
+    margin-top: 4px;
+  }
   /* preview-frame 内のトースト */
   .copy-toast {
     position: fixed;
@@ -479,6 +565,46 @@
 
 <div class="copy-toast" id="copyToast">✓ クリップボードにコピーしました</div>
 
+<!-- Phase 2 / 2-1: AI でテーマ生成（モック実装） -->
+<div class="modal-backdrop" id="aiBackdrop">
+  <div class="modal" role="dialog" aria-labelledby="aiTitle">
+    <div class="modal-header">
+      <h3 id="aiTitle">AI で雰囲気からテーマを生成</h3>
+      <button class="modal-close" data-close-modal="ai" type="button" aria-label="閉じる">✕</button>
+    </div>
+    <div class="modal-body">
+      <p>テーマの雰囲気・業界・印象を自然言語で記述してください。</p>
+      <small>※ 現在はモック実装です。キーワードから既存テーマにマッチします。</small>
+      <textarea id="aiPrompt" placeholder="例: 金融系で堅め、でも温かみがある印象 / ミニマルで青系の SaaS / Apple っぽいクリーンな感じ"></textarea>
+      <div class="modal-actions">
+        <button class="btn-primary" id="aiGenerate" type="button">生成して適用</button>
+        <button class="btn-secondary" data-close-modal="ai" type="button">キャンセル</button>
+      </div>
+      <div class="ai-result" id="aiResult"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Phase 2 / 2-2: URL から取り込み（モック実装） -->
+<div class="modal-backdrop" id="urlBackdrop">
+  <div class="modal" role="dialog" aria-labelledby="urlTitle">
+    <div class="modal-header">
+      <h3 id="urlTitle">URL からテーマを取り込み</h3>
+      <button class="modal-close" data-close-modal="url" type="button" aria-label="閉じる">✕</button>
+    </div>
+    <div class="modal-body">
+      <p>取り込みたいサイトの URL を入力してください。</p>
+      <small>※ 現在はモック実装です。既知ブランドのドメインを認識して、対応テーマに切り替えます。</small>
+      <input type="text" id="urlInput" placeholder="例: https://stripe.com / https://www.notion.so" />
+      <div class="modal-actions">
+        <button class="btn-primary" id="urlImport" type="button">取り込んで適用</button>
+        <button class="btn-secondary" data-close-modal="url" type="button">キャンセル</button>
+      </div>
+      <div class="ai-result" id="urlResult"></div>
+    </div>
+  </div>
+</div>
+
 <header class="app-header">
   <div>
     <h1>CSS Design System Generator</h1>
@@ -493,6 +619,15 @@
 <div class="app-layout">
 
   <aside class="settings-panel">
+
+    <!-- ツール（AI生成 / URL逆算） -->
+    <section class="settings-section">
+      <h2>ツール</h2>
+      <div class="action-buttons">
+        <button class="btn-secondary" id="aiBtn" type="button">✨ AI で雰囲気から生成</button>
+        <button class="btn-secondary" id="urlBtn" type="button">🔗 URL から取り込み</button>
+      </div>
+    </section>
 
     <!-- 現在のテーマ状況（ステータスストリップ） -->
     <div class="theme-status" id="themeStatus">
@@ -700,10 +835,16 @@
 
   <main class="preview-area">
     <div class="preview-frame">
-      <div class="preview-label">プレビュー</div>
+      <div class="preview-tabs" id="previewTabs">
+        <button class="ptab active" data-pattern="dashboard" type="button">ダッシュボード</button>
+        <button class="ptab" data-pattern="landing"   type="button">ランディング</button>
+        <button class="ptab" data-pattern="admin"     type="button">管理画面</button>
+        <button class="ptab" data-pattern="blog"      type="button">ブログ</button>
+        <button class="ptab" data-pattern="saas"      type="button">SaaS設定</button>
+      </div>
 
       <div class="ds-root" id="previewRoot">
-        <div class="dashboard-container">
+        <div class="dashboard-container preview-pattern" data-pattern="dashboard">
         <header class="dashboard-header">
           <h1 class="dashboard-title">経営ダッシュボード</h1>
           <p class="dashboard-subtitle">2026年上半期 売上・KPIサマリー</p>
@@ -835,9 +976,271 @@
             </div>
           </div>
         </section>
-        </div>
-      </div>
-    </div>
+        </div><!-- /pattern: dashboard -->
+
+        <!-- ============================================
+             Pattern: ランディング
+             ============================================ -->
+        <div class="dashboard-container preview-pattern" data-pattern="landing" hidden>
+          <section class="section" style="text-align:center; padding-top: var(--space-xl);">
+            <h1 class="dashboard-title" style="font-size: calc(var(--fs-title) * 1.4); line-height:1.2;">
+              ビジネスを次の段階へ
+            </h1>
+            <p class="dashboard-subtitle" style="font-size: var(--fs-base); max-width: 560px; margin: var(--space-md) auto;">
+              AIネイティブな分析プラットフォームで、データドリブンな意思決定を加速します。
+            </p>
+            <div class="mt-24">
+              <button class="button-primary">無料で始める</button>
+              <button class="button-secondary">資料をダウンロード</button>
+            </div>
+          </section>
+
+          <section class="section">
+            <div class="grid grid-3">
+              <div class="card">
+                <span class="badge badge-primary">高速</span>
+                <div class="card-title mt-16">秒単位の分析</div>
+                <p class="text-muted">大規模データを並列処理で瞬時に集計。意思決定の遅延をゼロに。</p>
+              </div>
+              <div class="card">
+                <span class="badge badge-positive">自動化</span>
+                <div class="card-title mt-16">レポート自動生成</div>
+                <p class="text-muted">毎日・毎週の経営レポートを定時にメール配信。手作業ゼロ。</p>
+              </div>
+              <div class="card">
+                <span class="badge badge-warning">エンタープライズ</span>
+                <div class="card-title mt-16">SOC2 / ISO 27001</div>
+                <p class="text-muted">国際標準のセキュリティ認証を取得。大企業の調達基準にも対応。</p>
+              </div>
+            </div>
+          </section>
+
+          <section class="section">
+            <div class="card insight-box" style="border-left-width: 0; padding: var(--space-xl);">
+              <p style="font-size: calc(var(--fs-base) * 1.2); line-height: 1.7; font-style: italic;">
+                "導入から3週間で、月次レポート作成にかけていた工数を80%削減できました。
+                経営会議の質も大きく変わりました。"
+              </p>
+              <div class="mt-16 text-muted">— 田中 太郎、株式会社ACME 取締役CFO</div>
+            </div>
+          </section>
+
+          <section class="section" style="text-align:center;">
+            <p class="text-muted mb-16">信頼している企業</p>
+            <div style="display:flex; gap: var(--space-lg); justify-content:center; flex-wrap:wrap; opacity: 0.7;">
+              <span class="text-muted" style="font-weight:700;">ACME</span>
+              <span class="text-muted" style="font-weight:700;">Globex</span>
+              <span class="text-muted" style="font-weight:700;">Initech</span>
+              <span class="text-muted" style="font-weight:700;">Umbrella</span>
+              <span class="text-muted" style="font-weight:700;">Wayne Ent</span>
+            </div>
+          </section>
+        </div><!-- /pattern: landing -->
+
+        <!-- ============================================
+             Pattern: 管理画面
+             ============================================ -->
+        <div class="dashboard-container preview-pattern" data-pattern="admin" hidden>
+          <header class="dashboard-header">
+            <h1 class="dashboard-title">ユーザー管理</h1>
+            <p class="dashboard-subtitle">登録ユーザー一覧と権限管理</p>
+          </header>
+
+          <section class="section">
+            <div class="grid grid-4">
+              <div class="card kpi-card">
+                <div class="kpi-label">アクティブ</div>
+                <div class="kpi-value">8,452</div>
+                <div class="text-positive kpi-delta">+2.4%</div>
+              </div>
+              <div class="card kpi-card">
+                <div class="kpi-label">本日の新規</div>
+                <div class="kpi-value">+124</div>
+                <div class="text-positive kpi-delta">+18%</div>
+              </div>
+              <div class="card kpi-card">
+                <div class="kpi-label">アカウント停止</div>
+                <div class="kpi-value">3</div>
+                <div class="text-muted kpi-delta">±0</div>
+              </div>
+              <div class="card kpi-card">
+                <div class="kpi-label">未認証</div>
+                <div class="kpi-value">42</div>
+                <div class="text-negative kpi-delta">+5</div>
+              </div>
+            </div>
+          </section>
+
+          <section class="section">
+            <div class="card">
+              <div class="card-title">ユーザー一覧</div>
+              <div class="mb-16">
+                <button class="button-primary">新規招待</button>
+                <button class="button-secondary">CSV エクスポート</button>
+              </div>
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>名前</th><th>メール</th><th>ロール</th><th>最終ログイン</th><th>状態</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr><td>佐藤 花子</td><td>sato@example.com</td><td><span class="badge badge-primary">Admin</span></td><td>2分前</td><td><span class="badge badge-positive">アクティブ</span></td></tr>
+                  <tr><td>鈴木 一郎</td><td>suzuki@example.com</td><td>Editor</td><td>1時間前</td><td><span class="badge badge-positive">アクティブ</span></td></tr>
+                  <tr><td>田中 次郎</td><td>tanaka@example.com</td><td>Viewer</td><td>3日前</td><td><span class="badge badge-warning">非アクティブ</span></td></tr>
+                  <tr><td>山田 三郎</td><td>yamada@example.com</td><td><span class="badge badge-primary">Admin</span></td><td>—</td><td><span class="badge badge-negative">停止</span></td></tr>
+                  <tr><td>高橋 四郎</td><td>takahashi@example.com</td><td>Editor</td><td>5分前</td><td><span class="badge badge-positive">アクティブ</span></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+        </div><!-- /pattern: admin -->
+
+        <!-- ============================================
+             Pattern: ブログ
+             ============================================ -->
+        <div class="dashboard-container preview-pattern" data-pattern="blog" hidden>
+          <header class="dashboard-header">
+            <h1 class="dashboard-title">エンジニアリングブログ</h1>
+            <p class="dashboard-subtitle">最新の技術記事と社内事例</p>
+          </header>
+
+          <section class="section">
+            <div class="card">
+              <div class="text-muted" style="font-size: var(--fs-chart-legend);">
+                Featured · 2026年5月7日 · 田中 太郎
+              </div>
+              <div class="card-title" style="font-size: calc(var(--fs-card-title) * 1.5); margin: var(--space-sm) 0 var(--space-md);">
+                Rust と WASM で実現した高速ダッシュボード基盤
+              </div>
+              <p style="line-height: 1.7;">
+                従来 Node.js で実装していた集計処理を Rust + WASM に移行し、レスポンス速度を平均
+                <strong>45倍</strong> 改善した取り組みを紹介します。アーキテクチャの選定理由から、
+                移行時に直面した技術課題、運用後の数値まで網羅的に解説します。
+              </p>
+              <div class="mt-24">
+                <span class="badge badge-primary">Rust</span>
+                <span class="badge badge-primary">WASM</span>
+                <span class="badge badge-primary">Performance</span>
+                <span class="badge">15分</span>
+              </div>
+            </div>
+          </section>
+
+          <section class="section">
+            <div class="grid grid-3">
+              <div class="card">
+                <div class="text-muted" style="font-size: var(--fs-chart-legend);">2026年5月3日</div>
+                <div class="card-title" style="margin-top: 6px;">CI/CDを30秒短縮した話</div>
+                <p class="text-muted mt-16">並列化と差分ビルド戦略で、PR サイクルを大幅短縮。</p>
+                <div class="mt-16">
+                  <span class="badge">DevOps</span>
+                  <span class="badge">5分</span>
+                </div>
+              </div>
+              <div class="card">
+                <div class="text-muted" style="font-size: var(--fs-chart-legend);">2026年4月28日</div>
+                <div class="card-title" style="margin-top: 6px;">PostgreSQL 16 への移行記録</div>
+                <p class="text-muted mt-16">ダウンタイム0で本番移行を実現したプロセスを公開。</p>
+                <div class="mt-16">
+                  <span class="badge">Database</span>
+                  <span class="badge">12分</span>
+                </div>
+              </div>
+              <div class="card">
+                <div class="text-muted" style="font-size: var(--fs-chart-legend);">2026年4月20日</div>
+                <div class="card-title" style="margin-top: 6px;">SREチームから見た開発文化</div>
+                <p class="text-muted mt-16">中途入社1ヶ月のエンジニアから見た弊社の開発フロー。</p>
+                <div class="mt-16">
+                  <span class="badge">Culture</span>
+                  <span class="badge">8分</span>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div><!-- /pattern: blog -->
+
+        <!-- ============================================
+             Pattern: SaaS 設定
+             ============================================ -->
+        <div class="dashboard-container preview-pattern" data-pattern="saas" hidden>
+          <header class="dashboard-header">
+            <h1 class="dashboard-title">設定</h1>
+            <p class="dashboard-subtitle">アカウント・通知・セキュリティ・課金</p>
+          </header>
+
+          <section class="section">
+            <div class="card">
+              <div class="card-title">プロフィール</div>
+              <div style="display:flex; justify-content:space-between; padding: var(--row-pad) 0; border-bottom: 1px solid var(--color-border);">
+                <span class="text-muted">表示名</span>
+                <span>山田 太郎</span>
+              </div>
+              <div style="display:flex; justify-content:space-between; padding: var(--row-pad) 0; border-bottom: 1px solid var(--color-border);">
+                <span class="text-muted">メールアドレス</span>
+                <span>yamada@example.com</span>
+              </div>
+              <div style="display:flex; justify-content:space-between; padding: var(--row-pad) 0;">
+                <span class="text-muted">タイムゾーン</span>
+                <span>Asia/Tokyo (UTC+9)</span>
+              </div>
+              <div class="mt-16">
+                <button class="button-primary">変更を保存</button>
+                <button class="button-secondary">キャンセル</button>
+              </div>
+            </div>
+          </section>
+
+          <section class="section">
+            <div class="card">
+              <div class="card-title">通知</div>
+              <div style="display:flex; justify-content:space-between; align-items:center; padding: var(--row-pad) 0; border-bottom: 1px solid var(--color-border);">
+                <div>
+                  <div>メール通知</div>
+                  <div class="text-muted" style="font-size: var(--fs-chart-legend);">日次サマリーをメールで受信</div>
+                </div>
+                <span class="badge badge-positive">ON</span>
+              </div>
+              <div style="display:flex; justify-content:space-between; align-items:center; padding: var(--row-pad) 0; border-bottom: 1px solid var(--color-border);">
+                <div>
+                  <div>Slack 通知</div>
+                  <div class="text-muted" style="font-size: var(--fs-chart-legend);">アラート発生時に Slack へ通知</div>
+                </div>
+                <span class="badge badge-positive">ON</span>
+              </div>
+              <div style="display:flex; justify-content:space-between; align-items:center; padding: var(--row-pad) 0;">
+                <div>
+                  <div>Push 通知</div>
+                  <div class="text-muted" style="font-size: var(--fs-chart-legend);">モバイルアプリへの即時通知</div>
+                </div>
+                <span class="badge">OFF</span>
+              </div>
+            </div>
+          </section>
+
+          <section class="section">
+            <div class="card">
+              <div class="card-title">プラン</div>
+              <div class="grid grid-2">
+                <div>
+                  <div class="text-muted" style="font-size: var(--fs-chart-legend);">現在のプラン</div>
+                  <div class="kpi-value" style="font-size: calc(var(--fs-kpi-value) * 0.7);">Pro</div>
+                </div>
+                <div>
+                  <div class="text-muted" style="font-size: var(--fs-chart-legend);">月額</div>
+                  <div class="kpi-value" style="font-size: calc(var(--fs-kpi-value) * 0.7);">$49</div>
+                </div>
+              </div>
+              <div class="mt-24">
+                <button class="button-primary">プランを変更</button>
+                <button class="button-secondary">請求書をダウンロード</button>
+              </div>
+            </div>
+          </section>
+        </div><!-- /pattern: saas -->
+
+      </div><!-- /.ds-root -->
+    </div><!-- /.preview-frame -->
 
     <div class="css-output">
       <div class="css-output-header">
@@ -2235,6 +2638,191 @@ function init() {
 
   // MVP: プレビュー上のホバーで ± トークン編集を有効化
   bindPreviewTokenHover();
+  // Phase 2: プレビューパターン切替 + AI/URL モーダル
+  bindPreviewTabs();
+  bindAIModal();
+  bindURLModal();
+}
+
+// =============================================
+// Phase 2 / 2-3: プレビューパターン切替
+// =============================================
+function bindPreviewTabs() {
+  const tabs = document.querySelectorAll('#previewTabs .ptab');
+  tabs.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const target = btn.dataset.pattern;
+      tabs.forEach(b => b.classList.toggle('active', b.dataset.pattern === target));
+      document.querySelectorAll('.preview-pattern').forEach(p => {
+        p.hidden = p.dataset.pattern !== target;
+      });
+      hidePopover();   // 切替時にポップオーバーを閉じる
+    });
+  });
+}
+
+// =============================================
+// Phase 2 共通: モーダル開閉
+// =============================================
+function openModal(name) {
+  const el = document.getElementById(name + 'Backdrop');
+  if (!el) return;
+  el.classList.add('show');
+  // 結果欄を一旦リセット
+  const res = document.getElementById(name + 'Result');
+  if (res) { res.classList.remove('show','fail'); res.innerHTML = ''; }
+}
+function closeModal(name) {
+  const el = document.getElementById(name + 'Backdrop');
+  if (el) el.classList.remove('show');
+}
+// 共通: 背景／✕／キャンセルで閉じる
+document.addEventListener('click', (e) => {
+  const closeBtn = e.target.closest('[data-close-modal]');
+  if (closeBtn) { closeModal(closeBtn.dataset.closeModal); return; }
+  // 背景タップ
+  if (e.target.classList && e.target.classList.contains('modal-backdrop')) {
+    e.target.classList.remove('show');
+  }
+});
+
+// =============================================
+// Phase 2 / 2-1: AI で雰囲気からテーマ生成（モック）
+// 自然言語のキーワードを既存テーマへマッピング
+// =============================================
+const AI_KEYWORD_MAP = [
+  // [マッチキーワード（小文字）, テーマキー, 説明]
+  [['apple','アップル','iOS','クリーン','上品で軽い'],          'apple',     'Apple 系のクリーンな雰囲気'],
+  [['anthropic','クリーム','ベージュ','落ち着いた','コーラル'], 'anthropic', 'Anthropic 風の編集的・温かみ'],
+  [['stripe','インディゴ','洗練','SaaS','決済'],                'stripe',    'Stripe 系の洗練インディゴ'],
+  [['linear','プロダクトSaaS','端正','エンジニア向け'],         'linear',    'Linear 風の端正なグレー'],
+  [['notion','ドキュメント','余白','ノート'],                   'notion',    'Notion 風のニュートラル'],
+  [['vercel','純黒','モノトーン','極限のミニマル'],             'vercel',    'Vercel 風の純黒×純白'],
+  [['github','開発','OSS','エンジニア','緑'],                   'github',    'GitHub 風グリーン'],
+  [['airbnb','コーラル','親しみ','コンシューマー','宿泊'],     'airbnb',    'Airbnb 風コーラル'],
+  [['slack','紫','コラボ','チーム','オーベルジン'],             'slack',     'Slack 風オーベルジン'],
+  [['spotify','音楽','ストリーミング','ライム'],                'spotify',   'Spotify 風グリーン'],
+  [['discord','ゲーミング','コミュニティ','親しみやすい紫'],    'discord',   'Discord 風カジュアル'],
+  [['twitch','ライブ','配信','ゲーム実況','紫'],                'twitch',    'Twitch 風ビビッド紫'],
+  [['tailwind','シアン','開発者','utility'],                    'tailwind',  'Tailwind 風シアン'],
+  [['material','google','elevation','エレベーション'],          'material',  'Material Design 風'],
+  [['aws','amazon','クラウド','オレンジ×ネイビー'],             'aws',       'AWS 風オレンジ'],
+  [['tesla','工業','シャープ','機械的'],                        'tesla',     'Tesla 風工業デザイン'],
+  [['netflix','映画','シネマ','エンタメ','映像'],               'netflix',   'Netflix 風シネマ的'],
+  [['shopify','EC','コマース','ライムグリーン','物販'],         'shopify',   'Shopify 風コマース'],
+  [['bloomberg','金融端末','監視','取引','tickers','ターミナル'], 'bloomberg', 'Bloomberg 風端末'],
+  [['economist','雑誌','editorial','セリフ','大人','落ち着き'], 'economist', 'The Economist 風編集'],
+  [['金融','信頼','堅め','銀行','ファイナンス'],                'finance',   '金融系の信頼感'],
+  [['ミニマル','控えめ','装飾少な','シンプル'],                 'minimal',   'ミニマルな印象'],
+  [['経営','王道','報告','コーポレート','executive'],           'executive', 'Executive Blue'],
+  [['印刷','モノクロ','黒','白黒','報告書'],                   'monochrome','モノクロ報告書'],
+  [['ピンク','ローズ','rose','花','春','可愛い'],               'pastelRose','パステルローズ'],
+  [['黄色','レモン','明るい','元気','イエロー'],                'pastelLemon','パステルレモン'],
+  [['パステル','やさしい','空','水色','ライトブルー'],          'pastelSky', 'パステル空色'],
+  [['ミント','清涼','健康','メディカル','green'],               'macaronMint','マカロンミント'],
+  [['ピーチ','桃','温かい','親近'],                             'macaronPeach','マカロンピーチ'],
+  [['ラベンダー','薄紫','上品','落ち着き'],                     'macaronLavender','マカロンラベンダー'],
+  [['ターコイズ','鮮やか','若々しい','海'],                     'vividOcean','ビビッドオーシャン'],
+  [['情熱','エネルギー','コーラル赤','サンセット'],             'sunsetCoral','サンセットコーラル'],
+  [['マーケティング','成長','ポジティブ','エコ'],               'marketing', 'マーケティンググリーン']
+];
+
+function aiMatchTheme(prompt) {
+  const p = prompt.toLowerCase();
+  // マッチしたキーワードの数でスコアリング
+  let best = null, bestScore = 0;
+  for (const [kws, themeKey, desc] of AI_KEYWORD_MAP) {
+    const score = kws.filter(kw => p.includes(kw.toLowerCase())).length;
+    if (score > bestScore) { best = { themeKey, desc, score }; bestScore = score; }
+  }
+  return best;
+}
+
+function bindAIModal() {
+  document.getElementById('aiBtn').addEventListener('click', () => openModal('ai'));
+  document.getElementById('aiGenerate').addEventListener('click', () => {
+    const prompt = document.getElementById('aiPrompt').value.trim();
+    const result = document.getElementById('aiResult');
+    if (!prompt) {
+      result.classList.add('show','fail');
+      result.innerHTML = '<strong>入力が空です。</strong>テーマの雰囲気を記述してください。';
+      return;
+    }
+    const match = aiMatchTheme(prompt);
+    if (!match) {
+      result.classList.add('show','fail');
+      result.innerHTML = '<strong>マッチするテーマが見つかりませんでした。</strong><br>別のキーワード（業界名・色・印象）でお試しください。';
+      return;
+    }
+    const t = THEMES[match.themeKey];
+    applyTheme(match.themeKey);
+    result.classList.add('show');
+    result.classList.remove('fail');
+    result.innerHTML = `<strong>${t.name}</strong> を適用しました（${match.desc}）。<br>左パネルでさらに微調整できます。`;
+  });
+}
+
+// =============================================
+// Phase 2 / 2-2: URL から取り込み（モック）
+// ホスト名から既知ブランドにマッチング
+// =============================================
+const URL_HOST_MAP = {
+  'apple.com': 'apple', 'anthropic.com': 'anthropic', 'claude.ai': 'anthropic',
+  'stripe.com': 'stripe', 'linear.app': 'linear', 'notion.so': 'notion',
+  'vercel.com': 'vercel', 'github.com': 'github', 'github.io': 'github',
+  'airbnb.com': 'airbnb', 'airbnb.co.jp': 'airbnb',
+  'slack.com': 'slack', 'spotify.com': 'spotify',
+  'discord.com': 'discord', 'discord.gg': 'discord',
+  'twitch.tv': 'twitch', 'tailwindcss.com': 'tailwind',
+  'aws.amazon.com': 'aws', 'amazon.com': 'aws',
+  'tesla.com': 'tesla', 'netflix.com': 'netflix',
+  'shopify.com': 'shopify', 'bloomberg.com': 'bloomberg',
+  'economist.com': 'economist',
+  'material.io': 'material', 'm3.material.io': 'material'
+};
+
+function urlMatchTheme(input) {
+  const u = input.toLowerCase().trim();
+  // ホスト名抽出
+  let host = u;
+  try {
+    const url = new URL(u.startsWith('http') ? u : 'https://' + u);
+    host = url.hostname.replace(/^www\./, '');
+  } catch (e) { /* fallthrough */ }
+
+  // 完全一致 → サフィックス一致
+  if (URL_HOST_MAP[host]) return { themeKey: URL_HOST_MAP[host], host };
+  for (const [k, v] of Object.entries(URL_HOST_MAP)) {
+    if (host.endsWith(k) || host.includes(k.split('.')[0])) {
+      return { themeKey: v, host };
+    }
+  }
+  return null;
+}
+
+function bindURLModal() {
+  document.getElementById('urlBtn').addEventListener('click', () => openModal('url'));
+  document.getElementById('urlImport').addEventListener('click', () => {
+    const url = document.getElementById('urlInput').value.trim();
+    const result = document.getElementById('urlResult');
+    if (!url) {
+      result.classList.add('show','fail');
+      result.innerHTML = '<strong>URL を入力してください。</strong>';
+      return;
+    }
+    const match = urlMatchTheme(url);
+    if (!match) {
+      result.classList.add('show','fail');
+      result.innerHTML = `<strong>${url} は未対応のドメインです。</strong><br>` +
+        '対応ドメイン例: apple.com / stripe.com / notion.so / github.com / netflix.com など';
+      return;
+    }
+    const t = THEMES[match.themeKey];
+    applyTheme(match.themeKey);
+    result.classList.add('show');
+    result.classList.remove('fail');
+    result.innerHTML = `<strong>${match.host}</strong> から <strong>${t.name}</strong> テーマを取り込みました。`;
+  });
 }
 document.addEventListener('DOMContentLoaded', init);
 </script>
