@@ -384,6 +384,82 @@
     font-size: 12px; line-height: 1.6;
   }
 
+  /* ======================================================
+     MVP: インライン・トークンポップオーバー
+     ====================================================== */
+  /* ホバー対象のハイライト */
+  .token-target-active {
+    outline: 2px dashed #fbbf24;
+    outline-offset: 4px;
+    border-radius: 2px;
+    cursor: help;
+    transition: outline-color 0.12s;
+  }
+
+  /* フローティングポップオーバー */
+  #token-popover {
+    position: absolute;
+    display: none;
+    align-items: center;
+    gap: 4px;
+    background: #1f2933;
+    color: #fff;
+    padding: 4px 6px;
+    border-radius: 8px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-size: 12px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+    z-index: 9999;
+    user-select: none;
+    white-space: nowrap;
+  }
+  #token-popover.show { display: inline-flex; }
+  #token-popover::after {
+    /* 下向きの矢印 */
+    content: '';
+    position: absolute;
+    bottom: -5px; left: 14px;
+    width: 0; height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 5px solid #1f2933;
+  }
+  #token-popover .tp-label {
+    font-size: 10px;
+    opacity: 0.7;
+    padding: 0 6px 0 2px;
+    border-right: 1px solid rgba(255,255,255,0.15);
+  }
+  #token-popover .tp-size {
+    min-width: 40px;
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+    font-weight: 600;
+    font-size: 12px;
+  }
+  #token-popover .tp-btn {
+    background: rgba(255,255,255,0.1);
+    border: none;
+    color: #fff;
+    width: 22px; height: 22px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center; justify-content: center;
+    line-height: 1;
+    padding: 0;
+  }
+  #token-popover .tp-btn:hover { background: rgba(255,255,255,0.22); }
+  #token-popover .tp-btn:active { transform: scale(0.92); }
+  #token-popover .tp-btn[data-act="reset"] {
+    font-size: 11px;
+    opacity: 0.85;
+  }
+  #token-popover.flash-up .tp-size { color: #6ee7b7; }
+  #token-popover.flash-down .tp-size { color: #fda4af; }
+
   @media (max-width: 960px) {
     .app-layout { grid-template-columns: 1fr; }
     .settings-panel {
@@ -1672,6 +1748,182 @@ function renderAllCharts() {
    プレビュー / 入力バインド
    ===================================================== */
 let styleEl = null;
+// =============================================
+// MVP: インライン・トークンポップオーバー
+// =============================================
+const TOKEN_LABELS = {
+  title:     'タイトル',
+  kpiValue:  'KPI数値',
+  cardTitle: 'カードタイトル',
+  tableBody: 'テーブル本文'
+};
+
+// 要素 → トークンキーへのマッチング（ホバー時に祖先まで遡る）
+function matchTokenTrigger(el) {
+  let cur = el;
+  while (cur && cur !== document.body && cur.tagName) {
+    const cl = cur.classList;
+    if (cl) {
+      if (cl.contains('dashboard-title')) return { key: 'title', el: cur };
+      if (cl.contains('kpi-value'))       return { key: 'kpiValue', el: cur };
+      if (cl.contains('card-title'))      return { key: 'cardTitle', el: cur };
+    }
+    if (cur.tagName === 'TD' || cur.tagName === 'TBODY') {
+      const tbl = cur.closest('table.data-table');
+      const tb  = cur.closest('tbody');
+      if (tbl && tb) return { key: 'tableBody', el: tb };
+    }
+    cur = cur.parentElement;
+  }
+  return null;
+}
+
+let popoverEl = null;
+let popoverHideTimer = null;
+let popoverFlashTimer = null;
+
+function ensurePopover() {
+  if (popoverEl) return popoverEl;
+  popoverEl = document.createElement('div');
+  popoverEl.id = 'token-popover';
+  popoverEl.innerHTML = `
+    <span class="tp-label"></span>
+    <button class="tp-btn" data-act="dec" type="button" aria-label="小さく">−</button>
+    <span class="tp-size"></span>
+    <button class="tp-btn" data-act="inc" type="button" aria-label="大きく">+</button>
+    <button class="tp-btn" data-act="reset" type="button" aria-label="自動に戻す" title="自動に戻す">↺</button>
+  `;
+  document.body.appendChild(popoverEl);
+  popoverEl.addEventListener('click', handlePopoverClick);
+  popoverEl.addEventListener('mouseenter', () => clearTimeout(popoverHideTimer));
+  popoverEl.addEventListener('mouseleave', schedulePopoverHide);
+  return popoverEl;
+}
+
+function refreshPopoverSize() {
+  if (!popoverEl) return;
+  const key = popoverEl.dataset.tokenKey;
+  if (!key) return;
+  const auto = computeAutoTextSizes();
+  const cur = state.textOverrides[key] !== undefined
+    ? state.textOverrides[key]
+    : auto[key];
+  const overridden = state.textOverrides[key] !== undefined;
+  popoverEl.querySelector('.tp-size').textContent =
+    cur + 'px' + (overridden ? '' : ' (auto)');
+}
+
+function showPopoverFor(targetEl, tokenKey) {
+  const pop = ensurePopover();
+  pop.dataset.tokenKey = tokenKey;
+  pop.querySelector('.tp-label').textContent = TOKEN_LABELS[tokenKey] || tokenKey;
+  refreshPopoverSize();
+
+  const rect = targetEl.getBoundingClientRect();
+  const top  = window.scrollY + rect.top - 36;
+  const left = window.scrollX + rect.left;
+  pop.style.top  = top + 'px';
+  pop.style.left = left + 'px';
+  pop.classList.add('show');
+
+  // 既存ハイライトを外して付け替え
+  document.querySelectorAll('.token-target-active').forEach(e => {
+    if (e !== targetEl) e.classList.remove('token-target-active');
+  });
+  targetEl.classList.add('token-target-active');
+}
+
+function hidePopover() {
+  if (popoverEl) popoverEl.classList.remove('show');
+  document.querySelectorAll('.token-target-active').forEach(e =>
+    e.classList.remove('token-target-active'));
+}
+
+function schedulePopoverHide() {
+  clearTimeout(popoverHideTimer);
+  popoverHideTimer = setTimeout(hidePopover, 250);
+}
+
+function handlePopoverClick(e) {
+  const btn = e.target.closest('.tp-btn');
+  if (!btn) return;
+  e.stopPropagation();
+  const act = btn.dataset.act;
+  const key = popoverEl.dataset.tokenKey;
+  if (!key || !TEXT_KEYS.includes(key)) return;
+
+  const auto = computeAutoTextSizes();
+  const cur = state.textOverrides[key] !== undefined
+    ? state.textOverrides[key]
+    : auto[key];
+  const opts = TEXT_OPTIONS[key];
+  const min = opts[0], max = opts[opts.length - 1];
+
+  if (act === 'reset') {
+    delete state.textOverrides[key];
+    flashPopover('reset');
+  } else {
+    let delta = e.shiftKey ? 5 : 1;
+    let dir = act === 'inc' ? 1 : -1;
+    if (e.altKey) dir = -dir;
+    const next = Math.max(min, Math.min(max, cur + dir * delta));
+    state.textOverrides[key] = next;
+    flashPopover(dir > 0 ? 'up' : 'down');
+  }
+
+  updatePreview();
+  rebuildTextSelectOptions();   // 左パネル select を双方向同期
+  refreshPopoverSize();
+}
+
+function flashPopover(kind) {
+  if (!popoverEl) return;
+  popoverEl.classList.remove('flash-up','flash-down');
+  if (kind === 'up')   popoverEl.classList.add('flash-up');
+  if (kind === 'down') popoverEl.classList.add('flash-down');
+  clearTimeout(popoverFlashTimer);
+  popoverFlashTimer = setTimeout(() => {
+    popoverEl.classList.remove('flash-up','flash-down');
+  }, 220);
+}
+
+function bindPreviewTokenHover() {
+  const root = document.querySelector('.ds-root');
+  if (!root) return;
+
+  root.addEventListener('mouseover', (e) => {
+    const m = matchTokenTrigger(e.target);
+    if (!m) return;
+    clearTimeout(popoverHideTimer);
+    showPopoverFor(m.el, m.key);
+  });
+
+  root.addEventListener('mouseout', (e) => {
+    const m = matchTokenTrigger(e.target);
+    if (!m) return;
+    // ポップオーバー or 同じ要素にカーソルが残っていれば消さない
+    const to = e.relatedTarget;
+    if (to && (to === popoverEl || (popoverEl && popoverEl.contains(to)))) return;
+    if (to && m.el.contains(to)) return;
+    schedulePopoverHide();
+  });
+
+  // タッチ対応：要素タップでもポップオーバーを開く
+  root.addEventListener('click', (e) => {
+    const m = matchTokenTrigger(e.target);
+    if (!m) return;
+    showPopoverFor(m.el, m.key);
+  });
+
+  // 外側クリックで閉じる
+  document.addEventListener('click', (e) => {
+    if (!popoverEl || !popoverEl.classList.contains('show')) return;
+    if (popoverEl.contains(e.target)) return;
+    if (matchTokenTrigger(e.target)) return;
+    hidePopover();
+  });
+}
+
 function updatePreview() {
   const css = generateCSS();
   if (!styleEl) {
@@ -1789,18 +2041,29 @@ function bindInputs() {
   }
 }
 
-// テキストselect生成（autoオプション + 各レンジ）
+// テキストselect生成（autoオプション + 各レンジ + カスタム値）
+// MVP: ホバーポップオーバーで選択肢外の値が入る場合があるので
+//      カスタム値があればプレフィックス option として挿入
 function rebuildTextSelectOptions() {
   const auto = computeAutoTextSizes();
   TEXT_KEYS.forEach(key => {
     const el = document.getElementById('ts_' + key);
     if (!el) return;
     const opts = TEXT_OPTIONS[key];
-    const current = state.textOverrides[key] || 'auto';
+    const overridden = state.textOverrides[key];
+    const value = overridden !== undefined ? String(overridden) : 'auto';
+
+    // 上書き値が標準選択肢に含まれない場合、カスタム option を先頭に追加
+    let extraOpt = '';
+    if (overridden !== undefined && !opts.includes(overridden)) {
+      extraOpt = `<option value="${overridden}">${overridden}px (カスタム)</option>`;
+    }
+
     el.innerHTML =
       `<option value="auto">自動 (${auto[key]}px)</option>` +
+      extraOpt +
       opts.map(v => `<option value="${v}">${v}px</option>`).join('');
-    el.value = String(current);
+    el.value = value;
   });
 }
 
@@ -1969,6 +2232,9 @@ function init() {
   syncInputsFromState();
   updatePreview();
   renderAllCharts();
+
+  // MVP: プレビュー上のホバーで ± トークン編集を有効化
+  bindPreviewTokenHover();
 }
 document.addEventListener('DOMContentLoaded', init);
 </script>
