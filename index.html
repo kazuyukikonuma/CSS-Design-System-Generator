@@ -113,9 +113,49 @@
     margin-bottom: 6px;
   }
 
-  .theme-grid {
-    display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+  /* テーマグループ（折りたたみ） */
+  #themeGrid > .theme-group {
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    margin-bottom: 6px;
+    background: #fff;
+    overflow: hidden;
   }
+  #themeGrid > .theme-group > summary {
+    padding: 8px 12px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #374151;
+    cursor: pointer;
+    user-select: none;
+    background: #fafafa;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    list-style: none;
+  }
+  #themeGrid > .theme-group > summary::-webkit-details-marker { display: none; }
+  #themeGrid > .theme-group > summary::before {
+    content: '▶';
+    font-size: 9px;
+    color: #9ca3af;
+    transition: transform 0.15s;
+  }
+  #themeGrid > .theme-group[open] > summary::before { transform: rotate(90deg); }
+  #themeGrid > .theme-group[open] > summary { border-bottom: 1px solid #e5e7eb; }
+  #themeGrid .theme-group-count {
+    margin-left: auto;
+    font-size: 11px;
+    color: #9ca3af;
+    font-weight: 500;
+  }
+  .theme-grid-inner {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+    padding: 8px;
+  }
+
   .theme-card {
     border: 2px solid #e5e7eb;
     border-radius: 10px;
@@ -224,7 +264,7 @@
     .app-header { padding: 16px; }
     .settings-panel, .preview-area { padding: 16px; }
     .form-row select { flex: 0 0 130px; }
-    .theme-grid { grid-template-columns: 1fr; }
+    .theme-grid-inner { grid-template-columns: 1fr; }
   }
 </style>
 </head>
@@ -593,42 +633,81 @@ const DENSITY_MAP = {
 
 /* テーマ */
 const THEMES = {
-  executive: { name:'Executive Blue', desc:'経営報告・王道', colorMain:'#2563eb',
+  // ----- 王道 -----
+  executive: { group:'王道', name:'Executive Blue', desc:'経営報告・王道', colorMain:'#2563eb',
     colorPositive:'#059669', colorNegative:'#dc2626', colorWarning:'#d97706',
     light:{ bg:'#f7f8fa', card:'#ffffff', text:'#0f172a', muted:'#64748b', border:'#e2e8f0' }},
-  finance: { name:'Finance Navy', desc:'金融・信頼感', colorMain:'#1e40af',
+  finance: { group:'王道', name:'Finance Navy', desc:'金融・信頼感', colorMain:'#1e40af',
     colorPositive:'#065f46', colorNegative:'#991b1b', colorWarning:'#92400e',
     light:{ bg:'#f5f7fb', card:'#ffffff', text:'#0f172a', muted:'#475569', border:'#dbe2ec' }},
-  minimal: { name:'Minimal Gray', desc:'装飾控えめ・シック', colorMain:'#374151',
+  minimal: { group:'王道', name:'Minimal Gray', desc:'装飾控えめ・シック', colorMain:'#374151',
     colorPositive:'#059669', colorNegative:'#dc2626', colorWarning:'#d97706',
     light:{ bg:'#fafafa', card:'#ffffff', text:'#1f2937', muted:'#9ca3af', border:'#e5e7eb' }},
-  monochrome: { name:'Monochrome', desc:'黒基調・印刷向け', colorMain:'#111827',
+  monochrome: { group:'王道', name:'Monochrome', desc:'黒基調・印刷向け', colorMain:'#111827',
     colorPositive:'#1f2937', colorNegative:'#7f1d1d', colorWarning:'#78350f',
     light:{ bg:'#ffffff', card:'#ffffff', text:'#111827', muted:'#6b7280', border:'#d1d5db' }},
-  pastelSky: { name:'Pastel Sky', desc:'澄んだ空・爽やか', colorMain:'#7dd3fc',
+
+  // ----- パステル -----
+  pastelSky: { group:'パステル', name:'Pastel Sky', desc:'澄んだ空・爽やか', colorMain:'#7dd3fc',
     colorPositive:'#86efac', colorNegative:'#fca5a5', colorWarning:'#fcd34d',
     light:{ bg:'#f0f9ff', card:'#ffffff', text:'#0c4a6e', muted:'#7c93a8', border:'#dbeafe' }},
-  pastelRose: { name:'Pastel Rose', desc:'やさしいピンク', colorMain:'#f9a8d4',
+  pastelRose: { group:'パステル', name:'Pastel Rose', desc:'やさしいピンク', colorMain:'#f9a8d4',
     colorPositive:'#86efac', colorNegative:'#fca5a5', colorWarning:'#fcd34d',
     light:{ bg:'#fff1f6', card:'#ffffff', text:'#831843', muted:'#9d7585', border:'#fce7f3' }},
-  pastelLemon: { name:'Pastel Lemon', desc:'明るく親しみやすい', colorMain:'#fcd34d',
+  pastelLemon: { group:'パステル', name:'Pastel Lemon', desc:'明るく親しみやすい', colorMain:'#fcd34d',
     colorPositive:'#86efac', colorNegative:'#fca5a5', colorWarning:'#fb923c',
     light:{ bg:'#fefce8', card:'#ffffff', text:'#713f12', muted:'#a08c5a', border:'#fef3c7' }},
-  macaronMint: { name:'Macaron Mint', desc:'清涼・健康', colorMain:'#6ee7b7',
+
+  // ----- マカロン -----
+  macaronMint: { group:'マカロン', name:'Macaron Mint', desc:'清涼・健康', colorMain:'#6ee7b7',
     colorPositive:'#34d399', colorNegative:'#fb7185', colorWarning:'#fbbf24',
     light:{ bg:'#f0fdf4', card:'#ffffff', text:'#064e3b', muted:'#6b8e7f', border:'#d1fae5' }},
-  macaronPeach: { name:'Macaron Peach', desc:'温かみ・親近感', colorMain:'#fdba74',
+  macaronPeach: { group:'マカロン', name:'Macaron Peach', desc:'温かみ・親近感', colorMain:'#fdba74',
     colorPositive:'#86efac', colorNegative:'#fb7185', colorWarning:'#fbbf24',
     light:{ bg:'#fff7ed', card:'#ffffff', text:'#7c2d12', muted:'#a08068', border:'#fed7aa' }},
-  macaronLavender: { name:'Macaron Lavender', desc:'上品・落ち着き', colorMain:'#c4b5fd',
+  macaronLavender: { group:'マカロン', name:'Macaron Lavender', desc:'上品・落ち着き', colorMain:'#c4b5fd',
     colorPositive:'#86efac', colorNegative:'#fda4af', colorWarning:'#fcd34d',
     light:{ bg:'#f5f3ff', card:'#ffffff', text:'#4c1d95', muted:'#8b80a8', border:'#ddd6fe' }},
-  vividOcean: { name:'Vivid Ocean', desc:'鮮やか・若々しい', colorMain:'#06b6d4',
+
+  // ----- ビビッド -----
+  vividOcean: { group:'ビビッド', name:'Vivid Ocean', desc:'鮮やか・若々しい', colorMain:'#06b6d4',
     colorPositive:'#10b981', colorNegative:'#ef4444', colorWarning:'#f59e0b',
     light:{ bg:'#ecfeff', card:'#ffffff', text:'#164e63', muted:'#64748b', border:'#cffafe' }},
-  sunsetCoral: { name:'Sunset Coral', desc:'情熱・エネルギッシュ', colorMain:'#fb7185',
+  sunsetCoral: { group:'ビビッド', name:'Sunset Coral', desc:'情熱・エネルギッシュ', colorMain:'#fb7185',
     colorPositive:'#10b981', colorNegative:'#dc2626', colorWarning:'#f59e0b',
-    light:{ bg:'#fff1f2', card:'#ffffff', text:'#881337', muted:'#7c5564', border:'#ffe4e6' }}
+    light:{ bg:'#fff1f2', card:'#ffffff', text:'#881337', muted:'#7c5564', border:'#ffe4e6' }},
+
+  // ----- ブランド風（インスパイア系） -----
+  apple: { group:'ブランド風', name:'Apple', desc:'iOS的・クリーン', colorMain:'#007aff',
+    colorPositive:'#34c759', colorNegative:'#ff3b30', colorWarning:'#ff9500',
+    light:{ bg:'#f5f5f7', card:'#ffffff', text:'#1d1d1f', muted:'#86868b', border:'#d2d2d7' }},
+  anthropic: { group:'ブランド風', name:'Anthropic', desc:'クリーム×コーラル', colorMain:'#c96442',
+    colorPositive:'#5e8a4a', colorNegative:'#9b3a2e', colorWarning:'#b87333',
+    light:{ bg:'#faf9f5', card:'#ffffff', text:'#181818', muted:'#6b6862', border:'#e8e4dc' }},
+  stripe: { group:'ブランド風', name:'Stripe', desc:'インディゴ・洗練', colorMain:'#635bff',
+    colorPositive:'#0a8a5c', colorNegative:'#df1b41', colorWarning:'#bb6a00',
+    light:{ bg:'#f6f9fc', card:'#ffffff', text:'#0a2540', muted:'#425466', border:'#e6e6f0' }},
+  linear: { group:'ブランド風', name:'Linear', desc:'紫×グレー・端正', colorMain:'#5e6ad2',
+    colorPositive:'#10b981', colorNegative:'#eb5757', colorWarning:'#f2994a',
+    light:{ bg:'#f7f8fa', card:'#ffffff', text:'#08090a', muted:'#6c6f7f', border:'#e0e1e6' }},
+  notion: { group:'ブランド風', name:'Notion', desc:'温かみ・余白', colorMain:'#2f3437',
+    colorPositive:'#0f7b6c', colorNegative:'#e03e3e', colorWarning:'#d9730d',
+    light:{ bg:'#ffffff', card:'#ffffff', text:'#37352f', muted:'#9b9a97', border:'#e9e9e7' }},
+  vercel: { group:'ブランド風', name:'Vercel', desc:'純黒×純白', colorMain:'#000000',
+    colorPositive:'#0070f3', colorNegative:'#e00', colorWarning:'#f5a623',
+    light:{ bg:'#fafafa', card:'#ffffff', text:'#000000', muted:'#666666', border:'#eaeaea' }},
+  github: { group:'ブランド風', name:'GitHub', desc:'グリーン×ニュートラル', colorMain:'#2da44e',
+    colorPositive:'#1a7f37', colorNegative:'#cf222e', colorWarning:'#9a6700',
+    light:{ bg:'#ffffff', card:'#ffffff', text:'#1f2328', muted:'#656d76', border:'#d0d7de' }},
+  airbnb: { group:'ブランド風', name:'Airbnb', desc:'コーラル・親しみ', colorMain:'#ff385c',
+    colorPositive:'#008a05', colorNegative:'#c13515', colorWarning:'#e07912',
+    light:{ bg:'#ffffff', card:'#ffffff', text:'#222222', muted:'#717171', border:'#ebebeb' }},
+  slack: { group:'ブランド風', name:'Slack', desc:'オーベルジン', colorMain:'#4a154b',
+    colorPositive:'#007a5a', colorNegative:'#e01e5a', colorWarning:'#ecb22e',
+    light:{ bg:'#ffffff', card:'#ffffff', text:'#1d1c1d', muted:'#616061', border:'#dddddd' }},
+  spotify: { group:'ブランド風', name:'Spotify', desc:'グリーン×ホワイト', colorMain:'#1db954',
+    colorPositive:'#0e8a3d', colorNegative:'#e22134', colorWarning:'#ffa42b',
+    light:{ bg:'#ffffff', card:'#ffffff', text:'#191414', muted:'#6a6a6a', border:'#e6e6e6' }}
 };
 function deriveDark() {
   return { bg:'#0b1220', card:'#111827', text:'#f1f5f9', muted:'#94a3b8', border:'#1f2937' };
@@ -1401,8 +1480,19 @@ function syncInputsFromState() {
 }
 
 function buildThemeGrid() {
-  const grid = document.getElementById('themeGrid');
-  grid.innerHTML = Object.entries(THEMES).map(([key, t]) => `
+  const container = document.getElementById('themeGrid');
+
+  // グループごとに集計
+  const groups = {};
+  Object.entries(THEMES).forEach(([key, t]) => {
+    const g = t.group || 'その他';
+    (groups[g] = groups[g] || []).push([key, t]);
+  });
+
+  // 現在選択中のテーマが属するグループは開く
+  const currentGroup = (THEMES[state.themeKey] || {}).group;
+
+  const cardHTML = ([key, t]) => `
     <button class="theme-card" data-theme="${key}" type="button">
       <div class="swatches">
         <span style="background:${t.colorMain}"></span>
@@ -1413,9 +1503,21 @@ function buildThemeGrid() {
       <div class="name">${t.name}</div>
       <div class="desc">${t.desc}</div>
     </button>
+  `;
+
+  container.innerHTML = Object.entries(groups).map(([groupName, themes]) => `
+    <details class="theme-group" ${groupName === currentGroup ? 'open' : ''}>
+      <summary>${groupName} <span class="theme-group-count">${themes.length}</span></summary>
+      <div class="theme-grid-inner">
+        ${themes.map(cardHTML).join('')}
+      </div>
+    </details>
   `).join('');
-  grid.querySelectorAll('.theme-card').forEach(btn => {
-    btn.addEventListener('click', () => applyTheme(btn.dataset.theme));
+
+  // クリック委譲（再描画に強い）
+  container.addEventListener('click', (e) => {
+    const btn = e.target.closest('.theme-card');
+    if (btn) applyTheme(btn.dataset.theme);
   });
 }
 function applyTheme(key) {
