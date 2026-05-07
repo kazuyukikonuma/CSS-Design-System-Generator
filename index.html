@@ -6,7 +6,7 @@
 <title>CSS Design System Generator</title>
 <style>
   /* ============================================
-     ジェネレーター本体のスタイル（プレビューCSSとは別）
+     ジェネレーターUI（プレビューCSSとは別系統）
      ============================================ */
   * { box-sizing: border-box; }
   html, body { margin: 0; padding: 0; }
@@ -18,35 +18,50 @@
     font-size: 14px;
   }
 
-  /* ヘッダー */
   .app-header {
-    background: #ffffff;
+    background: #fff;
     border-bottom: 1px solid #e5e7eb;
     padding: 20px 32px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
   }
-  .app-header h1 {
-    margin: 0 0 4px;
-    font-size: 22px;
-    font-weight: 700;
-    letter-spacing: 0.02em;
+  .app-header h1 { margin: 0 0 4px; font-size: 22px; font-weight: 700; }
+  .app-header p { margin: 0; color: #6b7280; font-size: 13px; }
+
+  .mode-toggle {
+    display: inline-flex;
+    background: #f3f4f6;
+    border-radius: 999px;
+    padding: 3px;
   }
-  .app-header p {
-    margin: 0;
+  .mode-toggle button {
+    border: none;
+    background: transparent;
+    padding: 6px 14px;
+    border-radius: 999px;
+    cursor: pointer;
+    font-size: 12px;
     color: #6b7280;
-    font-size: 13px;
+    font-weight: 600;
+  }
+  .mode-toggle button.active {
+    background: #fff;
+    color: #1f2933;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.08);
   }
 
-  /* レイアウト */
   .app-layout {
     display: grid;
-    grid-template-columns: 360px 1fr;
-    gap: 0;
+    grid-template-columns: 380px 1fr;
     min-height: calc(100vh - 73px);
   }
 
-  /* 左：設定パネル */
+  /* 設定パネル */
   .settings-panel {
-    background: #ffffff;
+    background: #fff;
     border-right: 1px solid #e5e7eb;
     padding: 24px;
     overflow-y: auto;
@@ -54,14 +69,14 @@
     position: sticky;
     top: 0;
   }
-  .settings-section { margin-bottom: 28px; }
+  .settings-section { margin-bottom: 24px; }
   .settings-section h2 {
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.08em;
     color: #374151;
-    margin: 0 0 12px;
+    margin: 0 0 10px;
     padding-bottom: 6px;
     border-bottom: 1px solid #e5e7eb;
   }
@@ -70,33 +85,22 @@
     align-items: center;
     justify-content: space-between;
     gap: 12px;
-    margin-bottom: 10px;
+    margin-bottom: 8px;
   }
-  .form-row label {
-    flex: 1;
-    font-size: 13px;
-    color: #374151;
-  }
+  .form-row label { flex: 1; font-size: 13px; color: #374151; }
   .form-row input[type="color"] {
-    width: 48px;
-    height: 30px;
-    border: 1px solid #d1d5db;
-    border-radius: 4px;
-    padding: 2px;
-    cursor: pointer;
-    background: #fff;
+    width: 48px; height: 30px;
+    border: 1px solid #d1d5db; border-radius: 4px;
+    padding: 2px; cursor: pointer; background: #fff;
   }
   .form-row select {
     flex: 0 0 170px;
-    padding: 6px 8px;
-    font-size: 13px;
-    border: 1px solid #d1d5db;
-    border-radius: 6px;
-    background: #fff;
-    cursor: pointer;
+    padding: 6px 8px; font-size: 13px;
+    border: 1px solid #d1d5db; border-radius: 6px;
+    background: #fff; cursor: pointer;
   }
 
-  /* テーマ選択（カードグリッド） */
+  /* テーマカード */
   .theme-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -104,84 +108,70 @@
   }
   .theme-card {
     border: 2px solid #e5e7eb;
-    border-radius: 8px;
+    border-radius: 10px;
     padding: 8px;
     cursor: pointer;
     background: #fff;
     text-align: left;
     transition: all 0.15s;
   }
-  .theme-card:hover { border-color: #9ca3af; }
+  .theme-card:hover { border-color: #9ca3af; transform: translateY(-1px); }
   .theme-card.active {
     border-color: #2563eb;
     box-shadow: 0 0 0 3px rgba(37,99,235,0.15);
   }
   .theme-card .swatches {
-    display: flex;
-    gap: 2px;
-    margin-bottom: 6px;
+    display: flex; gap: 2px; margin-bottom: 6px;
   }
   .theme-card .swatches span {
-    width: 14px;
-    height: 14px;
-    border-radius: 3px;
+    width: 14px; height: 14px;
+    border-radius: 4px;
     border: 1px solid rgba(0,0,0,0.06);
   }
-  .theme-card .name {
-    font-size: 12px;
-    font-weight: 600;
-    color: #1f2933;
-    line-height: 1.2;
+  .theme-card .name { font-size: 12px; font-weight: 600; color: #1f2933; line-height: 1.2; }
+  .theme-card .desc { font-size: 11px; color: #6b7280; margin-top: 2px; }
+
+  /* 装飾スタイル：横スクロールチップ */
+  .style-chips {
+    display: flex; flex-wrap: wrap; gap: 6px;
   }
-  .theme-card .desc {
-    font-size: 11px;
-    color: #6b7280;
-    margin-top: 2px;
+  .style-chip {
+    padding: 6px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 999px;
+    background: #fff;
+    font-size: 12px;
+    cursor: pointer;
+    color: #374151;
+  }
+  .style-chip.active {
+    background: #1f2933;
+    color: #fff;
+    border-color: #1f2933;
   }
 
-  .action-buttons {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
+  .action-buttons { display: flex; flex-direction: column; gap: 8px; }
   .action-buttons button {
-    padding: 10px 12px;
-    font-size: 13px;
-    border-radius: 6px;
-    cursor: pointer;
-    border: 1px solid transparent;
-    font-weight: 500;
+    padding: 10px 12px; font-size: 13px;
+    border-radius: 6px; cursor: pointer;
+    border: 1px solid transparent; font-weight: 500;
   }
   .btn-primary { background: #2563eb; color: #fff; }
   .btn-primary:hover { background: #1d4ed8; }
-  .btn-secondary {
-    background: #fff;
-    color: #1f2933;
-    border-color: #d1d5db !important;
-  }
+  .btn-secondary { background: #fff; color: #1f2933; border-color: #d1d5db !important; }
   .btn-secondary:hover { background: #f3f4f6; }
-  .btn-ghost {
-    background: transparent;
-    color: #6b7280;
-    border-color: #e5e7eb !important;
-  }
+  .btn-ghost { background: transparent; color: #6b7280; border-color: #e5e7eb !important; }
   .btn-ghost:hover { background: #f9fafb; }
   .copy-message {
-    font-size: 12px;
-    color: #047857;
-    text-align: center;
-    height: 16px;
+    font-size: 12px; color: #047857;
+    text-align: center; height: 16px;
     margin-top: 4px;
-    opacity: 0;
-    transition: opacity 0.2s;
+    opacity: 0; transition: opacity 0.2s;
   }
   .copy-message.show { opacity: 1; }
 
-  /* 右：プレビュー */
-  .preview-area {
-    padding: 24px;
-    overflow-x: auto;
-  }
+  /* プレビュー */
+  .preview-area { padding: 24px; overflow-x: auto; }
   .preview-frame {
     background: #fff;
     border: 1px solid #e5e7eb;
@@ -189,17 +179,14 @@
     overflow: hidden;
   }
   .preview-label {
-    font-size: 11px;
-    font-weight: 700;
-    color: #6b7280;
-    letter-spacing: 0.1em;
+    font-size: 11px; font-weight: 700;
+    color: #6b7280; letter-spacing: 0.1em;
     text-transform: uppercase;
     padding: 8px 16px;
     background: #f9fafb;
     border-bottom: 1px solid #e5e7eb;
   }
 
-  /* 生成CSS表示エリア */
   .css-output {
     margin-top: 24px;
     background: #1e293b;
@@ -207,35 +194,25 @@
     overflow: hidden;
   }
   .css-output-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    display: flex; justify-content: space-between; align-items: center;
     padding: 10px 16px;
     background: #0f172a;
     color: #cbd5e1;
-    font-size: 12px;
-    font-weight: 600;
-    letter-spacing: 0.05em;
+    font-size: 12px; font-weight: 600;
   }
   .css-output pre {
-    margin: 0;
-    padding: 16px;
-    max-height: 400px;
-    overflow: auto;
+    margin: 0; padding: 16px;
+    max-height: 400px; overflow: auto;
     color: #e2e8f0;
     font-family: "SF Mono", Menlo, Consolas, monospace;
-    font-size: 12px;
-    line-height: 1.6;
+    font-size: 12px; line-height: 1.6;
   }
 
-  /* レスポンシブ */
   @media (max-width: 960px) {
     .app-layout { grid-template-columns: 1fr; }
     .settings-panel {
-      position: static;
-      max-height: none;
-      border-right: none;
-      border-bottom: 1px solid #e5e7eb;
+      position: static; max-height: none;
+      border-right: none; border-bottom: 1px solid #e5e7eb;
     }
   }
   @media (max-width: 600px) {
@@ -249,13 +226,18 @@
 <body>
 
 <header class="app-header">
-  <h1>CSS Design System Generator</h1>
-  <p>HTMLダッシュボード用のCSSを、プレビューしながら生成できます。</p>
+  <div>
+    <h1>CSS Design System Generator</h1>
+    <p>HTMLダッシュボード用のCSSを、プレビューしながら生成できます。</p>
+  </div>
+  <div class="mode-toggle" id="modeToggle">
+    <button data-mode="light" class="active">☀ Light</button>
+    <button data-mode="dark">☾ Dark</button>
+  </div>
 </header>
 
 <div class="app-layout">
 
-  <!-- 左：設定パネル -->
   <aside class="settings-panel">
 
     <!-- テーマ -->
@@ -264,7 +246,7 @@
       <div class="theme-grid" id="themeGrid"></div>
     </section>
 
-    <!-- メインカラー（ここだけ手動調整可） -->
+    <!-- メインカラー -->
     <section class="settings-section">
       <h2>メインカラー</h2>
       <div class="form-row">
@@ -272,82 +254,71 @@
         <input type="color" id="colorMain">
       </div>
       <p style="font-size:11px;color:#6b7280;margin:4px 0 0;">
-        他のカラーはテーマで自動的に決まります。
+        メインカラーから50〜900の9階調を自動生成します。
+      </p>
+    </section>
+
+    <!-- 装飾スタイル -->
+    <section class="settings-section">
+      <h2>装飾スタイル</h2>
+      <div class="style-chips" id="styleChips">
+        <button class="style-chip active" data-style="standard">Standard</button>
+        <button class="style-chip" data-style="editorial">Editorial</button>
+        <button class="style-chip" data-style="soft">Soft</button>
+        <button class="style-chip" data-style="glass">Glass</button>
+      </div>
+      <p style="font-size:11px;color:#6b7280;margin:8px 0 0;">
+        カードの形状・影・罫線・背景の質感が一括で変わります。
       </p>
     </section>
 
     <!-- フォント -->
     <section class="settings-section">
-      <h2>フォント設定</h2>
+      <h2>フォント</h2>
       <div class="form-row">
-        <label for="fontFamily">フォント種類</label>
+        <label for="fontFamily">フォント</label>
         <select id="fontFamily">
           <option value="system">System UI</option>
           <option value="noto">Noto Sans JP</option>
           <option value="segoe">Segoe UI</option>
           <option value="arial">Arial</option>
-          <option value="georgia">Georgia</option>
+          <option value="georgia">Georgia (Serif)</option>
           <option value="meiryo">Meiryo</option>
         </select>
       </div>
-    </section>
-
-    <!-- 文字サイズ -->
-    <section class="settings-section">
-      <h2>文字サイズ</h2>
       <div class="form-row">
-        <label for="fontSizeBase">基本</label>
+        <label for="typeScale">タイポスケール</label>
+        <select id="typeScale">
+          <option value="1.2">1.200 Minor Third</option>
+          <option value="1.25" selected>1.250 Major Third</option>
+          <option value="1.333">1.333 Perfect Fourth</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <label for="fontSizeBase">基本サイズ</label>
         <select id="fontSizeBase">
           <option>13px</option><option>14px</option>
           <option>15px</option><option>16px</option>
-        </select>
-      </div>
-      <div class="form-row">
-        <label for="fontSizeHeading">見出し</label>
-        <select id="fontSizeHeading">
-          <option>20px</option><option>24px</option>
-          <option>28px</option><option>32px</option>
-        </select>
-      </div>
-      <div class="form-row">
-        <label for="fontSizeKpi">KPI数値</label>
-        <select id="fontSizeKpi">
-          <option>28px</option><option>32px</option>
-          <option>36px</option><option>40px</option>
-        </select>
-      </div>
-      <div class="form-row">
-        <label for="fontSizeSmall">小文字</label>
-        <select id="fontSizeSmall">
-          <option>11px</option><option>12px</option><option>13px</option>
         </select>
       </div>
     </section>
 
     <!-- レイアウト -->
     <section class="settings-section">
-      <h2>レイアウト設定</h2>
+      <h2>レイアウト</h2>
       <div class="form-row">
-        <label for="radius">角丸サイズ</label>
+        <label for="radius">角丸</label>
         <select id="radius">
           <option>4px</option><option>8px</option>
           <option>12px</option><option>16px</option><option>20px</option>
         </select>
       </div>
       <div class="form-row">
-        <label for="spacing">余白サイズ</label>
-        <select id="spacing">
+        <label for="density">密度</label>
+        <select id="density">
           <option value="compact">compact</option>
-          <option value="standard">standard</option>
-          <option value="spacious">spacious</option>
-        </select>
-      </div>
-      <div class="form-row">
-        <label for="shadow">カードの影</label>
-        <select id="shadow">
-          <option value="none">none</option>
-          <option value="soft">soft</option>
-          <option value="medium">medium</option>
+          <option value="cozy">cozy</option>
+          <option value="comfortable">comfortable</option>
         </select>
       </div>
       <div class="form-row">
@@ -371,7 +342,7 @@
     </section>
   </aside>
 
-  <!-- 右：プレビュー -->
+  <!-- プレビュー -->
   <main class="preview-area">
     <div class="preview-frame">
       <div class="preview-label">プレビュー</div>
@@ -382,28 +353,37 @@
           <p class="dashboard-subtitle">2026年上半期 売上・KPIサマリー</p>
         </header>
 
-        <!-- KPI -->
+        <!-- KPI（スパークライン付き） -->
         <section class="section">
           <div class="grid grid-3">
             <div class="card kpi-card">
               <div class="kpi-label">GMV</div>
               <div class="kpi-value">43.8M <span class="kpi-note">NTD</span></div>
-              <div class="text-positive">+8.2% vs 前年</div>
+              <div class="kpi-trend">
+                <span class="text-positive">+8.2%</span>
+                <span class="kpi-spark" id="spark1"></span>
+              </div>
             </div>
             <div class="card kpi-card">
               <div class="kpi-label">総契約数</div>
               <div class="kpi-value">12,450</div>
-              <div class="text-positive">+5.1% vs 前年</div>
+              <div class="kpi-trend">
+                <span class="text-positive">+5.1%</span>
+                <span class="kpi-spark" id="spark2"></span>
+              </div>
             </div>
             <div class="card kpi-card">
               <div class="kpi-label">AOV</div>
               <div class="kpi-value">3,515 <span class="kpi-note">NTD</span></div>
-              <div class="text-negative">-1.4% vs 前年</div>
+              <div class="kpi-trend">
+                <span class="text-negative">-1.4%</span>
+                <span class="kpi-spark" id="spark3"></span>
+              </div>
             </div>
           </div>
         </section>
 
-        <!-- グラフ：コンボ + 単独棒 -->
+        <!-- グラフ：コンボ + エリア -->
         <section class="section">
           <div class="grid grid-2">
             <div class="card">
@@ -415,17 +395,31 @@
               </div>
             </div>
             <div class="card">
-              <div class="card-title">カテゴリ別売上（棒グラフ）</div>
-              <div class="chart-box" id="chartBar"></div>
+              <div class="card-title">累積売上トレンド（エリア）</div>
+              <div class="chart-box" id="chartArea"></div>
             </div>
           </div>
         </section>
 
-        <!-- グラフ：積み上げ棒 縦 / 横 -->
+        <!-- グラフ：単独棒 + ドーナツ -->
         <section class="section">
           <div class="grid grid-2">
             <div class="card">
-              <div class="card-title">チャネル別構成（積み上げ縦）</div>
+              <div class="card-title">カテゴリ別売上（棒）</div>
+              <div class="chart-box" id="chartBar"></div>
+            </div>
+            <div class="card">
+              <div class="card-title">チャネル構成比（ドーナツ）</div>
+              <div class="chart-box" id="chartDonut"></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 積み上げ棒 縦/横 -->
+        <section class="section">
+          <div class="grid grid-2">
+            <div class="card">
+              <div class="card-title">月次×チャネル（積み上げ縦）</div>
               <div class="chart-box" id="chartStacked"></div>
               <div class="chart-legend">
                 <span><i class="legend-sw" style="background:var(--color-main)"></i>EC</span>
@@ -436,10 +430,6 @@
             <div class="card">
               <div class="card-title">部門別予実（積み上げ横）</div>
               <div class="chart-box" id="chartStackedH"></div>
-              <div class="chart-legend">
-                <span><i class="legend-sw" style="background:var(--color-main)"></i>達成</span>
-                <span><i class="legend-sw" style="background:var(--color-border)"></i>残</span>
-              </div>
             </div>
           </div>
         </section>
@@ -448,13 +438,14 @@
         <section class="section">
           <div class="card">
             <div class="card-title">ステータス・アクション</div>
-            <p class="text-muted mb-16">バッジとボタンの表示例。</p>
+            <p class="text-muted mb-16">バッジとボタン例。</p>
             <span class="badge badge-primary">主要</span>
             <span class="badge badge-positive">良好</span>
             <span class="badge badge-warning">注意</span>
             <span class="badge badge-negative">未達</span>
             <div class="mt-24">
               <button class="button-primary">レポートを発行</button>
+              <button class="button-secondary">詳細を見る</button>
             </div>
           </div>
         </section>
@@ -498,7 +489,6 @@
       </div>
     </div>
 
-    <!-- 生成CSS表示 -->
     <div class="css-output">
       <div class="css-output-header">
         <span>生成CSS（dashboard-system.css）</span>
@@ -511,7 +501,7 @@
 
 <script>
 /* =====================================================
-   フォント・余白・影マップ
+   定数
    ===================================================== */
 const FONT_STACKS = {
   system: '-apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif',
@@ -521,153 +511,311 @@ const FONT_STACKS = {
   georgia:'Georgia, "Times New Roman", serif',
   meiryo: 'Meiryo, "メイリオ", sans-serif'
 };
-const SPACING_MAP = {
-  compact:  { xs: '4px',  sm: '8px',  md: '12px', lg: '16px', xl: '24px' },
-  standard: { xs: '6px',  sm: '12px', md: '16px', lg: '24px', xl: '32px' },
-  spacious: { xs: '8px',  sm: '16px', md: '24px', lg: '32px', xl: '48px' }
-};
-const SHADOW_MAP = {
-  none:   'none',
-  soft:   '0 1px 2px rgba(15,23,42,0.04), 0 1px 3px rgba(15,23,42,0.06)',
-  medium: '0 4px 6px rgba(15,23,42,0.05), 0 10px 15px rgba(15,23,42,0.08)'
+
+// 密度（余白と行間）
+const DENSITY_MAP = {
+  compact:    { xs:'4px',  sm:'8px',  md:'12px', lg:'16px', xl:'24px', row:'8px' },
+  cozy:       { xs:'6px',  sm:'12px', md:'16px', lg:'24px', xl:'32px', row:'12px' },
+  comfortable:{ xs:'8px',  sm:'16px', md:'24px', lg:'32px', xl:'48px', row:'16px' }
 };
 
 /* =====================================================
-   テーマ定義（メインカラー以外をまとめて指定）
+   テーマ12種（明るさ・パステル・マカロン込み）
    ===================================================== */
 const THEMES = {
+  // --- 王道 ---
   executive: {
-    name: 'Executive Blue',
-    desc: '経営報告向け・王道',
-    colorMain: '#1d4ed8',
-    colorBg: '#f7f8fa', colorCard: '#ffffff',
-    colorText: '#0f172a', colorMuted: '#64748b', colorBorder: '#e2e8f0',
-    colorPositive: '#047857', colorNegative: '#b91c1c', colorWarning: '#b45309',
-    fontFamily: 'system', radius: '12px', spacing: 'standard', shadow: 'soft'
-  },
-  minimal: {
-    name: 'Minimal Gray',
-    desc: '装飾控えめ・シック',
-    colorMain: '#374151',
-    colorBg: '#fafafa', colorCard: '#ffffff',
-    colorText: '#1f2937', colorMuted: '#9ca3af', colorBorder: '#e5e7eb',
+    name: 'Executive Blue', desc: '経営報告・王道', group: '王道',
+    colorMain: '#2563eb',
     colorPositive: '#059669', colorNegative: '#dc2626', colorWarning: '#d97706',
-    fontFamily: 'system', radius: '8px', spacing: 'spacious', shadow: 'none'
-  },
-  marketing: {
-    name: 'Marketing Green',
-    desc: '成長・ポジティブ',
-    colorMain: '#059669',
-    colorBg: '#f6faf7', colorCard: '#ffffff',
-    colorText: '#1f2933', colorMuted: '#6b7280', colorBorder: '#e2ecdf',
-    colorPositive: '#047857', colorNegative: '#b91c1c', colorWarning: '#b45309',
-    fontFamily: 'noto', radius: '16px', spacing: 'standard', shadow: 'soft'
+    light: { bg:'#f7f8fa', card:'#ffffff', text:'#0f172a', muted:'#64748b', border:'#e2e8f0' }
   },
   finance: {
-    name: 'Finance Navy',
-    desc: '金融・信頼感',
-    colorMain: '#1e3a8a',
-    colorBg: '#f5f7fb', colorCard: '#ffffff',
-    colorText: '#0f172a', colorMuted: '#475569', colorBorder: '#dbe2ec',
+    name: 'Finance Navy', desc: '金融・信頼感', group: '王道',
+    colorMain: '#1e40af',
     colorPositive: '#065f46', colorNegative: '#991b1b', colorWarning: '#92400e',
-    fontFamily: 'georgia', radius: '4px', spacing: 'standard', shadow: 'medium'
+    light: { bg:'#f5f7fb', card:'#ffffff', text:'#0f172a', muted:'#475569', border:'#dbe2ec' }
   },
-  warm: {
-    name: 'Warm Beige',
-    desc: '温かみ・落ち着き',
-    colorMain: '#a16207',
-    colorBg: '#faf7f2', colorCard: '#ffffff',
-    colorText: '#3f2d1c', colorMuted: '#8a7866', colorBorder: '#ece4d6',
-    colorPositive: '#65a30d', colorNegative: '#b91c1c', colorWarning: '#b45309',
-    fontFamily: 'meiryo', radius: '20px', spacing: 'spacious', shadow: 'soft'
+  minimal: {
+    name: 'Minimal Gray', desc: '装飾控えめ・シック', group: '王道',
+    colorMain: '#374151',
+    colorPositive: '#059669', colorNegative: '#dc2626', colorWarning: '#d97706',
+    light: { bg:'#fafafa', card:'#ffffff', text:'#1f2937', muted:'#9ca3af', border:'#e5e7eb' }
   },
   monochrome: {
-    name: 'Monochrome',
-    desc: '黒基調・印刷向け',
+    name: 'Monochrome', desc: '黒基調・印刷向け', group: '王道',
     colorMain: '#111827',
-    colorBg: '#ffffff', colorCard: '#ffffff',
-    colorText: '#111827', colorMuted: '#6b7280', colorBorder: '#d1d5db',
     colorPositive: '#1f2937', colorNegative: '#7f1d1d', colorWarning: '#78350f',
-    fontFamily: 'system', radius: '4px', spacing: 'standard', shadow: 'none'
+    light: { bg:'#ffffff', card:'#ffffff', text:'#111827', muted:'#6b7280', border:'#d1d5db' }
+  },
+
+  // --- パステル ---
+  pastelSky: {
+    name: 'Pastel Sky', desc: '澄んだ空・爽やか', group: 'パステル',
+    colorMain: '#7dd3fc',
+    colorPositive: '#86efac', colorNegative: '#fca5a5', colorWarning: '#fcd34d',
+    light: { bg:'#f0f9ff', card:'#ffffff', text:'#0c4a6e', muted:'#7c93a8', border:'#dbeafe' }
+  },
+  pastelRose: {
+    name: 'Pastel Rose', desc: 'やさしいピンク', group: 'パステル',
+    colorMain: '#f9a8d4',
+    colorPositive: '#86efac', colorNegative: '#fca5a5', colorWarning: '#fcd34d',
+    light: { bg:'#fff1f6', card:'#ffffff', text:'#831843', muted:'#9d7585', border:'#fce7f3' }
+  },
+  pastelLemon: {
+    name: 'Pastel Lemon', desc: '明るく親しみやすい', group: 'パステル',
+    colorMain: '#fcd34d',
+    colorPositive: '#86efac', colorNegative: '#fca5a5', colorWarning: '#fb923c',
+    light: { bg:'#fefce8', card:'#ffffff', text:'#713f12', muted:'#a08c5a', border:'#fef3c7' }
+  },
+
+  // --- マカロン ---
+  macaronMint: {
+    name: 'Macaron Mint', desc: '清涼・健康', group: 'マカロン',
+    colorMain: '#6ee7b7',
+    colorPositive: '#34d399', colorNegative: '#fb7185', colorWarning: '#fbbf24',
+    light: { bg:'#f0fdf4', card:'#ffffff', text:'#064e3b', muted:'#6b8e7f', border:'#d1fae5' }
+  },
+  macaronPeach: {
+    name: 'Macaron Peach', desc: '温かみ・親近感', group: 'マカロン',
+    colorMain: '#fdba74',
+    colorPositive: '#86efac', colorNegative: '#fb7185', colorWarning: '#fbbf24',
+    light: { bg:'#fff7ed', card:'#ffffff', text:'#7c2d12', muted:'#a08068', border:'#fed7aa' }
+  },
+  macaronLavender: {
+    name: 'Macaron Lavender', desc: '上品・落ち着き', group: 'マカロン',
+    colorMain: '#c4b5fd',
+    colorPositive: '#86efac', colorNegative: '#fda4af', colorWarning: '#fcd34d',
+    light: { bg:'#f5f3ff', card:'#ffffff', text:'#4c1d95', muted:'#8b80a8', border:'#ddd6fe' }
+  },
+
+  // --- ビビッド ---
+  vividOcean: {
+    name: 'Vivid Ocean', desc: '鮮やか・若々しい', group: 'ビビッド',
+    colorMain: '#06b6d4',
+    colorPositive: '#10b981', colorNegative: '#ef4444', colorWarning: '#f59e0b',
+    light: { bg:'#ecfeff', card:'#ffffff', text:'#164e63', muted:'#64748b', border:'#cffafe' }
+  },
+  sunsetCoral: {
+    name: 'Sunset Coral', desc: '情熱・エネルギッシュ', group: 'ビビッド',
+    colorMain: '#fb7185',
+    colorPositive: '#10b981', colorNegative: '#dc2626', colorWarning: '#f59e0b',
+    light: { bg:'#fff1f2', card:'#ffffff', text:'#881337', muted:'#7c5564', border:'#ffe4e6' }
   }
 };
+
+/* テーマのダークモード版を、light設定から自動生成 */
+function deriveDark(theme) {
+  return {
+    bg:    '#0b1220',
+    card:  '#111827',
+    text:  '#f1f5f9',
+    muted: '#94a3b8',
+    border:'#1f2937'
+  };
+}
+
+/* =====================================================
+   カラーユーティリティ：HEX <-> HSL、階調生成
+   ===================================================== */
+function hexToHsl(hex) {
+  const m = hex.replace('#','').match(/.{2}/g).map(x => parseInt(x,16)/255);
+  const [r,g,b] = m;
+  const max = Math.max(r,g,b), min = Math.min(r,g,b);
+  let h = 0, s = 0, l = (max + min) / 2;
+  if (max !== min) {
+    const d = max - min;
+    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+    switch (max) {
+      case r: h = (g - b)/d + (g<b?6:0); break;
+      case g: h = (b - r)/d + 2; break;
+      case b: h = (r - g)/d + 4; break;
+    }
+    h *= 60;
+  }
+  return { h, s: s*100, l: l*100 };
+}
+function hslToHex(h, s, l) {
+  s /= 100; l /= 100;
+  const k = n => (n + h/30) % 12;
+  const a = s * Math.min(l, 1-l);
+  const f = n => {
+    const c = k(n);
+    return Math.round(255 * (l - a * Math.max(-1, Math.min(c-3, 9-c, 1))));
+  };
+  return '#' + [f(0), f(8), f(4)].map(x => x.toString(16).padStart(2,'0')).join('');
+}
+// メインカラーから50〜900を生成
+function buildScale(hex) {
+  const { h, s } = hexToHsl(hex);
+  const stops = { 50:97, 100:94, 200:87, 300:78, 400:66, 500:54, 600:46, 700:38, 800:28, 900:18 };
+  const out = {};
+  for (const [k, l] of Object.entries(stops)) {
+    // 彩度はライト寄りで控えめに、ダーク寄りでやや強めに
+    const adjS = Math.min(100, s * (l > 70 ? 0.9 : l < 30 ? 0.85 : 1));
+    out[k] = hslToHex(h, adjS, l);
+  }
+  return out;
+}
 
 /* =====================================================
    state
    ===================================================== */
 const DEFAULT_STATE = {
   themeKey: 'executive',
-  ...THEMES.executive,
+  colorMain: THEMES.executive.colorMain,
+  fontFamily: 'system',
+  typeScale: '1.25',
   fontSizeBase: '15px',
-  fontSizeHeading: '24px',
-  fontSizeKpi: '32px',
-  fontSizeSmall: '12px',
-  maxWidth: '1200px'
+  radius: '12px',
+  density: 'cozy',
+  maxWidth: '1200px',
+  styleVariant: 'standard', // standard / editorial / soft / glass
+  mode: 'light'             // light / dark
 };
 let state = { ...DEFAULT_STATE };
-
-/* テーマと無関係に自由設定できる項目（テーマ切替時に保持） */
-const KEEP_ON_THEME_CHANGE = [
-  'fontSizeBase','fontSizeHeading','fontSizeKpi','fontSizeSmall','maxWidth'
-];
 
 /* =====================================================
    CSS 生成
    ===================================================== */
 function generateCSS() {
   const s = state;
-  const sp = SPACING_MAP[s.spacing];
-  const sh = SHADOW_MAP[s.shadow];
+  const theme = THEMES[s.themeKey] || THEMES.executive;
+  const palette = s.mode === 'dark' ? deriveDark(theme) : theme.light;
+  const scale = buildScale(s.colorMain);
   const ff = FONT_STACKS[s.fontFamily];
+  const d = DENSITY_MAP[s.density];
+  const ratio = parseFloat(s.typeScale);
+  const base = parseFloat(s.fontSizeBase);
+
+  // タイポスケール自動算出
+  const fsSmall = Math.round(base / ratio);
+  const fsBase  = base;
+  const fsLg    = Math.round(base * ratio);
+  const fsHeading = Math.round(base * ratio * ratio);
+  const fsKpi     = Math.round(base * ratio * ratio * ratio);
+
+  // 装飾スタイル別のトークン
+  const variantTokens = {
+    standard: {
+      cardBg: 'var(--color-card)',
+      cardBorder: '1px solid var(--color-border)',
+      cardShadow: '0 1px 2px rgba(15,23,42,0.04), 0 1px 3px rgba(15,23,42,0.06)',
+      cardBackdrop: 'none',
+      bodyBg: 'var(--color-bg)',
+      headingFamily: 'var(--font-family)',
+      headingWeight: '600'
+    },
+    editorial: {
+      cardBg: 'var(--color-card)',
+      cardBorder: 'none',
+      cardShadow: 'none',
+      cardBackdrop: 'none',
+      cardExtra: 'border-top: 3px solid var(--color-text);',
+      bodyBg: 'var(--color-bg)',
+      headingFamily: 'Georgia, "Times New Roman", serif',
+      headingWeight: '700',
+      radiusOverride: '2px'
+    },
+    soft: {
+      cardBg: 'var(--color-card)',
+      cardBorder: '1px solid transparent',
+      cardShadow: '0 6px 20px rgba(15,23,42,0.06), 0 2px 6px rgba(15,23,42,0.04)',
+      cardBackdrop: 'none',
+      bodyBg: 'var(--color-bg)',
+      headingFamily: 'var(--font-family)',
+      headingWeight: '600',
+      radiusBoost: '4px'
+    },
+    glass: {
+      cardBg: 'color-mix(in srgb, var(--color-card) 70%, transparent)',
+      cardBorder: '1px solid color-mix(in srgb, var(--color-text) 8%, transparent)',
+      cardShadow: '0 8px 32px rgba(15,23,42,0.08)',
+      cardBackdrop: 'blur(12px) saturate(140%)',
+      bodyBg: `linear-gradient(135deg, ${scale[100]} 0%, ${scale[50]} 50%, ${palette.bg} 100%)`,
+      headingFamily: 'var(--font-family)',
+      headingWeight: '600'
+    }
+  };
+  const v = variantTokens[s.styleVariant];
+  const radiusFinal = v.radiusOverride
+    ? v.radiusOverride
+    : (v.radiusBoost ? `calc(${s.radius} + ${v.radiusBoost})` : s.radius);
 
   return `/* =====================================================
    Dashboard Design System
+   Theme: ${theme.name} / Style: ${s.styleVariant} / Mode: ${s.mode}
    Generated by CSS Design System Generator
-   Theme: ${THEMES[s.themeKey] ? THEMES[s.themeKey].name : 'Custom'}
    ===================================================== */
 
 /* 1. Design Tokens */
 :root {
+  /* Brand scale (auto-generated from main color) */
+  --color-main-50:  ${scale[50]};
+  --color-main-100: ${scale[100]};
+  --color-main-200: ${scale[200]};
+  --color-main-300: ${scale[300]};
+  --color-main-400: ${scale[400]};
+  --color-main-500: ${scale[500]};
+  --color-main-600: ${scale[600]};
+  --color-main-700: ${scale[700]};
+  --color-main-800: ${scale[800]};
+  --color-main-900: ${scale[900]};
   --color-main: ${s.colorMain};
-  --color-bg: ${s.colorBg};
-  --color-card: ${s.colorCard};
-  --color-text: ${s.colorText};
-  --color-muted: ${s.colorMuted};
-  --color-border: ${s.colorBorder};
-  --color-positive: ${s.colorPositive};
-  --color-negative: ${s.colorNegative};
-  --color-warning: ${s.colorWarning};
 
+  /* Semantic */
+  --color-bg: ${palette.bg};
+  --color-card: ${palette.card};
+  --color-text: ${palette.text};
+  --color-muted: ${palette.muted};
+  --color-border: ${palette.border};
+  --color-positive: ${theme.colorPositive};
+  --color-negative: ${theme.colorNegative};
+  --color-warning: ${theme.colorWarning};
+
+  /* Typography */
   --font-family: ${ff};
-  --font-size-base: ${s.fontSizeBase};
-  --font-size-heading: ${s.fontSizeHeading};
-  --font-size-kpi: ${s.fontSizeKpi};
-  --font-size-small: ${s.fontSizeSmall};
+  --font-heading-family: ${v.headingFamily};
+  --font-heading-weight: ${v.headingWeight};
+  --font-size-small:   ${fsSmall}px;
+  --font-size-base:    ${fsBase}px;
+  --font-size-lg:      ${fsLg}px;
+  --font-size-heading: ${fsHeading}px;
+  --font-size-kpi:     ${fsKpi}px;
 
-  --radius: ${s.radius};
+  /* Layout */
+  --radius: ${radiusFinal};
   --max-width: ${s.maxWidth};
 
-  --space-xs: ${sp.xs};
-  --space-sm: ${sp.sm};
-  --space-md: ${sp.md};
-  --space-lg: ${sp.lg};
-  --space-xl: ${sp.xl};
+  /* Spacing (density: ${s.density}) */
+  --space-xs: ${d.xs};
+  --space-sm: ${d.sm};
+  --space-md: ${d.md};
+  --space-lg: ${d.lg};
+  --space-xl: ${d.xl};
+  --row-pad: ${d.row};
 
-  --shadow-card: ${sh};
+  /* Effects */
+  --shadow-card: ${v.cardShadow};
+  --card-backdrop: ${v.cardBackdrop};
 }
 
-/* 2. Base Styles */
+/* 2. Base */
 * { box-sizing: border-box; }
 body {
   margin: 0;
-  background: var(--color-bg);
+  background: ${v.bodyBg};
   color: var(--color-text);
   font-family: var(--font-family);
   font-size: var(--font-size-base);
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
 }
-h1, h2, h3, h4 { margin: 0; font-weight: 600; }
+h1,h2,h3,h4 {
+  margin: 0;
+  font-family: var(--font-heading-family);
+  font-weight: var(--font-heading-weight);
+}
 p { margin: 0; }
 table { border-collapse: collapse; width: 100%; }
 
@@ -695,19 +843,24 @@ table { border-collapse: collapse; width: 100%; }
 
 /* 4. Components */
 .card {
-  background: var(--color-card);
-  border: 1px solid var(--color-border);
+  background: ${v.cardBg};
+  border: ${v.cardBorder};
   border-radius: var(--radius);
   padding: var(--space-lg);
   box-shadow: var(--shadow-card);
+  backdrop-filter: var(--card-backdrop);
+  -webkit-backdrop-filter: var(--card-backdrop);
+  ${v.cardExtra || ''}
 }
 .card-title {
-  font-size: calc(var(--font-size-base) + 1px);
-  font-weight: 600;
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-heading-weight);
+  font-family: var(--font-heading-family);
   color: var(--color-text);
   margin-bottom: var(--space-md);
 }
 
+/* KPI */
 .kpi-card { display: flex; flex-direction: column; gap: var(--space-xs); }
 .kpi-label {
   font-size: var(--font-size-small);
@@ -719,7 +872,8 @@ table { border-collapse: collapse; width: 100%; }
   font-size: var(--font-size-kpi);
   font-weight: 700;
   color: var(--color-text);
-  line-height: 1.2;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
 }
 .kpi-note {
   font-size: var(--font-size-small);
@@ -727,11 +881,24 @@ table { border-collapse: collapse; width: 100%; }
   font-weight: 500;
   margin-left: 4px;
 }
+.kpi-trend {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  font-size: var(--font-size-small);
+}
+.kpi-spark {
+  display: inline-block;
+  width: 80px;
+  height: 24px;
+}
 
+/* Chart */
 .chart-box {
   height: 220px;
-  border-radius: calc(var(--radius) / 2);
-  background: var(--color-bg);
+  border-radius: calc(var(--radius) / 1.5);
+  background: var(--color-main-50);
   padding: var(--space-md);
   position: relative;
 }
@@ -745,22 +912,18 @@ table { border-collapse: collapse; width: 100%; }
   color: var(--color-muted);
 }
 .chart-legend span { display: inline-flex; align-items: center; gap: 6px; }
-.chart-legend i {
-  display: inline-block;
-  width: 12px; height: 12px;
-  border-radius: 2px;
-}
+.chart-legend i { display: inline-block; width: 12px; height: 12px; border-radius: 3px; }
 .chart-legend .legend-bar { background: var(--color-main); }
 .chart-legend .legend-line {
   width: 16px; height: 2px;
-  background: var(--color-warning);
-  border-radius: 2px;
+  background: var(--color-warning); border-radius: 2px;
 }
 
+/* Table */
 .data-table { font-size: var(--font-size-base); }
 .data-table th,
 .data-table td {
-  padding: var(--space-sm) var(--space-md);
+  padding: var(--row-pad) var(--space-md);
   border-bottom: 1px solid var(--color-border);
   text-align: left;
 }
@@ -770,38 +933,29 @@ table { border-collapse: collapse; width: 100%; }
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.04em;
-  background: var(--color-bg);
+  background: var(--color-main-50);
 }
+.data-table tbody tr:hover { background: var(--color-main-50); }
 .data-table tbody tr:last-child td { border-bottom: none; }
 
+/* Badge */
 .badge {
   display: inline-block;
-  padding: 2px 10px;
+  padding: 3px 10px;
   border-radius: 999px;
   font-size: var(--font-size-small);
   font-weight: 600;
   margin-right: 4px;
-  background: var(--color-bg);
-  color: var(--color-text);
-  border: 1px solid var(--color-border);
+  background: var(--color-main-100);
+  color: var(--color-main-700);
+  border: 1px solid transparent;
 }
-.badge-primary {
-  background: color-mix(in srgb, var(--color-main) 12%, transparent);
-  color: var(--color-main); border-color: transparent;
-}
-.badge-positive {
-  background: color-mix(in srgb, var(--color-positive) 12%, transparent);
-  color: var(--color-positive); border-color: transparent;
-}
-.badge-negative {
-  background: color-mix(in srgb, var(--color-negative) 12%, transparent);
-  color: var(--color-negative); border-color: transparent;
-}
-.badge-warning {
-  background: color-mix(in srgb, var(--color-warning) 14%, transparent);
-  color: var(--color-warning); border-color: transparent;
-}
+.badge-primary  { background: var(--color-main-100);  color: var(--color-main-700); }
+.badge-positive { background: color-mix(in srgb, var(--color-positive) 15%, transparent); color: var(--color-positive); }
+.badge-negative { background: color-mix(in srgb, var(--color-negative) 15%, transparent); color: var(--color-negative); }
+.badge-warning  { background: color-mix(in srgb, var(--color-warning) 18%, transparent); color: var(--color-warning); }
 
+/* Buttons */
 .button-primary {
   display: inline-block;
   background: var(--color-main);
@@ -812,12 +966,27 @@ table { border-collapse: collapse; width: 100%; }
   font-size: var(--font-size-base);
   font-weight: 600;
   cursor: pointer;
-  transition: filter 0.15s;
+  transition: filter 0.15s, transform 0.1s;
+  margin-right: var(--space-sm);
 }
 .button-primary:hover { filter: brightness(0.92); }
+.button-primary:active { transform: translateY(1px); }
+.button-secondary {
+  display: inline-block;
+  background: var(--color-card);
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+  border-radius: calc(var(--radius) / 2);
+  padding: var(--space-sm) var(--space-lg);
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  cursor: pointer;
+}
+.button-secondary:hover { background: var(--color-main-50); }
 
+/* Insight / Risk */
 .insight-box {
-  background: color-mix(in srgb, var(--color-main) 6%, var(--color-card));
+  background: var(--color-main-50);
   border-left: 4px solid var(--color-main);
   padding: var(--space-md) var(--space-lg);
   border-radius: calc(var(--radius) / 2);
@@ -825,7 +994,7 @@ table { border-collapse: collapse; width: 100%; }
   color: var(--color-text);
 }
 .risk-box {
-  background: color-mix(in srgb, var(--color-warning) 8%, var(--color-card));
+  background: color-mix(in srgb, var(--color-warning) 10%, var(--color-card));
   border-left: 4px solid var(--color-warning);
   padding: var(--space-md) var(--space-lg);
   border-radius: calc(var(--radius) / 2);
@@ -849,6 +1018,7 @@ table { border-collapse: collapse; width: 100%; }
 @media (max-width: 640px) {
   .dashboard-container { padding: var(--space-lg) var(--space-md); }
   .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+  .kpi-spark { width: 60px; }
   .data-table th, .data-table td {
     padding: var(--space-xs) var(--space-sm);
     font-size: var(--font-size-small);
@@ -858,164 +1028,213 @@ table { border-collapse: collapse; width: 100%; }
 }
 
 /* =====================================================
-   SVG チャート描画
+   SVG チャート
    ===================================================== */
-
-// 共通：SVGビューボックス（横600 x 縦240）
 const VB_W = 600, VB_H = 240;
 
-// 1) コンボ（棒+折れ線）
+function svgWrap(inner, w = VB_W, h = VB_H) {
+  return `<svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="none">${inner}</svg>`;
+}
+
+// コンボ
 function renderComboChart(target) {
   const months = ['1月','2月','3月','4月','5月','6月'];
-  const bars   = [32, 38, 41, 36, 44, 48]; // GMV (M)
-  const line   = [2.1, 2.3, 2.6, 2.4, 2.9, 3.2]; // CVR %
-  const pad = { l: 36, r: 36, t: 16, b: 28 };
-  const cw = VB_W - pad.l - pad.r;
-  const ch = VB_H - pad.t - pad.b;
-  const barMax = 50, lineMax = 4;
+  const bars = [32,38,41,36,44,48], line = [2.1,2.3,2.6,2.4,2.9,3.2];
+  const pad = { l:36, r:36, t:16, b:28 };
+  const cw = VB_W - pad.l - pad.r, ch = VB_H - pad.t - pad.b;
   const barW = cw / bars.length * 0.55;
-
-  const yGrid = [0, 0.25, 0.5, 0.75, 1].map(t => pad.t + ch * (1 - t));
-  const gridLines = yGrid.map(y =>
-    `<line x1="${pad.l}" y1="${y}" x2="${pad.l + cw}" y2="${y}" stroke="var(--color-border)" stroke-width="1"/>`
-  ).join('');
-
-  const barEls = bars.map((v, i) => {
-    const x = pad.l + (cw / bars.length) * i + (cw / bars.length - barW) / 2;
-    const h = (v / barMax) * ch;
-    const y = pad.t + ch - h;
-    return `<rect x="${x}" y="${y}" width="${barW}" height="${h}" rx="3" fill="var(--color-main)" opacity="0.85"/>`;
-  }).join('');
-
-  const linePts = line.map((v, i) => {
-    const x = pad.l + (cw / bars.length) * i + (cw / bars.length) / 2;
-    const y = pad.t + ch - (v / lineMax) * ch;
-    return [x, y];
-  });
-  const linePath = linePts.map((p, i) => (i === 0 ? `M${p[0]},${p[1]}` : `L${p[0]},${p[1]}`)).join(' ');
-  const lineDots = linePts.map(p =>
-    `<circle cx="${p[0]}" cy="${p[1]}" r="3.5" fill="var(--color-warning)"/>`
-  ).join('');
-
-  const labels = months.map((m, i) => {
-    const x = pad.l + (cw / bars.length) * i + (cw / bars.length) / 2;
-    return `<text x="${x}" y="${VB_H - 8}" text-anchor="middle" font-size="11" fill="var(--color-muted)">${m}</text>`;
-  }).join('');
-
-  target.innerHTML = `<svg viewBox="0 0 ${VB_W} ${VB_H}" preserveAspectRatio="none">
-    ${gridLines}${barEls}
-    <path d="${linePath}" fill="none" stroke="var(--color-warning)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-    ${lineDots}${labels}
-  </svg>`;
-}
-
-// 2) 単独棒グラフ
-function renderBarChart(target) {
-  const cats = ['EC','TEL','店舗','法人','その他'];
-  const vals = [42, 28, 18, 22, 9];
-  const pad = { l: 40, r: 16, t: 16, b: 28 };
-  const cw = VB_W - pad.l - pad.r;
-  const ch = VB_H - pad.t - pad.b;
-  const max = 50;
-  const barW = cw / cats.length * 0.6;
-
-  const grid = [0, 0.5, 1].map(t => {
+  const grid = [0,.25,.5,.75,1].map(t => {
     const y = pad.t + ch * (1 - t);
-    return `<line x1="${pad.l}" y1="${y}" x2="${pad.l + cw}" y2="${y}" stroke="var(--color-border)" stroke-width="1"/>`;
+    return `<line x1="${pad.l}" y1="${y}" x2="${pad.l+cw}" y2="${y}" stroke="var(--color-border)"/>`;
   }).join('');
-
-  const bars = vals.map((v, i) => {
-    const x = pad.l + (cw / cats.length) * i + (cw / cats.length - barW) / 2;
-    const h = (v / max) * ch;
-    const y = pad.t + ch - h;
-    return `
-      <rect x="${x}" y="${y}" width="${barW}" height="${h}" rx="3" fill="var(--color-main)"/>
-      <text x="${x + barW/2}" y="${y - 4}" text-anchor="middle" font-size="10" fill="var(--color-text)" font-weight="600">${v}</text>
-    `;
+  const barEls = bars.map((v,i) => {
+    const x = pad.l + (cw/bars.length)*i + (cw/bars.length - barW)/2;
+    const h = (v/50) * ch, y = pad.t + ch - h;
+    return `<rect x="${x}" y="${y}" width="${barW}" height="${h}" rx="4" fill="var(--color-main)"/>`;
   }).join('');
-
-  const labels = cats.map((c, i) => {
-    const x = pad.l + (cw / cats.length) * i + (cw / cats.length) / 2;
-    return `<text x="${x}" y="${VB_H - 8}" text-anchor="middle" font-size="11" fill="var(--color-muted)">${c}</text>`;
+  const linePts = line.map((v,i) => [
+    pad.l + (cw/bars.length)*i + (cw/bars.length)/2,
+    pad.t + ch - (v/4)*ch
+  ]);
+  const path = linePts.map((p,i)=>(i?'L':'M')+p[0]+','+p[1]).join(' ');
+  const dots = linePts.map(p => `<circle cx="${p[0]}" cy="${p[1]}" r="4" fill="var(--color-warning)" stroke="var(--color-card)" stroke-width="2"/>`).join('');
+  const labels = months.map((m,i) => {
+    const x = pad.l + (cw/bars.length)*i + (cw/bars.length)/2;
+    return `<text x="${x}" y="${VB_H-8}" text-anchor="middle" font-size="11" fill="var(--color-muted)">${m}</text>`;
   }).join('');
-
-  target.innerHTML = `<svg viewBox="0 0 ${VB_W} ${VB_H}" preserveAspectRatio="none">
-    ${grid}${bars}${labels}
-  </svg>`;
+  target.innerHTML = svgWrap(`${grid}${barEls}<path d="${path}" fill="none" stroke="var(--color-warning)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>${dots}${labels}`);
 }
 
-// 3) 積み上げ棒（縦）
+// 単独棒
+function renderBarChart(target) {
+  const cats = ['EC','TEL','店舗','法人','その他'], vals = [42,28,18,22,9];
+  const pad = { l:40, r:16, t:16, b:28 };
+  const cw = VB_W - pad.l - pad.r, ch = VB_H - pad.t - pad.b;
+  const barW = cw / cats.length * 0.6;
+  const grid = [0,.5,1].map(t => {
+    const y = pad.t + ch * (1 - t);
+    return `<line x1="${pad.l}" y1="${y}" x2="${pad.l+cw}" y2="${y}" stroke="var(--color-border)"/>`;
+  }).join('');
+  const bars = vals.map((v,i) => {
+    const x = pad.l + (cw/cats.length)*i + (cw/cats.length - barW)/2;
+    const h = (v/50) * ch, y = pad.t + ch - h;
+    const fill = i === 0 ? 'var(--color-main)' : `var(--color-main-${600 - i*100})`;
+    return `<rect x="${x}" y="${y}" width="${barW}" height="${h}" rx="4" fill="${fill}"/>
+      <text x="${x+barW/2}" y="${y-4}" text-anchor="middle" font-size="10" fill="var(--color-text)" font-weight="600">${v}</text>`;
+  }).join('');
+  const labels = cats.map((c,i) => {
+    const x = pad.l + (cw/cats.length)*i + (cw/cats.length)/2;
+    return `<text x="${x}" y="${VB_H-8}" text-anchor="middle" font-size="11" fill="var(--color-muted)">${c}</text>`;
+  }).join('');
+  target.innerHTML = svgWrap(`${grid}${bars}${labels}`);
+}
+
+// 積み上げ縦
 function renderStackedChart(target) {
   const months = ['1月','2月','3月','4月','5月','6月'];
-  const data = [
-    [18, 12, 6], [20, 11, 7], [22, 13, 6],
-    [21, 10, 8], [25, 14, 7], [28, 13, 9]
-  ]; // [EC, TEL, 店舗]
-  const colors = ['var(--color-main)', 'var(--color-positive)', 'var(--color-warning)'];
-  const pad = { l: 36, r: 16, t: 16, b: 28 };
-  const cw = VB_W - pad.l - pad.r;
-  const ch = VB_H - pad.t - pad.b;
-  const max = 50;
+  const data = [[18,12,6],[20,11,7],[22,13,6],[21,10,8],[25,14,7],[28,13,9]];
+  const colors = ['var(--color-main)','var(--color-positive)','var(--color-warning)'];
+  const pad = { l:36, r:16, t:16, b:28 };
+  const cw = VB_W - pad.l - pad.r, ch = VB_H - pad.t - pad.b;
   const barW = cw / data.length * 0.55;
-
-  const grid = [0, 0.5, 1].map(t => {
+  const grid = [0,.5,1].map(t => {
     const y = pad.t + ch * (1 - t);
-    return `<line x1="${pad.l}" y1="${y}" x2="${pad.l + cw}" y2="${y}" stroke="var(--color-border)" stroke-width="1"/>`;
+    return `<line x1="${pad.l}" y1="${y}" x2="${pad.l+cw}" y2="${y}" stroke="var(--color-border)"/>`;
   }).join('');
-
-  const stacks = data.map((vals, i) => {
-    const x = pad.l + (cw / data.length) * i + (cw / data.length - barW) / 2;
-    let yCursor = pad.t + ch;
-    return vals.map((v, k) => {
-      const h = (v / max) * ch;
-      yCursor -= h;
-      return `<rect x="${x}" y="${yCursor}" width="${barW}" height="${h}" fill="${colors[k]}" ${k === vals.length - 1 ? 'rx="3"' : ''}/>`;
+  const stacks = data.map((vals,i) => {
+    const x = pad.l + (cw/data.length)*i + (cw/data.length - barW)/2;
+    let y = pad.t + ch;
+    return vals.map((v,k) => {
+      const h = (v/50) * ch; y -= h;
+      return `<rect x="${x}" y="${y}" width="${barW}" height="${h}" fill="${colors[k]}" ${k===vals.length-1?'rx="4"':''}/>`;
     }).join('');
   }).join('');
-
-  const labels = months.map((m, i) => {
-    const x = pad.l + (cw / data.length) * i + (cw / data.length) / 2;
-    return `<text x="${x}" y="${VB_H - 8}" text-anchor="middle" font-size="11" fill="var(--color-muted)">${m}</text>`;
+  const labels = months.map((m,i) => {
+    const x = pad.l + (cw/data.length)*i + (cw/data.length)/2;
+    return `<text x="${x}" y="${VB_H-8}" text-anchor="middle" font-size="11" fill="var(--color-muted)">${m}</text>`;
   }).join('');
-
-  target.innerHTML = `<svg viewBox="0 0 ${VB_W} ${VB_H}" preserveAspectRatio="none">
-    ${grid}${stacks}${labels}
-  </svg>`;
+  target.innerHTML = svgWrap(`${grid}${stacks}${labels}`);
 }
 
-// 4) 積み上げ棒（横・予実）
+// 積み上げ横
 function renderStackedHChart(target) {
   const rows = [
-    { name: '営業部', done: 78 },
-    { name: 'EC事業',  done: 92 },
-    { name: '法人営業', done: 64 },
-    { name: '海外',    done: 48 },
-    { name: '店舗',    done: 71 }
+    {name:'営業部',done:78}, {name:'EC事業',done:92},
+    {name:'法人営業',done:64}, {name:'海外',done:48}, {name:'店舗',done:71}
   ];
-  const pad = { l: 70, r: 40, t: 12, b: 12 };
+  const pad = { l:70, r:40, t:12, b:12 };
   const cw = VB_W - pad.l - pad.r;
   const rowH = (VB_H - pad.t - pad.b) / rows.length;
   const barH = rowH * 0.55;
-
-  const bars = rows.map((r, i) => {
-    const y = pad.t + rowH * i + (rowH - barH) / 2;
-    const doneW = cw * (r.done / 100);
-    return `
-      <rect x="${pad.l}" y="${y}" width="${cw}" height="${barH}" rx="3" fill="var(--color-border)"/>
-      <rect x="${pad.l}" y="${y}" width="${doneW}" height="${barH}" rx="3" fill="var(--color-main)"/>
-      <text x="${pad.l - 8}" y="${y + barH/2 + 4}" text-anchor="end" font-size="11" fill="var(--color-text)">${r.name}</text>
-      <text x="${pad.l + cw + 6}" y="${y + barH/2 + 4}" font-size="11" fill="var(--color-muted)" font-weight="600">${r.done}%</text>
-    `;
+  const bars = rows.map((r,i) => {
+    const y = pad.t + rowH*i + (rowH-barH)/2;
+    const doneW = cw * (r.done/100);
+    return `<rect x="${pad.l}" y="${y}" width="${cw}" height="${barH}" rx="4" fill="var(--color-main-100)"/>
+      <rect x="${pad.l}" y="${y}" width="${doneW}" height="${barH}" rx="4" fill="var(--color-main)"/>
+      <text x="${pad.l-8}" y="${y+barH/2+4}" text-anchor="end" font-size="11" fill="var(--color-text)">${r.name}</text>
+      <text x="${pad.l+cw+6}" y="${y+barH/2+4}" font-size="11" fill="var(--color-muted)" font-weight="600">${r.done}%</text>`;
   }).join('');
+  target.innerHTML = svgWrap(bars);
+}
 
-  target.innerHTML = `<svg viewBox="0 0 ${VB_W} ${VB_H}" preserveAspectRatio="none">${bars}</svg>`;
+// エリアチャート
+function renderAreaChart(target) {
+  const months = ['1月','2月','3月','4月','5月','6月'];
+  const vals = [12, 22, 31, 38, 46, 58];
+  const pad = { l:36, r:16, t:16, b:28 };
+  const cw = VB_W - pad.l - pad.r, ch = VB_H - pad.t - pad.b;
+  const max = 70;
+  const pts = vals.map((v,i) => [
+    pad.l + (cw/(vals.length-1))*i,
+    pad.t + ch - (v/max)*ch
+  ]);
+  const linePath = pts.map((p,i)=>(i?'L':'M')+p[0]+','+p[1]).join(' ');
+  const areaPath = `${linePath} L${pts[pts.length-1][0]},${pad.t+ch} L${pts[0][0]},${pad.t+ch} Z`;
+  const grid = [0,.5,1].map(t => {
+    const y = pad.t + ch * (1 - t);
+    return `<line x1="${pad.l}" y1="${y}" x2="${pad.l+cw}" y2="${y}" stroke="var(--color-border)"/>`;
+  }).join('');
+  const dots = pts.map(p => `<circle cx="${p[0]}" cy="${p[1]}" r="3.5" fill="var(--color-main)" stroke="var(--color-card)" stroke-width="2"/>`).join('');
+  const labels = months.map((m,i) => {
+    const x = pad.l + (cw/(vals.length-1))*i;
+    return `<text x="${x}" y="${VB_H-8}" text-anchor="middle" font-size="11" fill="var(--color-muted)">${m}</text>`;
+  }).join('');
+  target.innerHTML = svgWrap(`
+    <defs>
+      <linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="var(--color-main)" stop-opacity="0.4"/>
+        <stop offset="100%" stop-color="var(--color-main)" stop-opacity="0.05"/>
+      </linearGradient>
+    </defs>
+    ${grid}
+    <path d="${areaPath}" fill="url(#areaGrad)"/>
+    <path d="${linePath}" fill="none" stroke="var(--color-main)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+    ${dots}${labels}
+  `);
+}
+
+// ドーナツ
+function renderDonutChart(target) {
+  const data = [
+    { label:'EC',   value:42, color:'var(--color-main)' },
+    { label:'TEL',  value:28, color:'var(--color-main-400)' },
+    { label:'店舗', value:18, color:'var(--color-main-300)' },
+    { label:'その他', value:12, color:'var(--color-main-200)' }
+  ];
+  const total = data.reduce((s,d)=>s+d.value,0);
+  const cx = VB_W/2, cy = VB_H/2;
+  const r = 80, ir = 50;
+  let angle = -Math.PI/2;
+  const arcs = data.map(d => {
+    const a = (d.value/total) * Math.PI*2;
+    const x1 = cx + Math.cos(angle)*r, y1 = cy + Math.sin(angle)*r;
+    const x2 = cx + Math.cos(angle+a)*r, y2 = cy + Math.sin(angle+a)*r;
+    const x3 = cx + Math.cos(angle+a)*ir, y3 = cy + Math.sin(angle+a)*ir;
+    const x4 = cx + Math.cos(angle)*ir, y4 = cy + Math.sin(angle)*ir;
+    const large = a > Math.PI ? 1 : 0;
+    angle += a;
+    return `<path d="M${x1},${y1} A${r},${r} 0 ${large} 1 ${x2},${y2} L${x3},${y3} A${ir},${ir} 0 ${large} 0 ${x4},${y4} Z" fill="${d.color}"/>`;
+  }).join('');
+  // 凡例
+  const legend = data.map((d,i) =>
+    `<g transform="translate(${VB_W-130}, ${30 + i*22})">
+      <rect width="12" height="12" rx="2" fill="${d.color}"/>
+      <text x="18" y="10" font-size="11" fill="var(--color-text)">${d.label} ${Math.round(d.value/total*100)}%</text>
+    </g>`
+  ).join('');
+  target.innerHTML = svgWrap(`${arcs}
+    <text x="${cx}" y="${cy-4}" text-anchor="middle" font-size="11" fill="var(--color-muted)">合計</text>
+    <text x="${cx}" y="${cy+16}" text-anchor="middle" font-size="20" font-weight="700" fill="var(--color-text)">${total}M</text>
+    ${legend}
+  `);
+}
+
+// スパークライン
+function renderSpark(target, vals, color) {
+  const w = 80, h = 24;
+  const min = Math.min(...vals), max = Math.max(...vals);
+  const range = max - min || 1;
+  const pts = vals.map((v,i) => [
+    (w/(vals.length-1)) * i,
+    h - 2 - ((v - min)/range) * (h - 4)
+  ]);
+  const path = pts.map((p,i)=>(i?'L':'M')+p[0]+','+p[1]).join(' ');
+  target.innerHTML = `<svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" width="100%" height="100%">
+    <path d="${path}" fill="none" stroke="${color}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="${pts[pts.length-1][0]}" cy="${pts[pts.length-1][1]}" r="2.5" fill="${color}"/>
+  </svg>`;
 }
 
 function renderAllCharts() {
   renderComboChart(document.getElementById('chartCombo'));
+  renderAreaChart(document.getElementById('chartArea'));
   renderBarChart(document.getElementById('chartBar'));
+  renderDonutChart(document.getElementById('chartDonut'));
   renderStackedChart(document.getElementById('chartStacked'));
   renderStackedHChart(document.getElementById('chartStackedH'));
+  renderSpark(document.getElementById('spark1'), [30,32,28,35,40,44,43,48], 'var(--color-positive)');
+  renderSpark(document.getElementById('spark2'), [10,12,11,14,16,15,18,20], 'var(--color-positive)');
+  renderSpark(document.getElementById('spark3'), [40,38,42,39,37,36,35,34], 'var(--color-negative)');
 }
 
 /* =====================================================
@@ -1030,7 +1249,6 @@ function updatePreview() {
     document.head.appendChild(styleEl);
   }
   styleEl.textContent = css;
-
   document.getElementById('cssCode').textContent = css;
   document.getElementById('cssLineCount').textContent = `${css.split('\n').length} 行`;
 }
@@ -1038,42 +1256,36 @@ function updatePreview() {
 /* =====================================================
    入力バインド
    ===================================================== */
-const FREE_INPUT_KEYS = [
-  'colorMain','fontFamily',
-  'fontSizeBase','fontSizeHeading','fontSizeKpi','fontSizeSmall',
-  'radius','spacing','shadow','maxWidth'
-];
+const FREE_KEYS = ['colorMain','fontFamily','typeScale','fontSizeBase','radius','density','maxWidth'];
 
 function bindInputs() {
-  FREE_INPUT_KEYS.forEach(key => {
+  FREE_KEYS.forEach(key => {
     const el = document.getElementById(key);
     if (!el) return;
-    const handler = () => {
-      state[key] = el.value;
-      // メインカラーやフォント等は手動変更されるとテーマ「Custom」扱いになる
-      if (key === 'colorMain') {
-        // メイン色変更だけならテーマは保持（テーマ内のメインを上書き）
-      }
-      updatePreview();
-    };
+    const handler = () => { state[key] = el.value; updatePreview(); };
     el.addEventListener('input', handler);
     el.addEventListener('change', handler);
   });
 }
 
 function syncInputsFromState() {
-  FREE_INPUT_KEYS.forEach(key => {
+  FREE_KEYS.forEach(key => {
     const el = document.getElementById(key);
     if (el) el.value = state[key];
   });
-  // テーマカードの選択状態
   document.querySelectorAll('.theme-card').forEach(c => {
     c.classList.toggle('active', c.dataset.theme === state.themeKey);
+  });
+  document.querySelectorAll('.style-chip').forEach(c => {
+    c.classList.toggle('active', c.dataset.style === state.styleVariant);
+  });
+  document.querySelectorAll('#modeToggle button').forEach(b => {
+    b.classList.toggle('active', b.dataset.mode === state.mode);
   });
 }
 
 /* =====================================================
-   テーマ
+   テーマグリッド
    ===================================================== */
 function buildThemeGrid() {
   const grid = document.getElementById('themeGrid');
@@ -1083,13 +1295,12 @@ function buildThemeGrid() {
         <span style="background:${t.colorMain}"></span>
         <span style="background:${t.colorPositive}"></span>
         <span style="background:${t.colorWarning}"></span>
-        <span style="background:${t.colorBg};border-color:${t.colorBorder}"></span>
+        <span style="background:${t.light.bg};border-color:${t.light.border}"></span>
       </div>
       <div class="name">${t.name}</div>
       <div class="desc">${t.desc}</div>
     </button>
   `).join('');
-
   grid.querySelectorAll('.theme-card').forEach(btn => {
     btn.addEventListener('click', () => applyTheme(btn.dataset.theme));
   });
@@ -1098,16 +1309,36 @@ function buildThemeGrid() {
 function applyTheme(key) {
   const t = THEMES[key];
   if (!t) return;
-  // ユーザーが調整した文字サイズ等は保持
-  const kept = {};
-  KEEP_ON_THEME_CHANGE.forEach(k => kept[k] = state[k]);
-  state = { ...state, ...t, themeKey: key, ...kept };
+  state.themeKey = key;
+  state.colorMain = t.colorMain;
   syncInputsFromState();
   updatePreview();
 }
 
 /* =====================================================
-   リセット
+   装飾スタイル / モード
+   ===================================================== */
+function bindStyleChips() {
+  document.querySelectorAll('.style-chip').forEach(btn => {
+    btn.addEventListener('click', () => {
+      state.styleVariant = btn.dataset.style;
+      syncInputsFromState();
+      updatePreview();
+    });
+  });
+}
+function bindModeToggle() {
+  document.querySelectorAll('#modeToggle button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      state.mode = btn.dataset.mode;
+      syncInputsFromState();
+      updatePreview();
+    });
+  });
+}
+
+/* =====================================================
+   その他
    ===================================================== */
 function resetState() {
   state = { ...DEFAULT_STATE };
@@ -1115,29 +1346,20 @@ function resetState() {
   updatePreview();
 }
 
-/* =====================================================
-   コピー＆ダウンロード
-   ===================================================== */
 async function copyCSS() {
   try {
     await navigator.clipboard.writeText(generateCSS());
     const msg = document.getElementById('copyMsg');
     msg.classList.add('show');
     setTimeout(() => msg.classList.remove('show'), 1800);
-  } catch (e) {
-    alert('コピーに失敗しました: ' + e.message);
-  }
+  } catch (e) { alert('コピーに失敗しました: ' + e.message); }
 }
-
 function downloadCSS() {
   const blob = new Blob([generateCSS()], { type: 'text/css' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
-  a.href = url;
-  a.download = 'dashboard-system.css';
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
+  a.href = url; a.download = 'dashboard-system.css';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
   URL.revokeObjectURL(url);
 }
 
@@ -1147,7 +1369,8 @@ function downloadCSS() {
 function init() {
   buildThemeGrid();
   bindInputs();
-
+  bindStyleChips();
+  bindModeToggle();
   document.getElementById('copyBtn').addEventListener('click', copyCSS);
   document.getElementById('downloadBtn').addEventListener('click', downloadCSS);
   document.getElementById('resetBtn').addEventListener('click', resetState);
@@ -1156,7 +1379,6 @@ function init() {
   updatePreview();
   renderAllCharts();
 }
-
 document.addEventListener('DOMContentLoaded', init);
 </script>
 </body>
