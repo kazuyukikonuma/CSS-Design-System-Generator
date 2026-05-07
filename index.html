@@ -545,6 +545,44 @@
   }
   #token-popover.flash-up .tp-size { color: #6ee7b7; }
   #token-popover.flash-down .tp-size { color: #fda4af; }
+  #token-popover .tp-chip {
+    background: rgba(255,255,255,0.1);
+    border: none; color: #fff;
+    padding: 4px 9px; border-radius: 5px;
+    cursor: pointer; font-size: 11px; font-weight: 600;
+    line-height: 1;
+  }
+  #token-popover .tp-chip:hover { background: rgba(255,255,255,0.22); }
+  #token-popover .tp-chip.active {
+    background: #fff; color: #1f2933;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+  }
+
+  /* 密度バッジ（V-5: プレビュー上のインライン密度切替） */
+  .preview-frame { position: relative; }
+  .density-badge {
+    position: absolute;
+    top: 50px; right: 16px;
+    padding: 5px 10px;
+    background: rgba(31,41,51,0.88);
+    color: #fff;
+    border: none;
+    border-radius: 999px;
+    font-size: 11px; font-weight: 600;
+    cursor: pointer;
+    opacity: 0;
+    transform: translateY(-2px);
+    transition: opacity 0.15s, transform 0.15s;
+    z-index: 50;
+    display: inline-flex; align-items: center; gap: 4px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  }
+  .preview-frame:hover .density-badge,
+  .density-badge.active {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .density-badge:hover { background: #1f2933; }
 
   @media (max-width: 960px) {
     .app-layout { grid-template-columns: 1fr; }
@@ -842,6 +880,8 @@
         <button class="ptab" data-pattern="blog"      type="button">ブログ</button>
         <button class="ptab" data-pattern="saas"      type="button">SaaS設定</button>
       </div>
+
+      <button class="density-badge" id="densityBadge" type="button" title="密度を切替">⇕ <span id="densityBadgeLabel">cozy</span></button>
 
       <div class="ds-root" id="previewRoot">
         <div class="dashboard-container preview-pattern" data-pattern="dashboard">
@@ -2189,13 +2229,6 @@ function ensurePopover() {
   if (popoverEl) return popoverEl;
   popoverEl = document.createElement('div');
   popoverEl.id = 'token-popover';
-  popoverEl.innerHTML = `
-    <span class="tp-label"></span>
-    <button class="tp-btn" data-act="dec" type="button" aria-label="小さく">−</button>
-    <span class="tp-size"></span>
-    <button class="tp-btn" data-act="inc" type="button" aria-label="大きく">+</button>
-    <button class="tp-btn" data-act="reset" type="button" aria-label="自動に戻す" title="自動に戻す">↺</button>
-  `;
   document.body.appendChild(popoverEl);
   popoverEl.addEventListener('click', handlePopoverClick);
   popoverEl.addEventListener('mouseenter', () => clearTimeout(popoverHideTimer));
@@ -2203,8 +2236,30 @@ function ensurePopover() {
   return popoverEl;
 }
 
+function renderTextPopoverContent() {
+  popoverEl.innerHTML = `
+    <span class="tp-label"></span>
+    <button class="tp-btn" data-act="dec" type="button" aria-label="小さく">−</button>
+    <span class="tp-size"></span>
+    <button class="tp-btn" data-act="inc" type="button" aria-label="大きく">+</button>
+    <button class="tp-btn" data-act="reset" type="button" aria-label="自動に戻す" title="自動に戻す">↺</button>
+  `;
+}
+
+function renderDensityPopoverContent() {
+  const cur = state.density;
+  const chip = (key, label) =>
+    `<button class="tp-chip ${key === cur ? 'active' : ''}" data-density="${key}" type="button">${label}</button>`;
+  popoverEl.innerHTML =
+    `<span class="tp-label">密度</span>` +
+    chip('compact', 'compact') +
+    chip('cozy', 'cozy') +
+    chip('comfortable', 'comfortable');
+}
+
 function refreshPopoverSize() {
   if (!popoverEl) return;
+  if (popoverEl.dataset.type !== 'text') return;
   const key = popoverEl.dataset.tokenKey;
   if (!key) return;
   const auto = computeAutoTextSizes();
@@ -2218,7 +2273,9 @@ function refreshPopoverSize() {
 
 function showPopoverFor(targetEl, tokenKey) {
   const pop = ensurePopover();
+  pop.dataset.type = 'text';
   pop.dataset.tokenKey = tokenKey;
+  renderTextPopoverContent();
   pop.querySelector('.tp-label').textContent = TOKEN_LABELS[tokenKey] || tokenKey;
   refreshPopoverSize();
 
@@ -2236,10 +2293,27 @@ function showPopoverFor(targetEl, tokenKey) {
   targetEl.classList.add('token-target-active');
 }
 
+function showDensityPopover(anchorEl) {
+  const pop = ensurePopover();
+  pop.dataset.type = 'density';
+  delete pop.dataset.tokenKey;
+  renderDensityPopoverContent();
+
+  const rect = anchorEl.getBoundingClientRect();
+  // バッジの下に出す
+  const top  = window.scrollY + rect.bottom + 8;
+  const left = window.scrollX + Math.max(8, rect.right - 240);
+  pop.style.top  = top + 'px';
+  pop.style.left = left + 'px';
+  pop.classList.add('show');
+  document.getElementById('densityBadge')?.classList.add('active');
+}
+
 function hidePopover() {
   if (popoverEl) popoverEl.classList.remove('show');
   document.querySelectorAll('.token-target-active').forEach(e =>
     e.classList.remove('token-target-active'));
+  document.getElementById('densityBadge')?.classList.remove('active');
 }
 
 function schedulePopoverHide() {
@@ -2248,6 +2322,21 @@ function schedulePopoverHide() {
 }
 
 function handlePopoverClick(e) {
+  // 密度チップ（V-5）
+  const chip = e.target.closest('.tp-chip');
+  if (chip && popoverEl.dataset.type === 'density') {
+    e.stopPropagation();
+    const next = chip.dataset.density;
+    if (next && DENSITY_MAP[next] && next !== state.density) {
+      state.density = next;
+      updatePreview();
+      syncInputsFromState();
+      renderDensityPopoverContent();   // active 表示更新
+      updateDensityBadgeLabel();
+    }
+    return;
+  }
+
   const btn = e.target.closest('.tp-btn');
   if (!btn) return;
   e.stopPropagation();
@@ -2322,8 +2411,29 @@ function bindPreviewTokenHover() {
   document.addEventListener('click', (e) => {
     if (!popoverEl || !popoverEl.classList.contains('show')) return;
     if (popoverEl.contains(e.target)) return;
+    if (e.target.closest && e.target.closest('#densityBadge')) return;
     if (matchTokenTrigger(e.target)) return;
     hidePopover();
+  });
+}
+
+// V-5: 密度バッジのバインド
+function updateDensityBadgeLabel() {
+  const lbl = document.getElementById('densityBadgeLabel');
+  if (lbl) lbl.textContent = state.density;
+}
+function bindDensityBadge() {
+  const badge = document.getElementById('densityBadge');
+  if (!badge) return;
+  updateDensityBadgeLabel();
+  badge.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (popoverEl && popoverEl.classList.contains('show') &&
+        popoverEl.dataset.type === 'density') {
+      hidePopover();
+      return;
+    }
+    showDensityPopover(badge);
   });
 }
 
@@ -2488,6 +2598,9 @@ function syncInputsFromState() {
   document.querySelectorAll('#modeToggle button').forEach(b => {
     b.classList.toggle('active', b.dataset.mode === state.mode);
   });
+  // V-5: 密度バッジラベルも同期
+  const dlbl = document.getElementById('densityBadgeLabel');
+  if (dlbl) dlbl.textContent = state.density;
 }
 
 function buildThemeGrid() {
@@ -2642,6 +2755,8 @@ function init() {
   bindPreviewTabs();
   bindAIModal();
   bindURLModal();
+  // Vision V-5: 密度バッジ
+  bindDensityBadge();
 }
 
 // =============================================
