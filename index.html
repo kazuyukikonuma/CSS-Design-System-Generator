@@ -54,9 +54,7 @@
     position: sticky;
     top: 0;
   }
-  .settings-section {
-    margin-bottom: 28px;
-  }
+  .settings-section { margin-bottom: 28px; }
   .settings-section h2 {
     font-size: 13px;
     font-weight: 700;
@@ -89,7 +87,7 @@
     background: #fff;
   }
   .form-row select {
-    flex: 0 0 160px;
+    flex: 0 0 170px;
     padding: 6px 8px;
     font-size: 13px;
     border: 1px solid #d1d5db;
@@ -97,24 +95,50 @@
     background: #fff;
     cursor: pointer;
   }
-  .preset-buttons {
+
+  /* テーマ選択（カードグリッド） */
+  .theme-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 8px;
   }
-  .preset-buttons button {
-    padding: 8px 10px;
-    font-size: 12px;
-    border: 1px solid #d1d5db;
-    background: #fff;
-    border-radius: 6px;
+  .theme-card {
+    border: 2px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 8px;
     cursor: pointer;
+    background: #fff;
+    text-align: left;
     transition: all 0.15s;
   }
-  .preset-buttons button:hover {
-    background: #f3f4f6;
-    border-color: #9ca3af;
+  .theme-card:hover { border-color: #9ca3af; }
+  .theme-card.active {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37,99,235,0.15);
   }
+  .theme-card .swatches {
+    display: flex;
+    gap: 2px;
+    margin-bottom: 6px;
+  }
+  .theme-card .swatches span {
+    width: 14px;
+    height: 14px;
+    border-radius: 3px;
+    border: 1px solid rgba(0,0,0,0.06);
+  }
+  .theme-card .name {
+    font-size: 12px;
+    font-weight: 600;
+    color: #1f2933;
+    line-height: 1.2;
+  }
+  .theme-card .desc {
+    font-size: 11px;
+    color: #6b7280;
+    margin-top: 2px;
+  }
+
   .action-buttons {
     display: flex;
     flex-direction: column;
@@ -128,10 +152,7 @@
     border: 1px solid transparent;
     font-weight: 500;
   }
-  .btn-primary {
-    background: #2563eb;
-    color: #fff;
-  }
+  .btn-primary { background: #2563eb; color: #fff; }
   .btn-primary:hover { background: #1d4ed8; }
   .btn-secondary {
     background: #fff;
@@ -209,9 +230,7 @@
 
   /* レスポンシブ */
   @media (max-width: 960px) {
-    .app-layout {
-      grid-template-columns: 1fr;
-    }
+    .app-layout { grid-template-columns: 1fr; }
     .settings-panel {
       position: static;
       max-height: none;
@@ -223,12 +242,12 @@
     .app-header { padding: 16px; }
     .settings-panel, .preview-area { padding: 16px; }
     .form-row select { flex: 0 0 130px; }
+    .theme-grid { grid-template-columns: 1fr; }
   }
 </style>
 </head>
 <body>
 
-<!-- ヘッダー -->
 <header class="app-header">
   <h1>CSS Design System Generator</h1>
   <p>HTMLダッシュボード用のCSSを、プレビューしながら生成できます。</p>
@@ -239,33 +258,25 @@
   <!-- 左：設定パネル -->
   <aside class="settings-panel">
 
-    <!-- プリセット -->
+    <!-- テーマ -->
     <section class="settings-section">
-      <h2>プリセット</h2>
-      <div class="preset-buttons">
-        <button data-preset="executive">Executive Blue</button>
-        <button data-preset="minimal">Minimal Gray</button>
-        <button data-preset="marketing">Marketing Green</button>
-        <button data-preset="finance">Finance Navy</button>
-        <button data-preset="warm">Warm Beige</button>
+      <h2>テーマ</h2>
+      <div class="theme-grid" id="themeGrid"></div>
+    </section>
+
+    <!-- メインカラー（ここだけ手動調整可） -->
+    <section class="settings-section">
+      <h2>メインカラー</h2>
+      <div class="form-row">
+        <label for="colorMain">アクセント色</label>
+        <input type="color" id="colorMain">
       </div>
+      <p style="font-size:11px;color:#6b7280;margin:4px 0 0;">
+        他のカラーはテーマで自動的に決まります。
+      </p>
     </section>
 
-    <!-- カラー設定 -->
-    <section class="settings-section">
-      <h2>カラー設定</h2>
-      <div class="form-row"><label for="colorMain">メインカラー</label><input type="color" id="colorMain"></div>
-      <div class="form-row"><label for="colorBg">背景色</label><input type="color" id="colorBg"></div>
-      <div class="form-row"><label for="colorCard">カード背景色</label><input type="color" id="colorCard"></div>
-      <div class="form-row"><label for="colorText">本文文字色</label><input type="color" id="colorText"></div>
-      <div class="form-row"><label for="colorMuted">補足文字色</label><input type="color" id="colorMuted"></div>
-      <div class="form-row"><label for="colorBorder">ボーダー色</label><input type="color" id="colorBorder"></div>
-      <div class="form-row"><label for="colorPositive">ポジティブ</label><input type="color" id="colorPositive"></div>
-      <div class="form-row"><label for="colorNegative">ネガティブ</label><input type="color" id="colorNegative"></div>
-      <div class="form-row"><label for="colorWarning">注意</label><input type="color" id="colorWarning"></div>
-    </section>
-
-    <!-- フォント設定 -->
+    <!-- フォント -->
     <section class="settings-section">
       <h2>フォント設定</h2>
       <div class="form-row">
@@ -313,7 +324,7 @@
       </div>
     </section>
 
-    <!-- レイアウト設定 -->
+    <!-- レイアウト -->
     <section class="settings-section">
       <h2>レイアウト設定</h2>
       <div class="form-row">
@@ -348,7 +359,7 @@
       </div>
     </section>
 
-    <!-- アクションボタン -->
+    <!-- 出力 -->
     <section class="settings-section">
       <h2>出力</h2>
       <div class="action-buttons">
@@ -365,14 +376,13 @@
     <div class="preview-frame">
       <div class="preview-label">プレビュー</div>
 
-      <!-- ここにプレビュー対象のダッシュボードを描画。生成CSSが適用される -->
       <div id="previewRoot" class="dashboard-container">
         <header class="dashboard-header">
           <h1 class="dashboard-title">経営ダッシュボード</h1>
           <p class="dashboard-subtitle">2026年上半期 売上・KPIサマリー</p>
         </header>
 
-        <!-- KPIカード -->
+        <!-- KPI -->
         <section class="section">
           <div class="grid grid-3">
             <div class="card kpi-card">
@@ -393,28 +403,63 @@
           </div>
         </section>
 
-        <!-- グラフ + 通常カード -->
+        <!-- グラフ：コンボ + 単独棒 -->
         <section class="section">
           <div class="grid grid-2">
             <div class="card">
-              <div class="card-title">月次売上推移</div>
-              <div class="chart-box">[ Chart Placeholder ]</div>
+              <div class="card-title">月次GMV × CVR（コンボ）</div>
+              <div class="chart-box" id="chartCombo"></div>
+              <div class="chart-legend">
+                <span><i class="legend-bar"></i>GMV</span>
+                <span><i class="legend-line"></i>CVR (%)</span>
+              </div>
             </div>
             <div class="card">
-              <div class="card-title">主要バッジ</div>
-              <p class="text-muted mb-16">カテゴリ別ステータスの表示例です。</p>
-              <span class="badge badge-primary">主要</span>
-              <span class="badge badge-positive">良好</span>
-              <span class="badge badge-warning">注意</span>
-              <span class="badge badge-negative">未達</span>
-              <div class="mt-24">
-                <button class="button-primary">レポートを発行</button>
+              <div class="card-title">カテゴリ別売上（棒グラフ）</div>
+              <div class="chart-box" id="chartBar"></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- グラフ：積み上げ棒 縦 / 横 -->
+        <section class="section">
+          <div class="grid grid-2">
+            <div class="card">
+              <div class="card-title">チャネル別構成（積み上げ縦）</div>
+              <div class="chart-box" id="chartStacked"></div>
+              <div class="chart-legend">
+                <span><i class="legend-sw" style="background:var(--color-main)"></i>EC</span>
+                <span><i class="legend-sw" style="background:var(--color-positive)"></i>TEL</span>
+                <span><i class="legend-sw" style="background:var(--color-warning)"></i>店舗</span>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-title">部門別予実（積み上げ横）</div>
+              <div class="chart-box" id="chartStackedH"></div>
+              <div class="chart-legend">
+                <span><i class="legend-sw" style="background:var(--color-main)"></i>達成</span>
+                <span><i class="legend-sw" style="background:var(--color-border)"></i>残</span>
               </div>
             </div>
           </div>
         </section>
 
-        <!-- データテーブル -->
+        <!-- バッジ・ボタン -->
+        <section class="section">
+          <div class="card">
+            <div class="card-title">ステータス・アクション</div>
+            <p class="text-muted mb-16">バッジとボタンの表示例。</p>
+            <span class="badge badge-primary">主要</span>
+            <span class="badge badge-positive">良好</span>
+            <span class="badge badge-warning">注意</span>
+            <span class="badge badge-negative">未達</span>
+            <div class="mt-24">
+              <button class="button-primary">レポートを発行</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- テーブル -->
         <section class="section">
           <div class="card">
             <div class="card-title">月別売上サマリー</div>
@@ -429,33 +474,15 @@
                 </tr>
               </thead>
               <tbody>
-                <tr>
-                  <td>4月</td>
-                  <td class="text-right">3.2M</td>
-                  <td class="text-right">2.8M</td>
-                  <td class="text-right">6.0M</td>
-                  <td><span class="badge badge-positive">達成</span></td>
-                </tr>
-                <tr>
-                  <td>5月</td>
-                  <td class="text-right">3.5M</td>
-                  <td class="text-right">2.6M</td>
-                  <td class="text-right">6.1M</td>
-                  <td><span class="badge badge-warning">注意</span></td>
-                </tr>
-                <tr>
-                  <td>6月</td>
-                  <td class="text-right">3.8M</td>
-                  <td class="text-right">3.1M</td>
-                  <td class="text-right">6.9M</td>
-                  <td><span class="badge badge-positive">良好</span></td>
-                </tr>
+                <tr><td>4月</td><td class="text-right">3.2M</td><td class="text-right">2.8M</td><td class="text-right">6.0M</td><td><span class="badge badge-positive">達成</span></td></tr>
+                <tr><td>5月</td><td class="text-right">3.5M</td><td class="text-right">2.6M</td><td class="text-right">6.1M</td><td><span class="badge badge-warning">注意</span></td></tr>
+                <tr><td>6月</td><td class="text-right">3.8M</td><td class="text-right">3.1M</td><td class="text-right">6.9M</td><td><span class="badge badge-positive">良好</span></td></tr>
               </tbody>
             </table>
           </div>
         </section>
 
-        <!-- インサイト・リスク -->
+        <!-- インサイト -->
         <section class="section">
           <div class="grid grid-2">
             <div class="insight-box">
@@ -484,10 +511,8 @@
 
 <script>
 /* =====================================================
-   状態（state）：設定値を一元管理
+   フォント・余白・影マップ
    ===================================================== */
-
-// フォント定義（select 値 → 実 CSS）
 const FONT_STACKS = {
   system: '-apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif',
   noto:   '"Noto Sans JP", -apple-system, sans-serif',
@@ -496,88 +521,94 @@ const FONT_STACKS = {
   georgia:'Georgia, "Times New Roman", serif',
   meiryo: 'Meiryo, "メイリオ", sans-serif'
 };
-
-// 余白プリセット
 const SPACING_MAP = {
   compact:  { xs: '4px',  sm: '8px',  md: '12px', lg: '16px', xl: '24px' },
   standard: { xs: '6px',  sm: '12px', md: '16px', lg: '24px', xl: '32px' },
   spacious: { xs: '8px',  sm: '16px', md: '24px', lg: '32px', xl: '48px' }
 };
-
-// 影プリセット
 const SHADOW_MAP = {
   none:   'none',
   soft:   '0 1px 2px rgba(15,23,42,0.04), 0 1px 3px rgba(15,23,42,0.06)',
   medium: '0 4px 6px rgba(15,23,42,0.05), 0 10px 15px rgba(15,23,42,0.08)'
 };
 
-// 初期設定
-const DEFAULT_STATE = {
-  colorMain:     '#2563eb',
-  colorBg:       '#f7f8fa',
-  colorCard:     '#ffffff',
-  colorText:     '#1f2933',
-  colorMuted:    '#6b7280',
-  colorBorder:   '#e5e7eb',
-  colorPositive: '#047857',
-  colorNegative: '#b91c1c',
-  colorWarning:  '#b45309',
-  fontFamily:    'system',
-  fontSizeBase:  '15px',
-  fontSizeHeading:'24px',
-  fontSizeKpi:   '32px',
-  fontSizeSmall: '12px',
-  radius:        '16px',
-  spacing:       'standard',
-  shadow:        'soft',
-  maxWidth:      '1200px'
-};
-
-// プリセット定義
-const PRESETS = {
+/* =====================================================
+   テーマ定義（メインカラー以外をまとめて指定）
+   ===================================================== */
+const THEMES = {
   executive: {
-    colorMain: '#1d4ed8', colorBg: '#f7f8fa', colorCard: '#ffffff',
+    name: 'Executive Blue',
+    desc: '経営報告向け・王道',
+    colorMain: '#1d4ed8',
+    colorBg: '#f7f8fa', colorCard: '#ffffff',
     colorText: '#0f172a', colorMuted: '#64748b', colorBorder: '#e2e8f0',
     colorPositive: '#047857', colorNegative: '#b91c1c', colorWarning: '#b45309',
     fontFamily: 'system', radius: '12px', spacing: 'standard', shadow: 'soft'
   },
   minimal: {
-    colorMain: '#374151', colorBg: '#fafafa', colorCard: '#ffffff',
+    name: 'Minimal Gray',
+    desc: '装飾控えめ・シック',
+    colorMain: '#374151',
+    colorBg: '#fafafa', colorCard: '#ffffff',
     colorText: '#1f2937', colorMuted: '#9ca3af', colorBorder: '#e5e7eb',
     colorPositive: '#059669', colorNegative: '#dc2626', colorWarning: '#d97706',
     fontFamily: 'system', radius: '8px', spacing: 'spacious', shadow: 'none'
   },
   marketing: {
-    colorMain: '#059669', colorBg: '#f6faf7', colorCard: '#ffffff',
-    colorText: '#1f2933', colorMuted: '#6b7280', colorBorder: '#e5e7eb',
+    name: 'Marketing Green',
+    desc: '成長・ポジティブ',
+    colorMain: '#059669',
+    colorBg: '#f6faf7', colorCard: '#ffffff',
+    colorText: '#1f2933', colorMuted: '#6b7280', colorBorder: '#e2ecdf',
     colorPositive: '#047857', colorNegative: '#b91c1c', colorWarning: '#b45309',
     fontFamily: 'noto', radius: '16px', spacing: 'standard', shadow: 'soft'
   },
   finance: {
-    colorMain: '#1e3a8a', colorBg: '#f5f7fb', colorCard: '#ffffff',
+    name: 'Finance Navy',
+    desc: '金融・信頼感',
+    colorMain: '#1e3a8a',
+    colorBg: '#f5f7fb', colorCard: '#ffffff',
     colorText: '#0f172a', colorMuted: '#475569', colorBorder: '#dbe2ec',
     colorPositive: '#065f46', colorNegative: '#991b1b', colorWarning: '#92400e',
     fontFamily: 'georgia', radius: '4px', spacing: 'standard', shadow: 'medium'
   },
   warm: {
-    colorMain: '#a16207', colorBg: '#faf7f2', colorCard: '#ffffff',
+    name: 'Warm Beige',
+    desc: '温かみ・落ち着き',
+    colorMain: '#a16207',
+    colorBg: '#faf7f2', colorCard: '#ffffff',
     colorText: '#3f2d1c', colorMuted: '#8a7866', colorBorder: '#ece4d6',
     colorPositive: '#65a30d', colorNegative: '#b91c1c', colorWarning: '#b45309',
     fontFamily: 'meiryo', radius: '20px', spacing: 'spacious', shadow: 'soft'
+  },
+  monochrome: {
+    name: 'Monochrome',
+    desc: '黒基調・印刷向け',
+    colorMain: '#111827',
+    colorBg: '#ffffff', colorCard: '#ffffff',
+    colorText: '#111827', colorMuted: '#6b7280', colorBorder: '#d1d5db',
+    colorPositive: '#1f2937', colorNegative: '#7f1d1d', colorWarning: '#78350f',
+    fontFamily: 'system', radius: '4px', spacing: 'standard', shadow: 'none'
   }
 };
 
-// state を初期値で複製
+/* =====================================================
+   state
+   ===================================================== */
+const DEFAULT_STATE = {
+  themeKey: 'executive',
+  ...THEMES.executive,
+  fontSizeBase: '15px',
+  fontSizeHeading: '24px',
+  fontSizeKpi: '32px',
+  fontSizeSmall: '12px',
+  maxWidth: '1200px'
+};
 let state = { ...DEFAULT_STATE };
 
-/* =====================================================
-   入力 ID と state キーの対応
-   ===================================================== */
-const INPUT_KEYS = [
-  'colorMain','colorBg','colorCard','colorText','colorMuted','colorBorder',
-  'colorPositive','colorNegative','colorWarning',
-  'fontFamily','fontSizeBase','fontSizeHeading','fontSizeKpi','fontSizeSmall',
-  'radius','spacing','shadow','maxWidth'
+/* テーマと無関係に自由設定できる項目（テーマ切替時に保持） */
+const KEEP_ON_THEME_CHANGE = [
+  'fontSizeBase','fontSizeHeading','fontSizeKpi','fontSizeSmall','maxWidth'
 ];
 
 /* =====================================================
@@ -592,11 +623,11 @@ function generateCSS() {
   return `/* =====================================================
    Dashboard Design System
    Generated by CSS Design System Generator
+   Theme: ${THEMES[s.themeKey] ? THEMES[s.themeKey].name : 'Custom'}
    ===================================================== */
 
 /* 1. Design Tokens */
 :root {
-  /* Colors */
   --color-main: ${s.colorMain};
   --color-bg: ${s.colorBg};
   --color-card: ${s.colorCard};
@@ -607,25 +638,21 @@ function generateCSS() {
   --color-negative: ${s.colorNegative};
   --color-warning: ${s.colorWarning};
 
-  /* Typography */
   --font-family: ${ff};
   --font-size-base: ${s.fontSizeBase};
   --font-size-heading: ${s.fontSizeHeading};
   --font-size-kpi: ${s.fontSizeKpi};
   --font-size-small: ${s.fontSizeSmall};
 
-  /* Layout */
   --radius: ${s.radius};
   --max-width: ${s.maxWidth};
 
-  /* Spacing */
   --space-xs: ${sp.xs};
   --space-sm: ${sp.sm};
   --space-md: ${sp.md};
   --space-lg: ${sp.lg};
   --space-xl: ${sp.xl};
 
-  /* Shadow */
   --shadow-card: ${sh};
 }
 
@@ -650,9 +677,7 @@ table { border-collapse: collapse; width: 100%; }
   margin: 0 auto;
   padding: var(--space-xl) var(--space-lg);
 }
-.dashboard-header {
-  margin-bottom: var(--space-xl);
-}
+.dashboard-header { margin-bottom: var(--space-xl); }
 .dashboard-title {
   font-size: var(--font-size-heading);
   color: var(--color-text);
@@ -662,13 +687,8 @@ table { border-collapse: collapse; width: 100%; }
   font-size: var(--font-size-small);
   color: var(--color-muted);
 }
-.section {
-  margin-bottom: var(--space-xl);
-}
-.grid {
-  display: grid;
-  gap: var(--space-lg);
-}
+.section { margin-bottom: var(--space-xl); }
+.grid { display: grid; gap: var(--space-lg); }
 .grid-2 { grid-template-columns: repeat(2, 1fr); }
 .grid-3 { grid-template-columns: repeat(3, 1fr); }
 .grid-4 { grid-template-columns: repeat(4, 1fr); }
@@ -688,12 +708,7 @@ table { border-collapse: collapse; width: 100%; }
   margin-bottom: var(--space-md);
 }
 
-/* KPI */
-.kpi-card {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-xs);
-}
+.kpi-card { display: flex; flex-direction: column; gap: var(--space-xs); }
 .kpi-label {
   font-size: var(--font-size-small);
   color: var(--color-muted);
@@ -713,23 +728,36 @@ table { border-collapse: collapse; width: 100%; }
   margin-left: 4px;
 }
 
-/* Chart */
 .chart-box {
   height: 220px;
-  border: 1px dashed var(--color-border);
   border-radius: calc(var(--radius) / 2);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--color-muted);
-  font-size: var(--font-size-small);
   background: var(--color-bg);
+  padding: var(--space-md);
+  position: relative;
+}
+.chart-box svg { width: 100%; height: 100%; display: block; }
+.chart-legend {
+  display: flex;
+  gap: var(--space-md);
+  flex-wrap: wrap;
+  margin-top: var(--space-sm);
+  font-size: var(--font-size-small);
+  color: var(--color-muted);
+}
+.chart-legend span { display: inline-flex; align-items: center; gap: 6px; }
+.chart-legend i {
+  display: inline-block;
+  width: 12px; height: 12px;
+  border-radius: 2px;
+}
+.chart-legend .legend-bar { background: var(--color-main); }
+.chart-legend .legend-line {
+  width: 16px; height: 2px;
+  background: var(--color-warning);
+  border-radius: 2px;
 }
 
-/* Table */
-.data-table {
-  font-size: var(--font-size-base);
-}
+.data-table { font-size: var(--font-size-base); }
 .data-table th,
 .data-table td {
   padding: var(--space-sm) var(--space-md);
@@ -746,7 +774,6 @@ table { border-collapse: collapse; width: 100%; }
 }
 .data-table tbody tr:last-child td { border-bottom: none; }
 
-/* Badge */
 .badge {
   display: inline-block;
   padding: 2px 10px;
@@ -760,26 +787,21 @@ table { border-collapse: collapse; width: 100%; }
 }
 .badge-primary {
   background: color-mix(in srgb, var(--color-main) 12%, transparent);
-  color: var(--color-main);
-  border-color: transparent;
+  color: var(--color-main); border-color: transparent;
 }
 .badge-positive {
   background: color-mix(in srgb, var(--color-positive) 12%, transparent);
-  color: var(--color-positive);
-  border-color: transparent;
+  color: var(--color-positive); border-color: transparent;
 }
 .badge-negative {
   background: color-mix(in srgb, var(--color-negative) 12%, transparent);
-  color: var(--color-negative);
-  border-color: transparent;
+  color: var(--color-negative); border-color: transparent;
 }
 .badge-warning {
   background: color-mix(in srgb, var(--color-warning) 14%, transparent);
-  color: var(--color-warning);
-  border-color: transparent;
+  color: var(--color-warning); border-color: transparent;
 }
 
-/* Button */
 .button-primary {
   display: inline-block;
   background: var(--color-main);
@@ -794,7 +816,6 @@ table { border-collapse: collapse; width: 100%; }
 }
 .button-primary:hover { filter: brightness(0.92); }
 
-/* Insight / Risk */
 .insight-box {
   background: color-mix(in srgb, var(--color-main) 6%, var(--color-card));
   border-left: 4px solid var(--color-main);
@@ -837,13 +858,172 @@ table { border-collapse: collapse; width: 100%; }
 }
 
 /* =====================================================
-   プレビュー更新（CSS変数 + style要素を入れ替え）
+   SVG チャート描画
+   ===================================================== */
+
+// 共通：SVGビューボックス（横600 x 縦240）
+const VB_W = 600, VB_H = 240;
+
+// 1) コンボ（棒+折れ線）
+function renderComboChart(target) {
+  const months = ['1月','2月','3月','4月','5月','6月'];
+  const bars   = [32, 38, 41, 36, 44, 48]; // GMV (M)
+  const line   = [2.1, 2.3, 2.6, 2.4, 2.9, 3.2]; // CVR %
+  const pad = { l: 36, r: 36, t: 16, b: 28 };
+  const cw = VB_W - pad.l - pad.r;
+  const ch = VB_H - pad.t - pad.b;
+  const barMax = 50, lineMax = 4;
+  const barW = cw / bars.length * 0.55;
+
+  const yGrid = [0, 0.25, 0.5, 0.75, 1].map(t => pad.t + ch * (1 - t));
+  const gridLines = yGrid.map(y =>
+    `<line x1="${pad.l}" y1="${y}" x2="${pad.l + cw}" y2="${y}" stroke="var(--color-border)" stroke-width="1"/>`
+  ).join('');
+
+  const barEls = bars.map((v, i) => {
+    const x = pad.l + (cw / bars.length) * i + (cw / bars.length - barW) / 2;
+    const h = (v / barMax) * ch;
+    const y = pad.t + ch - h;
+    return `<rect x="${x}" y="${y}" width="${barW}" height="${h}" rx="3" fill="var(--color-main)" opacity="0.85"/>`;
+  }).join('');
+
+  const linePts = line.map((v, i) => {
+    const x = pad.l + (cw / bars.length) * i + (cw / bars.length) / 2;
+    const y = pad.t + ch - (v / lineMax) * ch;
+    return [x, y];
+  });
+  const linePath = linePts.map((p, i) => (i === 0 ? `M${p[0]},${p[1]}` : `L${p[0]},${p[1]}`)).join(' ');
+  const lineDots = linePts.map(p =>
+    `<circle cx="${p[0]}" cy="${p[1]}" r="3.5" fill="var(--color-warning)"/>`
+  ).join('');
+
+  const labels = months.map((m, i) => {
+    const x = pad.l + (cw / bars.length) * i + (cw / bars.length) / 2;
+    return `<text x="${x}" y="${VB_H - 8}" text-anchor="middle" font-size="11" fill="var(--color-muted)">${m}</text>`;
+  }).join('');
+
+  target.innerHTML = `<svg viewBox="0 0 ${VB_W} ${VB_H}" preserveAspectRatio="none">
+    ${gridLines}${barEls}
+    <path d="${linePath}" fill="none" stroke="var(--color-warning)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+    ${lineDots}${labels}
+  </svg>`;
+}
+
+// 2) 単独棒グラフ
+function renderBarChart(target) {
+  const cats = ['EC','TEL','店舗','法人','その他'];
+  const vals = [42, 28, 18, 22, 9];
+  const pad = { l: 40, r: 16, t: 16, b: 28 };
+  const cw = VB_W - pad.l - pad.r;
+  const ch = VB_H - pad.t - pad.b;
+  const max = 50;
+  const barW = cw / cats.length * 0.6;
+
+  const grid = [0, 0.5, 1].map(t => {
+    const y = pad.t + ch * (1 - t);
+    return `<line x1="${pad.l}" y1="${y}" x2="${pad.l + cw}" y2="${y}" stroke="var(--color-border)" stroke-width="1"/>`;
+  }).join('');
+
+  const bars = vals.map((v, i) => {
+    const x = pad.l + (cw / cats.length) * i + (cw / cats.length - barW) / 2;
+    const h = (v / max) * ch;
+    const y = pad.t + ch - h;
+    return `
+      <rect x="${x}" y="${y}" width="${barW}" height="${h}" rx="3" fill="var(--color-main)"/>
+      <text x="${x + barW/2}" y="${y - 4}" text-anchor="middle" font-size="10" fill="var(--color-text)" font-weight="600">${v}</text>
+    `;
+  }).join('');
+
+  const labels = cats.map((c, i) => {
+    const x = pad.l + (cw / cats.length) * i + (cw / cats.length) / 2;
+    return `<text x="${x}" y="${VB_H - 8}" text-anchor="middle" font-size="11" fill="var(--color-muted)">${c}</text>`;
+  }).join('');
+
+  target.innerHTML = `<svg viewBox="0 0 ${VB_W} ${VB_H}" preserveAspectRatio="none">
+    ${grid}${bars}${labels}
+  </svg>`;
+}
+
+// 3) 積み上げ棒（縦）
+function renderStackedChart(target) {
+  const months = ['1月','2月','3月','4月','5月','6月'];
+  const data = [
+    [18, 12, 6], [20, 11, 7], [22, 13, 6],
+    [21, 10, 8], [25, 14, 7], [28, 13, 9]
+  ]; // [EC, TEL, 店舗]
+  const colors = ['var(--color-main)', 'var(--color-positive)', 'var(--color-warning)'];
+  const pad = { l: 36, r: 16, t: 16, b: 28 };
+  const cw = VB_W - pad.l - pad.r;
+  const ch = VB_H - pad.t - pad.b;
+  const max = 50;
+  const barW = cw / data.length * 0.55;
+
+  const grid = [0, 0.5, 1].map(t => {
+    const y = pad.t + ch * (1 - t);
+    return `<line x1="${pad.l}" y1="${y}" x2="${pad.l + cw}" y2="${y}" stroke="var(--color-border)" stroke-width="1"/>`;
+  }).join('');
+
+  const stacks = data.map((vals, i) => {
+    const x = pad.l + (cw / data.length) * i + (cw / data.length - barW) / 2;
+    let yCursor = pad.t + ch;
+    return vals.map((v, k) => {
+      const h = (v / max) * ch;
+      yCursor -= h;
+      return `<rect x="${x}" y="${yCursor}" width="${barW}" height="${h}" fill="${colors[k]}" ${k === vals.length - 1 ? 'rx="3"' : ''}/>`;
+    }).join('');
+  }).join('');
+
+  const labels = months.map((m, i) => {
+    const x = pad.l + (cw / data.length) * i + (cw / data.length) / 2;
+    return `<text x="${x}" y="${VB_H - 8}" text-anchor="middle" font-size="11" fill="var(--color-muted)">${m}</text>`;
+  }).join('');
+
+  target.innerHTML = `<svg viewBox="0 0 ${VB_W} ${VB_H}" preserveAspectRatio="none">
+    ${grid}${stacks}${labels}
+  </svg>`;
+}
+
+// 4) 積み上げ棒（横・予実）
+function renderStackedHChart(target) {
+  const rows = [
+    { name: '営業部', done: 78 },
+    { name: 'EC事業',  done: 92 },
+    { name: '法人営業', done: 64 },
+    { name: '海外',    done: 48 },
+    { name: '店舗',    done: 71 }
+  ];
+  const pad = { l: 70, r: 40, t: 12, b: 12 };
+  const cw = VB_W - pad.l - pad.r;
+  const rowH = (VB_H - pad.t - pad.b) / rows.length;
+  const barH = rowH * 0.55;
+
+  const bars = rows.map((r, i) => {
+    const y = pad.t + rowH * i + (rowH - barH) / 2;
+    const doneW = cw * (r.done / 100);
+    return `
+      <rect x="${pad.l}" y="${y}" width="${cw}" height="${barH}" rx="3" fill="var(--color-border)"/>
+      <rect x="${pad.l}" y="${y}" width="${doneW}" height="${barH}" rx="3" fill="var(--color-main)"/>
+      <text x="${pad.l - 8}" y="${y + barH/2 + 4}" text-anchor="end" font-size="11" fill="var(--color-text)">${r.name}</text>
+      <text x="${pad.l + cw + 6}" y="${y + barH/2 + 4}" font-size="11" fill="var(--color-muted)" font-weight="600">${r.done}%</text>
+    `;
+  }).join('');
+
+  target.innerHTML = `<svg viewBox="0 0 ${VB_W} ${VB_H}" preserveAspectRatio="none">${bars}</svg>`;
+}
+
+function renderAllCharts() {
+  renderComboChart(document.getElementById('chartCombo'));
+  renderBarChart(document.getElementById('chartBar'));
+  renderStackedChart(document.getElementById('chartStacked'));
+  renderStackedHChart(document.getElementById('chartStackedH'));
+}
+
+/* =====================================================
+   プレビュー更新
    ===================================================== */
 let styleEl = null;
 function updatePreview() {
   const css = generateCSS();
-
-  // プレビュー専用 <style> をスコープ風に注入（:root 変数はグローバルでも問題なし）
   if (!styleEl) {
     styleEl = document.createElement('style');
     styleEl.id = 'preview-style';
@@ -851,50 +1031,77 @@ function updatePreview() {
   }
   styleEl.textContent = css;
 
-  // 生成コードを表示
-  const codeEl = document.getElementById('cssCode');
-  codeEl.textContent = css;
-
-  const lineCount = css.split('\n').length;
-  document.getElementById('cssLineCount').textContent = `${lineCount} 行`;
+  document.getElementById('cssCode').textContent = css;
+  document.getElementById('cssLineCount').textContent = `${css.split('\n').length} 行`;
 }
 
 /* =====================================================
-   入力反映：UI → state
+   入力バインド
    ===================================================== */
+const FREE_INPUT_KEYS = [
+  'colorMain','fontFamily',
+  'fontSizeBase','fontSizeHeading','fontSizeKpi','fontSizeSmall',
+  'radius','spacing','shadow','maxWidth'
+];
+
 function bindInputs() {
-  INPUT_KEYS.forEach(key => {
+  FREE_INPUT_KEYS.forEach(key => {
     const el = document.getElementById(key);
     if (!el) return;
-    el.addEventListener('input', () => {
+    const handler = () => {
       state[key] = el.value;
+      // メインカラーやフォント等は手動変更されるとテーマ「Custom」扱いになる
+      if (key === 'colorMain') {
+        // メイン色変更だけならテーマは保持（テーマ内のメインを上書き）
+      }
       updatePreview();
-    });
-    el.addEventListener('change', () => {
-      state[key] = el.value;
-      updatePreview();
-    });
+    };
+    el.addEventListener('input', handler);
+    el.addEventListener('change', handler);
   });
 }
 
-/* =====================================================
-   state → UI 反映
-   ===================================================== */
 function syncInputsFromState() {
-  INPUT_KEYS.forEach(key => {
+  FREE_INPUT_KEYS.forEach(key => {
     const el = document.getElementById(key);
-    if (!el) return;
-    el.value = state[key];
+    if (el) el.value = state[key];
+  });
+  // テーマカードの選択状態
+  document.querySelectorAll('.theme-card').forEach(c => {
+    c.classList.toggle('active', c.dataset.theme === state.themeKey);
   });
 }
 
 /* =====================================================
-   プリセット適用
+   テーマ
    ===================================================== */
-function applyPreset(name) {
-  const p = PRESETS[name];
-  if (!p) return;
-  state = { ...state, ...p };
+function buildThemeGrid() {
+  const grid = document.getElementById('themeGrid');
+  grid.innerHTML = Object.entries(THEMES).map(([key, t]) => `
+    <button class="theme-card" data-theme="${key}" type="button">
+      <div class="swatches">
+        <span style="background:${t.colorMain}"></span>
+        <span style="background:${t.colorPositive}"></span>
+        <span style="background:${t.colorWarning}"></span>
+        <span style="background:${t.colorBg};border-color:${t.colorBorder}"></span>
+      </div>
+      <div class="name">${t.name}</div>
+      <div class="desc">${t.desc}</div>
+    </button>
+  `).join('');
+
+  grid.querySelectorAll('.theme-card').forEach(btn => {
+    btn.addEventListener('click', () => applyTheme(btn.dataset.theme));
+  });
+}
+
+function applyTheme(key) {
+  const t = THEMES[key];
+  if (!t) return;
+  // ユーザーが調整した文字サイズ等は保持
+  const kept = {};
+  KEEP_ON_THEME_CHANGE.forEach(k => kept[k] = state[k]);
+  state = { ...state, ...t, themeKey: key, ...kept };
   syncInputsFromState();
   updatePreview();
 }
@@ -912,9 +1119,8 @@ function resetState() {
    コピー＆ダウンロード
    ===================================================== */
 async function copyCSS() {
-  const css = generateCSS();
   try {
-    await navigator.clipboard.writeText(css);
+    await navigator.clipboard.writeText(generateCSS());
     const msg = document.getElementById('copyMsg');
     msg.classList.add('show');
     setTimeout(() => msg.classList.remove('show'), 1800);
@@ -924,8 +1130,7 @@ async function copyCSS() {
 }
 
 function downloadCSS() {
-  const css = generateCSS();
-  const blob = new Blob([css], { type: 'text/css' });
+  const blob = new Blob([generateCSS()], { type: 'text/css' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
@@ -937,22 +1142,19 @@ function downloadCSS() {
 }
 
 /* =====================================================
-   イベント登録 & 初期化
+   初期化
    ===================================================== */
 function init() {
-  // プリセットボタン
-  document.querySelectorAll('.preset-buttons button').forEach(btn => {
-    btn.addEventListener('click', () => applyPreset(btn.dataset.preset));
-  });
+  buildThemeGrid();
+  bindInputs();
 
-  // アクションボタン
   document.getElementById('copyBtn').addEventListener('click', copyCSS);
   document.getElementById('downloadBtn').addEventListener('click', downloadCSS);
   document.getElementById('resetBtn').addEventListener('click', resetState);
 
-  bindInputs();
   syncInputsFromState();
   updatePreview();
+  renderAllCharts();
 }
 
 document.addEventListener('DOMContentLoaded', init);
