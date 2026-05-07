@@ -608,6 +608,32 @@
   }
   .radius-badge:hover { background: #1f2933; }
 
+  /* 余白バッジ（V-3: グリッドホバーで gap/padding 編集） */
+  .spacing-badge {
+    position: absolute;
+    padding: 3px 8px;
+    background: rgba(31,41,51,0.88);
+    color: #fff;
+    border: none;
+    border-radius: 999px;
+    font-size: 10px; font-weight: 600;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.12s;
+    z-index: 9998;
+    pointer-events: none;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    white-space: nowrap;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.18);
+  }
+  .spacing-badge.show { opacity: 1; pointer-events: auto; }
+  .spacing-badge:hover { background: #1f2933; }
+  /* グリッドホバー時に余白を視覚化 */
+  .ds-root .grid.spacing-target-active {
+    outline: 1px dashed rgba(99,91,255,0.45);
+    outline-offset: 2px;
+  }
+
   /* radius ポップオーバー（slider + chips） */
   #token-popover .tp-slider {
     -webkit-appearance: none; appearance: none;
@@ -1692,7 +1718,8 @@ const DEFAULT_STATE = {
   mode: 'light',
   textOverrides: {}, // { kpiValue: 36, ... } 個別上書き（数値, px）
   weightOverrides: {}, // { title: 700, kpiValue: 700, ... } V-1
-  colorOverrides: {} // { kpiValue:'#hex', buttonPrimary:'#hex', badge:'#hex' } V-2
+  colorOverrides: {}, // { kpiValue:'#hex', buttonPrimary:'#hex', badge:'#hex' } V-2
+  spacingOverrides: {} // { gap:'24px', cardPadding:'24px' } V-3
 };
 
 // V-1: ウェイトを上書きできるキーと、未指定時のフォールバック
@@ -1825,6 +1852,13 @@ function generateCSS() {
   });
   const coBlock = coLines.length ? '\n' + coLines.join('\n') : '';
 
+  // V-3: 余白上書き
+  const sp = s.spacingOverrides || {};
+  const spLines = [];
+  if (sp.gap)         spLines.push(`  --sp-grid-gap: ${sp.gap};`);
+  if (sp.cardPadding) spLines.push(`  --sp-card-padding: ${sp.cardPadding};`);
+  const spBlock = spLines.length ? '\n' + spLines.join('\n') : '';
+
   // 装飾スタイル別
   const variants = {
     standard: { cardBg:'var(--color-card)', cardBorder:'1px solid var(--color-border)',
@@ -1922,7 +1956,7 @@ function generateCSS() {
   --fs-chart-text:   ${ts.chartText};
   --fs-chart-legend: ${ts.chartLegend};
   --fs-table-head:   ${ts.tableHead};
-  --fs-table-body:   ${ts.tableBody};${fwBlock}${coBlock}
+  --fs-table-body:   ${ts.tableBody};${fwBlock}${coBlock}${spBlock}
 
   /* Layout */
   --radius: ${radiusFinal};
@@ -1984,7 +2018,7 @@ function generateCSS() {
   color: var(--color-muted);
 }
 .ds-root .section { margin-bottom: var(--space-xl); }
-.ds-root .grid { display: grid; gap: var(--space-lg); }
+.ds-root .grid { display: grid; gap: var(--sp-grid-gap, var(--space-lg)); }
 .ds-root .grid-2 { grid-template-columns: repeat(2, 1fr); }
 .ds-root .grid-3 { grid-template-columns: repeat(3, 1fr); }
 .ds-root .grid-4 { grid-template-columns: repeat(4, 1fr); }
@@ -1994,7 +2028,7 @@ function generateCSS() {
   background: ${v.cardBg};
   border: ${v.cardBorder};
   border-radius: var(--radius);
-  padding: var(--space-lg);
+  padding: var(--sp-card-padding, var(--space-lg));
   box-shadow: var(--shadow-card);
   backdrop-filter: var(--card-backdrop);
   -webkit-backdrop-filter: var(--card-backdrop);
@@ -2495,6 +2529,52 @@ function refreshPopoverColor() {
   if (hInput) hInput.value = r.value;
 }
 
+// V-3: 余白の現在値（上書きなければ density プリセットの lg）を解決
+function resolveSpacing(prop) {
+  const o = state.spacingOverrides || {};
+  if (o[prop]) return { value: o[prop], overridden: true };
+  const d = DENSITY_MAP[state.density] || DENSITY_MAP.cozy;
+  return { value: d.lg, overridden: false };
+}
+
+function renderSpacingPopoverContent() {
+  const gap = resolveSpacing('gap');
+  const pad = resolveSpacing('cardPadding');
+  const gapN = parseInt(gap.value, 10) || 0;
+  const padN = parseInt(pad.value, 10) || 0;
+  const stops = [
+    { k:'xs', label:'xs' },
+    { k:'sm', label:'sm' },
+    { k:'md', label:'md' },
+    { k:'lg', label:'lg' },
+    { k:'xl', label:'xl' }
+  ];
+  const d = DENSITY_MAP[state.density] || DENSITY_MAP.cozy;
+  const chips = stops.map(s =>
+    `<button class="tp-chip" data-spacing-stop="${s.k}" type="button">${s.label} (${d[s.k]})</button>`
+  ).join('');
+
+  popoverEl.classList.add('multi');
+  popoverEl.innerHTML = `<div class="tp-stack">
+    <div class="tp-line">
+      <span class="tp-label">gap</span>
+      <input class="tp-slider" data-spacing="gap" type="range" min="0" max="64" step="2" value="${gapN}" />
+      <span class="tp-size" data-spacing-readout="gap">${gapN}px${gap.overridden ? '' : ' (auto)'}</span>
+      <button class="tp-btn" data-act="reset-sp-gap" type="button" title="自動に戻す">↺</button>
+    </div>
+    <div class="tp-line">
+      <span class="tp-label">padding</span>
+      <input class="tp-slider" data-spacing="cardPadding" type="range" min="0" max="64" step="2" value="${padN}" />
+      <span class="tp-size" data-spacing-readout="cardPadding">${padN}px${pad.overridden ? '' : ' (auto)'}</span>
+      <button class="tp-btn" data-act="reset-sp-pad" type="button" title="自動に戻す">↺</button>
+    </div>
+    <div class="tp-line" style="justify-content:flex-start;">
+      <span class="tp-label">scale</span>
+      ${chips}
+    </div>
+  </div>`;
+}
+
 function renderRadiusPopoverContent() {
   const cur = parseInt(state.radius, 10) || 0;
   const stops = [0, 4, 8, 12, 16, 20, 24];
@@ -2597,6 +2677,19 @@ function showDensityPopover(anchorEl) {
   document.getElementById('densityBadge')?.classList.add('active');
 }
 
+function showSpacingPopover(anchorEl) {
+  const pop = ensurePopover();
+  pop.dataset.type = 'spacing';
+  delete pop.dataset.tokenKey;
+  renderSpacingPopoverContent();
+  const rect = anchorEl.getBoundingClientRect();
+  const top  = window.scrollY + rect.bottom + 8;
+  const left = window.scrollX + Math.max(8, rect.right - 320);
+  pop.style.top  = top + 'px';
+  pop.style.left = left + 'px';
+  pop.classList.add('show');
+}
+
 function showRadiusPopover(anchorEl) {
   const pop = ensurePopover();
   pop.dataset.type = 'radius';
@@ -2632,10 +2725,26 @@ function handlePopoverClick(e) {
     const next = chip.dataset.density;
     if (next && DENSITY_MAP[next] && next !== state.density) {
       state.density = next;
+      // V-3: 密度プリセット選び直しで余白カスタムを解除
+      state.spacingOverrides = {};
       updatePreview();
       syncInputsFromState();
       renderDensityPopoverContent();   // active 表示更新
       updateDensityBadgeLabel();
+    }
+    return;
+  }
+  // V-3: 余白スケールチップ（gap と cardPadding を同時セット）
+  if (chip && popoverEl.dataset.type === 'spacing' && chip.dataset.spacingStop) {
+    e.stopPropagation();
+    const d = DENSITY_MAP[state.density] || DENSITY_MAP.cozy;
+    const v = d[chip.dataset.spacingStop];
+    if (v) {
+      state.spacingOverrides = state.spacingOverrides || {};
+      state.spacingOverrides.gap = v;
+      state.spacingOverrides.cardPadding = v;
+      updatePreview();
+      renderSpacingPopoverContent();
     }
     return;
   }
@@ -2657,6 +2766,17 @@ function handlePopoverClick(e) {
   if (!btn) return;
   e.stopPropagation();
   const act = btn.dataset.act;
+
+  // V-3: 余白リセット（type=spacing）
+  if (popoverEl.dataset.type === 'spacing') {
+    state.spacingOverrides = state.spacingOverrides || {};
+    if (act === 'reset-sp-gap') delete state.spacingOverrides.gap;
+    if (act === 'reset-sp-pad') delete state.spacingOverrides.cardPadding;
+    updatePreview();
+    renderSpacingPopoverContent();
+    return;
+  }
+
   const key = popoverEl.dataset.tokenKey;
   if (!key) return;
 
@@ -2747,6 +2867,19 @@ function handlePopoverInput(e) {
 
   const slider = e.target.closest('.tp-slider');
   if (!slider) return;
+  // V-3: 余白スライダー
+  if (popoverEl.dataset.type === 'spacing' && slider.dataset.spacing) {
+    const prop = slider.dataset.spacing;
+    const v = parseInt(slider.value, 10);
+    if (!isNaN(v)) {
+      state.spacingOverrides = state.spacingOverrides || {};
+      state.spacingOverrides[prop] = v + 'px';
+      const ro = popoverEl.querySelector(`[data-spacing-readout="${prop}"]`);
+      if (ro) ro.textContent = v + 'px';
+      updatePreview();
+    }
+    return;
+  }
   if (popoverEl.dataset.type === 'radius') {
     const v = parseInt(slider.value, 10);
     if (!isNaN(v)) {
@@ -2809,6 +2942,7 @@ function bindPreviewTokenHover() {
     if (popoverEl.contains(e.target)) return;
     if (e.target.closest && e.target.closest('#densityBadge')) return;
     if (e.target.closest && e.target.closest('#radiusBadge')) return;
+    if (e.target.closest && e.target.closest('#spacingBadge')) return;
     if (matchTokenTrigger(e.target)) return;
     hidePopover();
   });
@@ -2882,6 +3016,77 @@ function bindRadiusBadgeHover() {
     if (to && (to === radiusBadgeEl || (radiusBadgeEl && radiusBadgeEl.contains(to)))) return;
     if (to && card.contains(to)) return;
     scheduleRadiusBadgeHide();
+  });
+}
+
+// V-3: 余白バッジ（.grid ホバーで gap/padding 編集）
+let spacingBadgeEl = null;
+let spacingBadgeHideTimer = null;
+let spacingBadgeAnchor = null;
+function ensureSpacingBadge() {
+  if (spacingBadgeEl) return spacingBadgeEl;
+  spacingBadgeEl = document.createElement('button');
+  spacingBadgeEl.className = 'spacing-badge';
+  spacingBadgeEl.id = 'spacingBadge';
+  spacingBadgeEl.type = 'button';
+  spacingBadgeEl.title = '余白を編集';
+  spacingBadgeEl.innerHTML = '⇄ spacing';
+  document.body.appendChild(spacingBadgeEl);
+  spacingBadgeEl.addEventListener('mouseenter', () => clearTimeout(spacingBadgeHideTimer));
+  spacingBadgeEl.addEventListener('mouseleave', scheduleSpacingBadgeHide);
+  spacingBadgeEl.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (popoverEl && popoverEl.classList.contains('show') &&
+        popoverEl.dataset.type === 'spacing') {
+      hidePopover();
+      return;
+    }
+    showSpacingPopover(spacingBadgeEl);
+  });
+  return spacingBadgeEl;
+}
+function showSpacingBadgeFor(gridEl) {
+  const badge = ensureSpacingBadge();
+  spacingBadgeAnchor = gridEl;
+  const rect = gridEl.getBoundingClientRect();
+  badge.style.top  = (window.scrollY + rect.top - 22) + 'px';
+  badge.style.left = (window.scrollX + Math.max(8, rect.right - 90)) + 'px';
+  badge.classList.add('show');
+  document.querySelectorAll('.spacing-target-active').forEach(e => {
+    if (e !== gridEl) e.classList.remove('spacing-target-active');
+  });
+  gridEl.classList.add('spacing-target-active');
+}
+function hideSpacingBadge() {
+  if (spacingBadgeEl) spacingBadgeEl.classList.remove('show');
+  document.querySelectorAll('.spacing-target-active').forEach(e =>
+    e.classList.remove('spacing-target-active'));
+  spacingBadgeAnchor = null;
+}
+function scheduleSpacingBadgeHide() {
+  clearTimeout(spacingBadgeHideTimer);
+  spacingBadgeHideTimer = setTimeout(() => {
+    if (popoverEl && popoverEl.classList.contains('show') &&
+        popoverEl.dataset.type === 'spacing') return;
+    hideSpacingBadge();
+  }, 220);
+}
+function bindSpacingBadgeHover() {
+  const root = document.querySelector('.ds-root');
+  if (!root) return;
+  root.addEventListener('mouseover', (e) => {
+    const grid = e.target.closest && e.target.closest('.grid');
+    if (!grid || !root.contains(grid)) return;
+    clearTimeout(spacingBadgeHideTimer);
+    if (spacingBadgeAnchor !== grid) showSpacingBadgeFor(grid);
+  });
+  root.addEventListener('mouseout', (e) => {
+    const grid = e.target.closest && e.target.closest('.grid');
+    if (!grid) return;
+    const to = e.relatedTarget;
+    if (to && (to === spacingBadgeEl || (spacingBadgeEl && spacingBadgeEl.contains(to)))) return;
+    if (to && grid.contains(to)) return;
+    scheduleSpacingBadgeHide();
   });
 }
 
@@ -3000,6 +3205,10 @@ function bindInputs() {
       // typeScale / fontSizeBase が変わったらテキストオーバーライドの選択肢を再描画
       if (key === 'typeScale' || key === 'fontSizeBase') {
         rebuildTextSelectOptions();
+      }
+      // V-3: 密度プリセット選び直しで余白カスタムを解除
+      if (key === 'density') {
+        state.spacingOverrides = {};
       }
       updatePreview();
     };
@@ -3182,6 +3391,8 @@ function applyTheme(key) {
   if (t.radius)       state.radius       = t.radius;
   if (t.density)      state.density      = t.density;
   state.mode = t.mode || 'light'; // 明示なければ light に戻す（ダーク残留防止）
+  // V-3: テーマ切替で密度プリセットが変わり得るので余白カスタムを解除
+  state.spacingOverrides = {};
 
   // 選択テーマが含まれるグループを自動展開
   const card = document.querySelector(`.theme-card[data-theme="${key}"]`);
@@ -3277,6 +3488,8 @@ function init() {
   bindDensityBadge();
   // Vision V-4: 角丸バッジ（カードホバー）
   bindRadiusBadgeHover();
+  // Vision V-3: 余白バッジ（グリッドホバー）
+  bindSpacingBadgeHover();
 }
 
 // =============================================
@@ -3293,6 +3506,7 @@ function bindPreviewTabs() {
       });
       hidePopover();   // 切替時にポップオーバーを閉じる
       hideRadiusBadge();
+      hideSpacingBadge();
     });
   });
 }
