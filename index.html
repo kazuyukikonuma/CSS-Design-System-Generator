@@ -650,6 +650,28 @@
     min-width: 64px;
     padding: 0 2px;
   }
+  /* V-2: 色行 */
+  #token-popover .tp-color {
+    -webkit-appearance: none; appearance: none;
+    width: 22px; height: 22px;
+    border: none; border-radius: 5px;
+    padding: 0; cursor: pointer;
+    background: transparent;
+  }
+  #token-popover .tp-color::-webkit-color-swatch-wrapper { padding: 0; }
+  #token-popover .tp-color::-webkit-color-swatch { border: 1px solid rgba(255,255,255,0.3); border-radius: 5px; }
+  #token-popover .tp-color::-moz-color-swatch { border: 1px solid rgba(255,255,255,0.3); border-radius: 5px; }
+  #token-popover .tp-hex {
+    background: rgba(255,255,255,0.1);
+    border: none; color: #fff;
+    width: 78px; height: 22px;
+    border-radius: 5px;
+    padding: 0 6px;
+    font-family: "SF Mono", Menlo, Consolas, monospace;
+    font-size: 11px;
+    text-transform: lowercase;
+  }
+  #token-popover .tp-hex:focus { outline: 1px solid rgba(255,255,255,0.4); }
 
   @media (max-width: 960px) {
     .app-layout { grid-template-columns: 1fr; }
@@ -1669,7 +1691,8 @@ const DEFAULT_STATE = {
   cardAccent: 'none',
   mode: 'light',
   textOverrides: {}, // { kpiValue: 36, ... } 個別上書き（数値, px）
-  weightOverrides: {} // { title: 700, kpiValue: 700, ... } V-1
+  weightOverrides: {}, // { title: 700, kpiValue: 700, ... } V-1
+  colorOverrides: {} // { kpiValue:'#hex', buttonPrimary:'#hex', badge:'#hex' } V-2
 };
 
 // V-1: ウェイトを上書きできるキーと、未指定時のフォールバック
@@ -1688,6 +1711,39 @@ const WEIGHT_DEFAULTS = {
   cardTitle: null,   // null = var(--font-heading-weight)
   tableBody: 400
 };
+
+// V-2: 色を上書きできるキー
+const COLOR_KEYS = ['kpiValue', 'buttonPrimary', 'badge'];
+const COLOR_LABELS = {
+  kpiValue:      'KPI数値',
+  buttonPrimary: 'プライマリボタン',
+  badge:         'バッジ'
+};
+// 各キーの「未上書き時の」フォールバック色をテーマ・state から計算
+function resolveDefaultColor(key) {
+  const t = THEMES[state.themeKey] || THEMES.executive;
+  const palette = state.mode === 'dark' ? deriveDark() : t.light;
+  if (key === 'kpiValue')      return palette.text;
+  if (key === 'buttonPrimary') return state.colorMain;
+  if (key === 'badge')         return clampForChart(state.colorMain);
+  return state.colorMain;
+}
+function resolveColor(key) {
+  if (state.colorOverrides[key]) {
+    return { value: state.colorOverrides[key], overridden: true };
+  }
+  return { value: resolveDefaultColor(key), overridden: false };
+}
+function normalizeHex(s) {
+  if (!s) return null;
+  s = s.trim();
+  if (/^#([0-9a-f]{6})$/i.test(s)) return s.toLowerCase();
+  if (/^([0-9a-f]{6})$/i.test(s)) return '#' + s.toLowerCase();
+  if (/^#([0-9a-f]{3})$/i.test(s)) {
+    return '#' + s.slice(1).split('').map(c => c+c).join('').toLowerCase();
+  }
+  return null;
+}
 let state = JSON.parse(JSON.stringify(DEFAULT_STATE));
 
 /* =====================================================
@@ -1759,6 +1815,15 @@ function generateCSS() {
     if (v !== undefined) fwLines.push(`  ${fwVarMap[k]}: ${v};`);
   });
   const fwBlock = fwLines.length ? '\n' + fwLines.join('\n') : '';
+
+  // V-2: 個別カラー上書き → --co-* を出力
+  const coLines = [];
+  const coVarMap = { kpiValue:'--co-kpi-value', buttonPrimary:'--co-button-primary', badge:'--co-badge' };
+  COLOR_KEYS.forEach(k => {
+    const v = s.colorOverrides[k];
+    if (v) coLines.push(`  ${coVarMap[k]}: ${v};`);
+  });
+  const coBlock = coLines.length ? '\n' + coLines.join('\n') : '';
 
   // 装飾スタイル別
   const variants = {
@@ -1857,7 +1922,7 @@ function generateCSS() {
   --fs-chart-text:   ${ts.chartText};
   --fs-chart-legend: ${ts.chartLegend};
   --fs-table-head:   ${ts.tableHead};
-  --fs-table-body:   ${ts.tableBody};${fwBlock}
+  --fs-table-body:   ${ts.tableBody};${fwBlock}${coBlock}
 
   /* Layout */
   --radius: ${radiusFinal};
@@ -1958,7 +2023,7 @@ ${gradientCSS}
 .ds-root .kpi-value {
   font-size: var(--fs-kpi-value);
   font-weight: var(--fw-kpi-value, 700);
-  color: var(--color-text);
+  color: var(--co-kpi-value, var(--color-text));
   line-height: 1.1;
   letter-spacing: -0.02em;
 }
@@ -2031,8 +2096,8 @@ ${gradientCSS}
   font-size: var(--fs-chart-legend);
   font-weight: 600;
   margin-right: 4px;
-  background: color-mix(in srgb, var(--color-chart) 14%, transparent);
-  color: var(--color-chart);
+  background: color-mix(in srgb, var(--co-badge, var(--color-chart)) 14%, transparent);
+  color: var(--co-badge, var(--color-chart));
   border: 1px solid transparent;
 }
 .ds-root .badge-primary  { background: color-mix(in srgb, var(--color-chart) 14%, transparent); color: var(--color-chart); }
@@ -2043,7 +2108,7 @@ ${gradientCSS}
 /* Buttons */
 .ds-root .button-primary {
   display: inline-block;
-  background: var(--color-main); color: #fff;
+  background: var(--co-button-primary, var(--color-main)); color: #fff;
   border: none;
   border-radius: calc(var(--radius) / 2);
   padding: var(--space-sm) var(--space-lg);
@@ -2329,6 +2394,8 @@ function matchTokenTrigger(el) {
       if (cl.contains('dashboard-title')) return { key: 'title', el: cur };
       if (cl.contains('kpi-value'))       return { key: 'kpiValue', el: cur };
       if (cl.contains('card-title'))      return { key: 'cardTitle', el: cur };
+      if (cl.contains('button-primary'))  return { key: 'buttonPrimary', el: cur };
+      if (cl.contains('badge'))           return { key: 'badge', el: cur };
     }
     if (cur.tagName === 'TD' || cur.tagName === 'TBODY') {
       const tbl = cur.closest('table.data-table');
@@ -2358,11 +2425,12 @@ function ensurePopover() {
 
 function renderTextPopoverContent() {
   const key = popoverEl.dataset.tokenKey;
-  const supportsWeight = WEIGHT_KEYS.includes(key);
-  const labelText = TOKEN_LABELS[key] || key || '';
+  const hasSize   = TEXT_KEYS.includes(key);
+  const hasWeight = WEIGHT_KEYS.includes(key);
+  const hasColor  = COLOR_KEYS.includes(key);
+  const labelText = TOKEN_LABELS[key] || COLOR_LABELS[key] || key || '';
 
-  // 1行目（サイズ）
-  const sizeRow = `
+  const sizeRow = hasSize ? `
     <div class="tp-line">
       <span class="tp-label">${labelText}</span>
       <button class="tp-btn" data-act="dec" type="button" aria-label="小さく">−</button>
@@ -2370,10 +2438,9 @@ function renderTextPopoverContent() {
       <button class="tp-btn" data-act="inc" type="button" aria-label="大きく">+</button>
       <button class="tp-btn" data-act="reset" type="button" aria-label="自動に戻す" title="自動に戻す">↺</button>
     </div>
-  `;
+  ` : '';
 
-  // 2行目（ウェイト）— 4要素のみ
-  const weightRow = supportsWeight ? `
+  const weightRow = hasWeight ? `
     <div class="tp-line">
       <span class="tp-label">weight</span>
       <button class="tp-btn" data-act="dec-w" type="button" aria-label="細く">−</button>
@@ -2383,10 +2450,24 @@ function renderTextPopoverContent() {
     </div>
   ` : '';
 
-  if (supportsWeight) {
+  const colorRow = hasColor ? (() => {
+    const cur = resolveColor(key).value;
+    return `
+    <div class="tp-line">
+      <span class="tp-label">${hasSize ? 'color' : labelText}</span>
+      <input class="tp-color" type="color" value="${cur}" />
+      <input class="tp-hex" type="text" value="${cur}" maxlength="7" spellcheck="false" />
+      <button class="tp-btn" data-act="use-main" type="button" title="メイン色から生成">M</button>
+      <button class="tp-btn" data-act="reset-c" type="button" title="テーマ色に戻す">↺</button>
+    </div>
+    `;
+  })() : '';
+
+  const rowCount = (hasSize?1:0) + (hasWeight?1:0) + (hasColor?1:0);
+  if (rowCount > 1) {
     popoverEl.classList.add('multi');
-    popoverEl.innerHTML = `<div class="tp-stack">${sizeRow}${weightRow}</div>`;
-  } else {
+    popoverEl.innerHTML = `<div class="tp-stack">${sizeRow}${weightRow}${colorRow}</div>`;
+  } else if (hasSize) {
     popoverEl.classList.remove('multi');
     popoverEl.innerHTML = `
       <span class="tp-label">${labelText}</span>
@@ -2395,7 +2476,23 @@ function renderTextPopoverContent() {
       <button class="tp-btn" data-act="inc" type="button" aria-label="大きく">+</button>
       <button class="tp-btn" data-act="reset" type="button" aria-label="自動に戻す" title="自動に戻す">↺</button>
     `;
+  } else {
+    // color のみ（buttonPrimary / badge）
+    popoverEl.classList.remove('multi');
+    popoverEl.innerHTML = colorRow.replace('<div class="tp-line">', '').replace(/<\/div>\s*$/, '');
   }
+}
+
+function refreshPopoverColor() {
+  if (!popoverEl) return;
+  if (popoverEl.dataset.type !== 'text') return;
+  const key = popoverEl.dataset.tokenKey;
+  if (!COLOR_KEYS.includes(key)) return;
+  const r = resolveColor(key);
+  const cInput = popoverEl.querySelector('.tp-color');
+  const hInput = popoverEl.querySelector('.tp-hex');
+  if (cInput) cInput.value = r.value;
+  if (hInput) hInput.value = r.value;
 }
 
 function renderRadiusPopoverContent() {
@@ -2467,6 +2564,7 @@ function showPopoverFor(targetEl, tokenKey) {
   renderTextPopoverContent();
   refreshPopoverSize();
   refreshPopoverWeight();
+  refreshPopoverColor();
 
   const rect = targetEl.getBoundingClientRect();
   const top  = window.scrollY + rect.top - 36;
@@ -2562,6 +2660,21 @@ function handlePopoverClick(e) {
   const key = popoverEl.dataset.tokenKey;
   if (!key) return;
 
+  // V-2: 色系
+  if (act === 'use-main' || act === 'reset-c') {
+    if (!COLOR_KEYS.includes(key)) return;
+    if (act === 'reset-c') {
+      delete state.colorOverrides[key];
+    } else {
+      // メイン色から生成 — kpi-value は text色なのでメイン色そのまま、その他は chart色（クランプ）
+      const v = key === 'kpiValue' ? state.colorMain : clampForChart(state.colorMain);
+      state.colorOverrides[key] = v;
+    }
+    updatePreview();
+    refreshPopoverColor();
+    return;
+  }
+
   // V-1: ウェイト系
   if (act === 'dec-w' || act === 'inc-w' || act === 'reset-w') {
     if (!WEIGHT_KEYS.includes(key)) return;
@@ -2608,6 +2721,30 @@ function handlePopoverClick(e) {
 }
 
 function handlePopoverInput(e) {
+  // V-2: 色ピッカー / HEX入力
+  const colorInput = e.target.closest('.tp-color');
+  const hexInput   = e.target.closest('.tp-hex');
+  if (colorInput || hexInput) {
+    if (popoverEl.dataset.type !== 'text') return;
+    const key = popoverEl.dataset.tokenKey;
+    if (!COLOR_KEYS.includes(key)) return;
+    const raw = (colorInput || hexInput).value;
+    const hex = normalizeHex(raw);
+    if (!hex) return;
+    state.colorOverrides[key] = hex;
+    // 入力欄同士を同期（ただし入力中の方はそのまま）
+    if (colorInput) {
+      const h = popoverEl.querySelector('.tp-hex');
+      if (h) h.value = hex;
+    }
+    if (hexInput) {
+      const c = popoverEl.querySelector('.tp-color');
+      if (c) c.value = hex;
+    }
+    updatePreview();
+    return;
+  }
+
   const slider = e.target.closest('.tp-slider');
   if (!slider) return;
   if (popoverEl.dataset.type === 'radius') {
@@ -2819,13 +2956,20 @@ function renderA11yPanel() {
   const palette = s.mode === 'dark' ? deriveDark() : theme.light;
   const chart = clampForChart(s.colorMain);
 
+  // V-2: 個別上書きを反映
+  const co = s.colorOverrides || {};
+  const kpiColor    = co.kpiValue      || palette.text;
+  const buttonColor = co.buttonPrimary || s.colorMain;
+  const badgeColor  = co.badge         || chart;
+
   // 検証する重要ペア
   const pairs = [
     { label: '本文 / 背景',         fg: palette.text,    bg: palette.bg,    large: false },
     { label: '本文 / カード',       fg: palette.text,    bg: palette.card,  large: false },
     { label: '補足 / 背景',         fg: palette.muted,   bg: palette.bg,    large: false },
-    { label: 'ボタン文字 / メイン色', fg: '#ffffff',       bg: s.colorMain,   large: false },
-    { label: 'チャート色 / 背景',   fg: chart,           bg: palette.bg,    large: true  }
+    { label: 'KPI数値 / カード',    fg: kpiColor,        bg: palette.card,  large: true  },
+    { label: 'ボタン文字 / プライマリ', fg: '#ffffff',     bg: buttonColor,   large: false },
+    { label: 'バッジ色 / 背景',     fg: badgeColor,      bg: palette.bg,    large: true  }
   ];
 
   panel.innerHTML = pairs.map(p => {
@@ -3022,6 +3166,13 @@ function buildThemeGrid() {
 function applyTheme(key) {
   const t = THEMES[key];
   if (!t) return;
+  // V-2: 色の個別上書きが残っている場合は確認してクリア
+  const hasColorOverrides = Object.keys(state.colorOverrides || {}).length > 0;
+  if (hasColorOverrides) {
+    const ok = confirm('個別の色上書きが設定されています。\nテーマ「' + t.name + '」を適用すると、これらはクリアされます。続行しますか？');
+    if (!ok) return;
+    state.colorOverrides = {};
+  }
   state.themeKey = key;
   state.colorMain = t.colorMain;
   // テーマがフォント・装飾・カード装飾・角丸・密度・モードを定義していれば一括適用
