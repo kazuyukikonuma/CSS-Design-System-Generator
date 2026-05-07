@@ -329,10 +329,15 @@
         <label for="fontFamily">フォント</label>
         <select id="fontFamily">
           <option value="system">System UI</option>
+          <option value="helvetica">Helvetica Neue</option>
+          <option value="rounded">Rounded (SF Rounded系)</option>
+          <option value="inter">Inter / Modern Sans</option>
           <option value="noto">Noto Sans JP</option>
           <option value="segoe">Segoe UI</option>
           <option value="arial">Arial</option>
           <option value="georgia">Georgia (Serif)</option>
+          <option value="serif-editorial">Editorial Serif</option>
+          <option value="mono">Monospace (端末風)</option>
           <option value="meiryo">Meiryo</option>
         </select>
       </div>
@@ -432,8 +437,11 @@
       <div class="form-row">
         <label for="radius">角丸</label>
         <select id="radius">
-          <option>4px</option><option>8px</option>
-          <option>12px</option><option>16px</option><option>20px</option>
+          <option>0px</option><option>2px</option>
+          <option>4px</option><option>6px</option>
+          <option>8px</option><option>10px</option>
+          <option>12px</option><option>16px</option>
+          <option>20px</option><option>24px</option>
         </select>
       </div>
       <div class="form-row">
@@ -618,12 +626,17 @@
    定数
    ===================================================== */
 const FONT_STACKS = {
-  system: '-apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif',
-  noto:   '"Noto Sans JP", -apple-system, sans-serif',
-  segoe:  '"Segoe UI", Tahoma, Geneva, Verdana, sans-serif',
-  arial:  'Arial, Helvetica, sans-serif',
-  georgia:'Georgia, "Times New Roman", serif',
-  meiryo: 'Meiryo, "メイリオ", sans-serif'
+  system:    '-apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif',
+  helvetica: '"Helvetica Neue", Helvetica, Arial, sans-serif',
+  rounded:   '"SF Pro Rounded", "Hiragino Maru Gothic ProN", "Quicksand", "Avenir Next", system-ui, sans-serif',
+  inter:     'Inter, "Helvetica Neue", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
+  noto:      '"Noto Sans JP", -apple-system, sans-serif',
+  segoe:     '"Segoe UI", Tahoma, Geneva, Verdana, sans-serif',
+  arial:     'Arial, Helvetica, sans-serif',
+  georgia:   'Georgia, "Times New Roman", "Yu Mincho", "游明朝", serif',
+  'serif-editorial': '"Playfair Display", "Tiempos Text", Georgia, "Times New Roman", serif',
+  mono:      '"SF Mono", "JetBrains Mono", Monaco, Menlo, Consolas, "Courier New", monospace',
+  meiryo:    'Meiryo, "メイリオ", sans-serif'
 };
 const DENSITY_MAP = {
   compact:    { xs:'4px', sm:'8px',  md:'12px', lg:'16px', xl:'24px', row:'8px' },
@@ -677,37 +690,89 @@ const THEMES = {
     colorPositive:'#10b981', colorNegative:'#dc2626', colorWarning:'#f59e0b',
     light:{ bg:'#fff1f2', card:'#ffffff', text:'#881337', muted:'#7c5564', border:'#ffe4e6' }},
 
-  // ----- ブランド風（インスパイア系） -----
-  apple: { group:'ブランド風', name:'Apple', desc:'iOS的・クリーン', colorMain:'#007aff',
+  // ----- ブランド風（テック・SaaS） -----
+  apple: { group:'ブランド風（テック）', name:'Apple', desc:'iOS的・クリーン', colorMain:'#007aff',
     colorPositive:'#34c759', colorNegative:'#ff3b30', colorWarning:'#ff9500',
-    light:{ bg:'#f5f5f7', card:'#ffffff', text:'#1d1d1f', muted:'#86868b', border:'#d2d2d7' }},
-  anthropic: { group:'ブランド風', name:'Anthropic', desc:'クリーム×コーラル', colorMain:'#c96442',
+    light:{ bg:'#f5f5f7', card:'#ffffff', text:'#1d1d1f', muted:'#86868b', border:'#d2d2d7' },
+    fontFamily:'system', styleVariant:'soft', cardAccent:'none', radius:'16px', density:'cozy' },
+  anthropic: { group:'ブランド風（テック）', name:'Anthropic', desc:'クリーム×コーラル', colorMain:'#c96442',
     colorPositive:'#5e8a4a', colorNegative:'#9b3a2e', colorWarning:'#b87333',
-    light:{ bg:'#faf9f5', card:'#ffffff', text:'#181818', muted:'#6b6862', border:'#e8e4dc' }},
-  stripe: { group:'ブランド風', name:'Stripe', desc:'インディゴ・洗練', colorMain:'#635bff',
+    light:{ bg:'#faf9f5', card:'#ffffff', text:'#181818', muted:'#6b6862', border:'#e8e4dc' },
+    fontFamily:'serif-editorial', styleVariant:'editorial', cardAccent:'none', radius:'4px', density:'comfortable' },
+  stripe: { group:'ブランド風（テック）', name:'Stripe', desc:'インディゴ・洗練', colorMain:'#635bff',
     colorPositive:'#0a8a5c', colorNegative:'#df1b41', colorWarning:'#bb6a00',
-    light:{ bg:'#f6f9fc', card:'#ffffff', text:'#0a2540', muted:'#425466', border:'#e6e6f0' }},
-  linear: { group:'ブランド風', name:'Linear', desc:'紫×グレー・端正', colorMain:'#5e6ad2',
+    light:{ bg:'#f6f9fc', card:'#ffffff', text:'#0a2540', muted:'#425466', border:'#e6e6f0' },
+    fontFamily:'inter', styleVariant:'soft', cardAccent:'side-thin', radius:'12px', density:'cozy' },
+  linear: { group:'ブランド風（テック）', name:'Linear', desc:'紫×グレー・端正', colorMain:'#5e6ad2',
     colorPositive:'#10b981', colorNegative:'#eb5757', colorWarning:'#f2994a',
-    light:{ bg:'#f7f8fa', card:'#ffffff', text:'#08090a', muted:'#6c6f7f', border:'#e0e1e6' }},
-  notion: { group:'ブランド風', name:'Notion', desc:'温かみ・余白', colorMain:'#2f3437',
+    light:{ bg:'#f7f8fa', card:'#ffffff', text:'#08090a', muted:'#6c6f7f', border:'#e0e1e6' },
+    fontFamily:'inter', styleVariant:'standard', cardAccent:'none', radius:'8px', density:'compact' },
+  notion: { group:'ブランド風（テック）', name:'Notion', desc:'温かみ・余白', colorMain:'#2f3437',
     colorPositive:'#0f7b6c', colorNegative:'#e03e3e', colorWarning:'#d9730d',
-    light:{ bg:'#ffffff', card:'#ffffff', text:'#37352f', muted:'#9b9a97', border:'#e9e9e7' }},
-  vercel: { group:'ブランド風', name:'Vercel', desc:'純黒×純白', colorMain:'#000000',
+    light:{ bg:'#ffffff', card:'#ffffff', text:'#37352f', muted:'#9b9a97', border:'#e9e9e7' },
+    fontFamily:'system', styleVariant:'standard', cardAccent:'none', radius:'4px', density:'comfortable' },
+  vercel: { group:'ブランド風（テック）', name:'Vercel', desc:'純黒×純白', colorMain:'#000000',
     colorPositive:'#0070f3', colorNegative:'#e00', colorWarning:'#f5a623',
-    light:{ bg:'#fafafa', card:'#ffffff', text:'#000000', muted:'#666666', border:'#eaeaea' }},
-  github: { group:'ブランド風', name:'GitHub', desc:'グリーン×ニュートラル', colorMain:'#2da44e',
+    light:{ bg:'#fafafa', card:'#ffffff', text:'#000000', muted:'#666666', border:'#eaeaea' },
+    fontFamily:'inter', styleVariant:'standard', cardAccent:'none', radius:'8px', density:'cozy' },
+  github: { group:'ブランド風（テック）', name:'GitHub', desc:'グリーン×ニュートラル', colorMain:'#2da44e',
     colorPositive:'#1a7f37', colorNegative:'#cf222e', colorWarning:'#9a6700',
-    light:{ bg:'#ffffff', card:'#ffffff', text:'#1f2328', muted:'#656d76', border:'#d0d7de' }},
-  airbnb: { group:'ブランド風', name:'Airbnb', desc:'コーラル・親しみ', colorMain:'#ff385c',
-    colorPositive:'#008a05', colorNegative:'#c13515', colorWarning:'#e07912',
-    light:{ bg:'#ffffff', card:'#ffffff', text:'#222222', muted:'#717171', border:'#ebebeb' }},
-  slack: { group:'ブランド風', name:'Slack', desc:'オーベルジン', colorMain:'#4a154b',
+    light:{ bg:'#ffffff', card:'#ffffff', text:'#1f2328', muted:'#656d76', border:'#d0d7de' },
+    fontFamily:'system', styleVariant:'standard', cardAccent:'none', radius:'8px', density:'cozy' },
+  slack: { group:'ブランド風（テック）', name:'Slack', desc:'オーベルジン', colorMain:'#4a154b',
     colorPositive:'#007a5a', colorNegative:'#e01e5a', colorWarning:'#ecb22e',
-    light:{ bg:'#ffffff', card:'#ffffff', text:'#1d1c1d', muted:'#616061', border:'#dddddd' }},
-  spotify: { group:'ブランド風', name:'Spotify', desc:'グリーン×ホワイト', colorMain:'#1db954',
+    light:{ bg:'#ffffff', card:'#ffffff', text:'#1d1c1d', muted:'#616061', border:'#dddddd' },
+    fontFamily:'helvetica', styleVariant:'standard', cardAccent:'side-thick', radius:'8px', density:'cozy' },
+  discord: { group:'ブランド風（テック）', name:'Discord', desc:'紫×ライト・親しみ', colorMain:'#5865f2',
+    colorPositive:'#23a55a', colorNegative:'#f23f43', colorWarning:'#f0b232',
+    light:{ bg:'#f2f3f5', card:'#ffffff', text:'#060607', muted:'#5c5e66', border:'#e3e5e8' },
+    fontFamily:'rounded', styleVariant:'soft', cardAccent:'none', radius:'12px', density:'cozy' },
+  tailwind: { group:'ブランド風（テック）', name:'Tailwind', desc:'シアン×開発者', colorMain:'#06b6d4',
+    colorPositive:'#10b981', colorNegative:'#ef4444', colorWarning:'#f59e0b',
+    light:{ bg:'#f8fafc', card:'#ffffff', text:'#0f172a', muted:'#64748b', border:'#e2e8f0' },
+    fontFamily:'inter', styleVariant:'soft', cardAccent:'gradient', radius:'12px', density:'cozy' },
+  material: { group:'ブランド風（テック）', name:'Material', desc:'Google・エレベーション', colorMain:'#1976d2',
+    colorPositive:'#388e3c', colorNegative:'#d32f2f', colorWarning:'#f57c00',
+    light:{ bg:'#fafafa', card:'#ffffff', text:'#212121', muted:'#757575', border:'#e0e0e0' },
+    fontFamily:'system', styleVariant:'soft', cardAccent:'top-thin', radius:'4px', density:'cozy' },
+  aws: { group:'ブランド風（テック）', name:'AWS', desc:'オレンジ×ネイビー', colorMain:'#ff9900',
+    colorPositive:'#1d8102', colorNegative:'#d13212', colorWarning:'#df7c00',
+    light:{ bg:'#f2f3f3', card:'#ffffff', text:'#16191f', muted:'#545b64', border:'#d5dbdb' },
+    fontFamily:'system', styleVariant:'standard', cardAccent:'top-thick', radius:'2px', density:'compact' },
+
+  // ----- ブランド風（B2C・メディア） -----
+  airbnb: { group:'ブランド風（メディア）', name:'Airbnb', desc:'コーラル・親しみ', colorMain:'#ff385c',
+    colorPositive:'#008a05', colorNegative:'#c13515', colorWarning:'#e07912',
+    light:{ bg:'#ffffff', card:'#ffffff', text:'#222222', muted:'#717171', border:'#ebebeb' },
+    fontFamily:'rounded', styleVariant:'soft', cardAccent:'none', radius:'12px', density:'comfortable' },
+  spotify: { group:'ブランド風（メディア）', name:'Spotify', desc:'グリーン×ホワイト', colorMain:'#1db954',
     colorPositive:'#0e8a3d', colorNegative:'#e22134', colorWarning:'#ffa42b',
-    light:{ bg:'#ffffff', card:'#ffffff', text:'#191414', muted:'#6a6a6a', border:'#e6e6e6' }}
+    light:{ bg:'#ffffff', card:'#ffffff', text:'#191414', muted:'#6a6a6a', border:'#e6e6e6' },
+    fontFamily:'helvetica', styleVariant:'standard', cardAccent:'none', radius:'8px', density:'cozy' },
+  twitch: { group:'ブランド風（メディア）', name:'Twitch', desc:'紫×ゲーミング', colorMain:'#9146ff',
+    colorPositive:'#00b173', colorNegative:'#eb0400', colorWarning:'#ffa800',
+    light:{ bg:'#f7f7f8', card:'#ffffff', text:'#0e0e10', muted:'#53535f', border:'#dedee3' },
+    fontFamily:'inter', styleVariant:'standard', cardAccent:'side-thick', radius:'4px', density:'cozy' },
+  netflix: { group:'ブランド風（メディア）', name:'Netflix', desc:'赤×黒・シネマ', colorMain:'#e50914',
+    colorPositive:'#46d369', colorNegative:'#b9090b', colorWarning:'#e87c03',
+    light:{ bg:'#0b0b0b', card:'#181818', text:'#f5f5f1', muted:'#999999', border:'#2a2a2a' },
+    fontFamily:'helvetica', styleVariant:'standard', cardAccent:'none', radius:'2px', density:'compact', mode:'dark' },
+  tesla: { group:'ブランド風（メディア）', name:'Tesla', desc:'赤×ミニマル', colorMain:'#cc0000',
+    colorPositive:'#3eb049', colorNegative:'#cc0000', colorWarning:'#ffa500',
+    light:{ bg:'#000000', card:'#171a20', text:'#ffffff', muted:'#a0a4ad', border:'#2c2f36' },
+    fontFamily:'helvetica', styleVariant:'standard', cardAccent:'none', radius:'4px', density:'compact', mode:'dark' },
+  shopify: { group:'ブランド風（メディア）', name:'Shopify', desc:'ライムグリーン・コマース', colorMain:'#008060',
+    colorPositive:'#1a7f4f', colorNegative:'#d72c0d', colorWarning:'#b98900',
+    light:{ bg:'#f6f6f7', card:'#ffffff', text:'#202223', muted:'#6d7175', border:'#e1e3e5' },
+    fontFamily:'inter', styleVariant:'standard', cardAccent:'none', radius:'8px', density:'cozy' },
+  bloomberg: { group:'ブランド風（メディア）', name:'Bloomberg', desc:'端末風・金融', colorMain:'#fa6900',
+    colorPositive:'#00a650', colorNegative:'#ff2a3c', colorWarning:'#ffb900',
+    light:{ bg:'#0a0a0a', card:'#141414', text:'#fafafa', muted:'#9b9b9b', border:'#2a2a2a' },
+    fontFamily:'mono', styleVariant:'standard', cardAccent:'side-thin', radius:'2px', density:'compact', mode:'dark' },
+  economist: { group:'ブランド風（メディア）', name:'The Economist', desc:'雑誌風・赤×セリフ', colorMain:'#e3120b',
+    colorPositive:'#0a7d32', colorNegative:'#a4001b', colorWarning:'#b15c00',
+    light:{ bg:'#ffffff', card:'#ffffff', text:'#121212', muted:'#666666', border:'#cfcfcf' },
+    fontFamily:'serif-editorial', styleVariant:'editorial', cardAccent:'top-thick', radius:'2px', density:'comfortable' }
 };
 function deriveDark() {
   return { bg:'#0b1220', card:'#111827', text:'#f1f5f9', muted:'#94a3b8', border:'#1f2937' };
@@ -1525,6 +1590,13 @@ function applyTheme(key) {
   if (!t) return;
   state.themeKey = key;
   state.colorMain = t.colorMain;
+  // テーマがフォント・装飾・カード装飾・角丸・密度・モードを定義していれば一括適用
+  if (t.fontFamily)   state.fontFamily   = t.fontFamily;
+  if (t.styleVariant) state.styleVariant = t.styleVariant;
+  if (t.cardAccent)   state.cardAccent   = t.cardAccent;
+  if (t.radius)       state.radius       = t.radius;
+  if (t.density)      state.density      = t.density;
+  if (t.mode)         state.mode         = t.mode;
   syncInputsFromState();
   updatePreview();
 }
