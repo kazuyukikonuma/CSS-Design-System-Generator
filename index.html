@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html lang="zh-Hant-TW">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>CSS Design System Generator</title>
+<title>CSS 設計系統產生器</title>
 <style>
-  /* ジェネレーターUI */
+  /* 產生器 UI */
   * { box-sizing: border-box; }
   html, body { margin: 0; padding: 0; }
   body {
@@ -87,7 +87,7 @@
     padding-bottom: 6px; border-bottom: 1px solid #e5e7eb;
   }
 
-  /* テーマ ステータスストリップ（左パネル冒頭） */
+  /* 主題狀態列 (左面板頂端) */
   .theme-status {
     background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
     border: 1px solid #e5e7eb;
@@ -124,7 +124,7 @@
     font-size: 10px;
   }
 
-  /* A11y コントラストパネル */
+  /* A11y 對比度面板 */
   .a11y-panel {
     display: flex; flex-direction: column;
     gap: 4px;
@@ -204,7 +204,7 @@
     text-transform: uppercase;
     margin-bottom: 6px;
   }
-  /* 3層目（テキスト個別調整内のカテゴリ） */
+  /* 第三層 (文字個別調整內的分類) */
   details.sub-nest {
     border: 1px solid #e5e7eb;
     border-radius: 5px;
@@ -231,7 +231,7 @@
   details.sub-nest > .form-row { padding: 0 10px; margin: 8px 0; }
   details.sub-nest > .form-row:last-child { padding-bottom: 8px; }
 
-  /* テーマグループ（折りたたみ） */
+  /* 主題群組 (可折疊) */
   #themeGrid > .theme-group {
     border: 1px solid #e5e7eb;
     border-radius: 8px;
@@ -345,7 +345,7 @@
     border: 1px solid #e5e7eb;
     border-radius: 8px;
     overflow: hidden;
-    /* 微細な市松模様：Glass モードで「ぼかす対象」が見える */
+    /* 細緻棋盤紋: 讓 Glass 模式下的模糊對象可見 */
     background-color: #fafbfc;
     background-image:
       linear-gradient(45deg, rgba(0,0,0,0.025) 25%, transparent 25%),
@@ -364,7 +364,7 @@
     border-bottom: 1px solid #e5e7eb;
   }
 
-  /* プレビューパターン切替タブ */
+  /* 預覽範本切換頁籤 */
   .preview-tabs {
     display: flex; gap: 2px;
     padding: 6px 8px;
@@ -391,7 +391,7 @@
     box-shadow: 0 1px 2px rgba(0,0,0,0.04);
   }
 
-  /* モーダル（AIテーマ生成 / URL取り込み）共通 */
+  /* 共用對話框 (AI 主題產生 / URL 匯入) */
   .modal-backdrop {
     position: fixed; inset: 0;
     background: rgba(15,23,42,0.55);
@@ -449,7 +449,7 @@
     line-height: 1.5;
     margin-top: 4px;
   }
-  /* preview-frame 内のトースト */
+  /* preview-frame 內的提示 */
   .copy-toast {
     position: fixed;
     top: 24px; left: 50%;
@@ -489,9 +489,9 @@
   }
 
   /* ======================================================
-     MVP: インライン・トークンポップオーバー
+     MVP: 行內 token popover
      ====================================================== */
-  /* ホバー対象のハイライト */
+  /* hover 對象的反白 */
   .token-target-active {
     outline: 2px dashed #fbbf24;
     outline-offset: 4px;
@@ -500,7 +500,7 @@
     transition: outline-color 0.12s;
   }
 
-  /* フローティングポップオーバー */
+  /* 浮動 popover */
   #token-popover {
     position: absolute;
     display: none;
@@ -519,7 +519,7 @@
   }
   #token-popover.show { display: inline-flex; }
   #token-popover::after {
-    /* 下向きの矢印 */
+    /* 向下箭頭 */
     content: '';
     position: absolute;
     bottom: -5px; left: 14px;
@@ -576,7 +576,7 @@
     box-shadow: 0 1px 2px rgba(0,0,0,0.2);
   }
 
-  /* 密度バッジ（V-5: プレビュー上のインライン密度切替） */
+  /* 密度標記 (V-5: 預覽上的行內密度切換) */
   .preview-frame { position: relative; }
   .density-badge {
     position: absolute;
@@ -602,7 +602,7 @@
   }
   .density-badge:hover { background: #1f2933; }
 
-  /* 角丸バッジ（V-4: カード角ホバーでインライン編集） */
+  /* 圓角標記 (V-4: hover 卡片角落即可行內編輯) */
   .radius-badge {
     position: absolute;
     padding: 3px 8px;
@@ -626,7 +626,7 @@
   }
   .radius-badge:hover { background: #1f2933; }
 
-  /* 余白バッジ（V-3: グリッドホバーで gap/padding 編集） */
+  /* 間距標記 (V-3: hover grid 編輯 gap/padding) */
   .spacing-badge {
     position: absolute;
     padding: 3px 8px;
@@ -646,13 +646,13 @@
   }
   .spacing-badge.show { opacity: 1; pointer-events: auto; }
   .spacing-badge:hover { background: #1f2933; }
-  /* グリッドホバー時に余白を視覚化 */
+  /* hover grid 時將間距視覺化 */
   .ds-root .grid.spacing-target-active {
     outline: 1px dashed rgba(99,91,255,0.45);
     outline-offset: 2px;
   }
 
-  /* radius ポップオーバー（slider + chips） */
+  /* radius popover (slider + chips) */
   #token-popover .tp-slider {
     -webkit-appearance: none; appearance: none;
     width: 100px; height: 4px;
@@ -680,7 +680,7 @@
     flex-wrap: wrap;
     max-width: 280px;
   }
-  /* multi-row レイアウト（V-1: size + weight） */
+  /* multi-row 排版 (V-1: size + weight) */
   #token-popover.multi { align-items: stretch; }
   #token-popover .tp-stack {
     display: flex; flex-direction: column; gap: 4px;
@@ -694,7 +694,7 @@
     min-width: 64px;
     padding: 0 2px;
   }
-  /* V-2: 色行 */
+  /* V-2: 色彩行 */
   #token-popover .tp-color {
     -webkit-appearance: none; appearance: none;
     width: 22px; height: 22px;
@@ -734,42 +734,42 @@
 </head>
 <body>
 
-<div class="copy-toast" id="copyToast">✓ クリップボードにコピーしました</div>
+<div class="copy-toast" id="copyToast">✓ 已複製到剪貼簿</div>
 
-<!-- Phase 2 / 2-1: AI でテーマ生成（モック実装） -->
+<!-- Phase 2 / 2-1: AI 主題產生（模擬實作） -->
 <div class="modal-backdrop" id="aiBackdrop">
   <div class="modal" role="dialog" aria-labelledby="aiTitle">
     <div class="modal-header">
-      <h3 id="aiTitle">AI で雰囲気からテーマを生成</h3>
-      <button class="modal-close" data-close-modal="ai" type="button" aria-label="閉じる">✕</button>
+      <h3 id="aiTitle">用 AI 從氛圍產生主題</h3>
+      <button class="modal-close" data-close-modal="ai" type="button" aria-label="關閉">✕</button>
     </div>
     <div class="modal-body">
-      <p>テーマの雰囲気・業界・印象を自然言語で記述してください。</p>
-      <small>※ 現在はモック実装です。キーワードから既存テーマにマッチします。</small>
-      <textarea id="aiPrompt" placeholder="例: 金融系で堅め、でも温かみがある印象 / ミニマルで青系の SaaS / Apple っぽいクリーンな感じ"></textarea>
+      <p>請以自然語言描述主題的氛圍、產業或印象。</p>
+      <small>※ 目前為模擬實作，會從關鍵字比對既有主題。</small>
+      <textarea id="aiPrompt" placeholder="例：金融類偏沉穩但帶溫度／極簡藍調 SaaS／Apple 風格的乾淨感"></textarea>
       <div class="modal-actions">
-        <button class="btn-primary" id="aiGenerate" type="button">生成して適用</button>
-        <button class="btn-secondary" data-close-modal="ai" type="button">キャンセル</button>
+        <button class="btn-primary" id="aiGenerate" type="button">產生並套用</button>
+        <button class="btn-secondary" data-close-modal="ai" type="button">取消</button>
       </div>
       <div class="ai-result" id="aiResult"></div>
     </div>
   </div>
 </div>
 
-<!-- Phase 2 / 2-2: URL から取り込み（モック実装） -->
+<!-- Phase 2 / 2-2: 從 URL 匯入（模擬實作） -->
 <div class="modal-backdrop" id="urlBackdrop">
   <div class="modal" role="dialog" aria-labelledby="urlTitle">
     <div class="modal-header">
-      <h3 id="urlTitle">URL からテーマを取り込み</h3>
-      <button class="modal-close" data-close-modal="url" type="button" aria-label="閉じる">✕</button>
+      <h3 id="urlTitle">從 URL 匯入主題</h3>
+      <button class="modal-close" data-close-modal="url" type="button" aria-label="關閉">✕</button>
     </div>
     <div class="modal-body">
-      <p>取り込みたいサイトの URL を入力してください。</p>
-      <small>※ 現在はモック実装です。既知ブランドのドメインを認識して、対応テーマに切り替えます。</small>
-      <input type="text" id="urlInput" placeholder="例: https://stripe.com / https://www.notion.so" />
+      <p>請輸入要匯入的網站 URL。</p>
+      <small>※ 目前為模擬實作,會辨識已知品牌網域並切換到對應主題。</small>
+      <input type="text" id="urlInput" placeholder="例：https://stripe.com / https://www.notion.so" />
       <div class="modal-actions">
-        <button class="btn-primary" id="urlImport" type="button">取り込んで適用</button>
-        <button class="btn-secondary" data-close-modal="url" type="button">キャンセル</button>
+        <button class="btn-primary" id="urlImport" type="button">匯入並套用</button>
+        <button class="btn-secondary" data-close-modal="url" type="button">取消</button>
       </div>
       <div class="ai-result" id="urlResult"></div>
     </div>
@@ -778,13 +778,13 @@
 
 <header class="app-header">
   <div>
-    <h1>CSS Design System Generator</h1>
-    <p>HTMLダッシュボード用のCSSを、プレビューしながら生成できます。</p>
+    <h1>CSS 設計系統產生器</h1>
+    <p>邊預覽邊產生 HTML 儀表板用的 CSS。</p>
   </div>
   <div class="header-actions">
     <div class="undo-redo">
-      <button class="ur-btn" id="undoBtn" type="button" title="元に戻す (Cmd/Ctrl+Z)" disabled>↶ Undo</button>
-      <button class="ur-btn" id="redoBtn" type="button" title="やり直す (Cmd/Ctrl+Shift+Z)" disabled>↷ Redo</button>
+      <button class="ur-btn" id="undoBtn" type="button" title="復原 (Cmd/Ctrl+Z)" disabled>↶ 復原</button>
+      <button class="ur-btn" id="redoBtn" type="button" title="重做 (Cmd/Ctrl+Shift+Z)" disabled>↷ 重做</button>
     </div>
     <div class="mode-toggle" id="modeToggle">
       <button data-mode="light" class="active">☀ Light</button>
@@ -797,50 +797,50 @@
 
   <aside class="settings-panel">
 
-    <!-- ツール（AI生成 / URL逆算） -->
+    <!-- 工具（AI 產生 / URL 反推） -->
     <section class="settings-section">
-      <h2>ツール</h2>
+      <h2>工具</h2>
       <div class="action-buttons">
-        <button class="btn-secondary" id="aiBtn" type="button">✨ AI で雰囲気から生成</button>
-        <button class="btn-secondary" id="urlBtn" type="button">🔗 URL から取り込み</button>
+        <button class="btn-secondary" id="aiBtn" type="button">✨ 用 AI 從氛圍產生</button>
+        <button class="btn-secondary" id="urlBtn" type="button">🔗 從 URL 匯入</button>
       </div>
     </section>
 
-    <!-- 現在のテーマ状況（ステータスストリップ） -->
+    <!-- 目前主題狀態 -->
     <div class="theme-status" id="themeStatus">
       <span class="theme-status-row">
-        <span class="theme-status-label">現在のテーマ</span>
+        <span class="theme-status-label">目前主題</span>
         <strong id="currentThemeName">Executive Blue</strong>
       </span>
       <span class="theme-status-meta" id="currentThemeMeta"></span>
     </div>
 
     <section class="settings-section">
-      <h2>テーマ</h2>
+      <h2>主題</h2>
       <div class="theme-grid" id="themeGrid"></div>
     </section>
 
     <section class="settings-section">
-      <h2>メインカラー</h2>
+      <h2>主色</h2>
       <div class="form-row">
-        <label for="colorMain">アクセント色</label>
+        <label for="colorMain">強調色</label>
         <input type="color" id="colorMain">
       </div>
       <p style="font-size:11px;color:#6b7280;margin:4px 0 0;">
-        50〜900の9階調を自動生成します。
+        自動產生 50〜900 共 9 階。
       </p>
     </section>
 
     <section class="settings-section">
-      <h2>アクセシビリティ（WCAG コントラスト比）</h2>
+      <h2>無障礙(WCAG 對比度)</h2>
       <div class="a11y-panel" id="a11yPanel"></div>
       <p style="font-size:11px;color:#6b7280;margin:6px 0 0;">
-        AAA: 7.0以上 / AA: 4.5以上 が目安。NG なら色を調整してください。
+        AAA: 7.0 以上 / AA: 4.5 以上為基準。若顯示 NG 請調整顏色。
       </p>
     </section>
 
     <section class="settings-section">
-      <h2>装飾スタイル</h2>
+      <h2>裝飾風格</h2>
       <div class="style-chips" id="styleChips">
         <button class="style-chip active" data-style="standard">Standard</button>
         <button class="style-chip" data-style="editorial">Editorial</button>
@@ -850,37 +850,37 @@
     </section>
 
     <section class="settings-section">
-      <h2>カード装飾（アクセント帯）</h2>
+      <h2>卡片裝飾(強調條)</h2>
       <div class="accent-chips" id="accentChips">
-        <button class="accent-chip active" data-accent="none">なし</button>
+        <button class="accent-chip active" data-accent="none">無</button>
         <button class="accent-chip" data-accent="top-thin">上 細</button>
-        <button class="accent-chip" data-accent="top-thick">上 太</button>
+        <button class="accent-chip" data-accent="top-thick">上 粗</button>
         <button class="accent-chip" data-accent="side-thin">左 細</button>
-        <button class="accent-chip" data-accent="side-thick">左 太</button>
-        <button class="accent-chip" data-accent="gradient">グラデ帯</button>
+        <button class="accent-chip" data-accent="side-thick">左 粗</button>
+        <button class="accent-chip" data-accent="gradient">漸層條</button>
       </div>
     </section>
 
     <section class="settings-section">
-      <h2>フォント</h2>
+      <h2>字型</h2>
       <div class="form-row">
-        <label for="fontFamily">フォント</label>
+        <label for="fontFamily">字型</label>
         <select id="fontFamily">
           <option value="system">System UI</option>
           <option value="helvetica">Helvetica Neue</option>
-          <option value="rounded">Rounded (SF Rounded系)</option>
+          <option value="rounded">Rounded (SF Rounded 系)</option>
           <option value="inter">Inter / Modern Sans</option>
-          <option value="noto">Noto Sans JP</option>
+          <option value="noto">Noto Sans TC</option>
           <option value="segoe">Segoe UI</option>
           <option value="arial">Arial</option>
           <option value="georgia">Georgia (Serif)</option>
           <option value="serif-editorial">Editorial Serif</option>
-          <option value="mono">Monospace (端末風)</option>
-          <option value="meiryo">Meiryo</option>
+          <option value="mono">Monospace (終端機風)</option>
+          <option value="meiryo">Microsoft JhengHei (微軟正黑體)</option>
         </select>
       </div>
       <div class="form-row">
-        <label for="typeScale">タイポスケール</label>
+        <label for="typeScale">字級比例</label>
         <select id="typeScale">
           <option value="1.2">1.200 Minor Third</option>
           <option value="1.25" selected>1.250 Major Third</option>
@@ -888,7 +888,7 @@
         </select>
       </div>
       <div class="form-row">
-        <label for="fontSizeBase">基本文字サイズ</label>
+        <label for="fontSizeBase">基準字級</label>
         <select id="fontSizeBase">
           <option>12px</option><option>13px</option>
           <option>14px</option><option>15px</option>
@@ -897,72 +897,72 @@
         </select>
       </div>
       <p style="font-size:11px;color:#6b7280;margin:4px 0 8px;">
-        スケール×基本サイズから各要素の文字サイズを自動算出します。下で個別に上書きできます。
+        從比例 × 基準字級自動算出各元素字級,可在下方個別覆寫。
       </p>
 
       <details class="sub-section">
-        <summary>テキスト個別調整</summary>
+        <summary>文字個別調整</summary>
         <div class="sub-body">
           <details class="sub-nest">
-            <summary>ダッシュボード本体</summary>
+            <summary>儀表板主體</summary>
             <div class="form-row">
-              <label for="ts_title">タイトル</label>
+              <label for="ts_title">標題</label>
               <select id="ts_title" data-text></select>
             </div>
             <div class="form-row">
-              <label for="ts_subtitle">説明文</label>
+              <label for="ts_subtitle">說明文</label>
               <select id="ts_subtitle" data-text></select>
             </div>
           </details>
 
           <details class="sub-nest">
-            <summary>カード / KPI</summary>
+            <summary>卡片 / KPI</summary>
             <div class="form-row">
-              <label for="ts_cardTitle">カードタイトル</label>
+              <label for="ts_cardTitle">卡片標題</label>
               <select id="ts_cardTitle" data-text></select>
             </div>
             <div class="form-row">
-              <label for="ts_kpiLabel">KPIラベル</label>
+              <label for="ts_kpiLabel">KPI 標籤</label>
               <select id="ts_kpiLabel" data-text></select>
             </div>
             <div class="form-row">
-              <label for="ts_kpiValue">KPI数値</label>
+              <label for="ts_kpiValue">KPI 數值</label>
               <select id="ts_kpiValue" data-text></select>
             </div>
             <div class="form-row">
-              <label for="ts_kpiUnit">単位</label>
+              <label for="ts_kpiUnit">單位</label>
               <select id="ts_kpiUnit" data-text></select>
             </div>
             <div class="form-row">
-              <label for="ts_kpiDelta">増減（%）</label>
+              <label for="ts_kpiDelta">增減 (%)</label>
               <select id="ts_kpiDelta" data-text></select>
             </div>
           </details>
 
           <details class="sub-nest">
-            <summary>グラフ</summary>
+            <summary>圖表</summary>
             <div class="form-row">
-              <label for="ts_chartTitle">グラフタイトル</label>
+              <label for="ts_chartTitle">圖表標題</label>
               <select id="ts_chartTitle" data-text></select>
             </div>
             <div class="form-row">
-              <label for="ts_chartText">軸/データラベル</label>
+              <label for="ts_chartText">座標軸/資料標籤</label>
               <select id="ts_chartText" data-text></select>
             </div>
             <div class="form-row">
-              <label for="ts_chartLegend">凡例</label>
+              <label for="ts_chartLegend">圖例</label>
               <select id="ts_chartLegend" data-text></select>
             </div>
           </details>
 
           <details class="sub-nest">
-            <summary>テーブル</summary>
+            <summary>表格</summary>
             <div class="form-row">
-              <label for="ts_tableHead">ヘッダー</label>
+              <label for="ts_tableHead">表頭</label>
               <select id="ts_tableHead" data-text></select>
             </div>
             <div class="form-row">
-              <label for="ts_tableBody">本文</label>
+              <label for="ts_tableBody">內文</label>
               <select id="ts_tableBody" data-text></select>
             </div>
           </details>
@@ -970,22 +970,22 @@
       </details>
 
       <details class="sub-section">
-        <summary>ウェイト個別調整</summary>
+        <summary>字重個別調整</summary>
         <div class="sub-body">
           <div class="form-row">
-            <label for="fw_title">タイトル</label>
+            <label for="fw_title">標題</label>
             <select id="fw_title" data-weight></select>
           </div>
           <div class="form-row">
-            <label for="fw_kpiValue">KPI数値</label>
+            <label for="fw_kpiValue">KPI 數值</label>
             <select id="fw_kpiValue" data-weight></select>
           </div>
           <div class="form-row">
-            <label for="fw_cardTitle">カードタイトル</label>
+            <label for="fw_cardTitle">卡片標題</label>
             <select id="fw_cardTitle" data-weight></select>
           </div>
           <div class="form-row">
-            <label for="fw_tableBody">テーブル本文</label>
+            <label for="fw_tableBody">表格內文</label>
             <select id="fw_tableBody" data-weight></select>
           </div>
         </div>
@@ -993,9 +993,9 @@
     </section>
 
     <section class="settings-section">
-      <h2>レイアウト</h2>
+      <h2>版面</h2>
       <div class="form-row">
-        <label for="radius">角丸</label>
+        <label for="radius">圓角</label>
         <select id="radius">
           <option>0px</option><option>2px</option>
           <option>4px</option><option>6px</option>
@@ -1013,7 +1013,7 @@
         </select>
       </div>
       <div class="form-row">
-        <label for="maxWidth">最大幅</label>
+        <label for="maxWidth">最大寬度</label>
         <select id="maxWidth">
           <option>960px</option><option>1080px</option>
           <option>1200px</option><option>1440px</option>
@@ -1022,12 +1022,12 @@
     </section>
 
     <section class="settings-section">
-      <h2>出力</h2>
+      <h2>輸出</h2>
       <div class="action-buttons">
-        <button class="btn-primary" id="copyBtn">CSSをコピー</button>
-        <div class="copy-message" id="copyMsg">コピーしました</div>
-        <button class="btn-secondary" id="downloadBtn">CSSファイルをダウンロード</button>
-        <button class="btn-ghost" id="resetBtn">設定をリセット</button>
+        <button class="btn-primary" id="copyBtn">複製 CSS</button>
+        <div class="copy-message" id="copyMsg">已複製</div>
+        <button class="btn-secondary" id="downloadBtn">下載 CSS 檔</button>
+        <button class="btn-ghost" id="resetBtn">重設設定</button>
       </div>
     </section>
   </aside>
@@ -1035,20 +1035,20 @@
   <main class="preview-area">
     <div class="preview-frame">
       <div class="preview-tabs" id="previewTabs">
-        <button class="ptab active" data-pattern="dashboard" type="button">ダッシュボード</button>
-        <button class="ptab" data-pattern="landing"   type="button">ランディング</button>
-        <button class="ptab" data-pattern="admin"     type="button">管理画面</button>
-        <button class="ptab" data-pattern="blog"      type="button">ブログ</button>
-        <button class="ptab" data-pattern="saas"      type="button">SaaS設定</button>
+        <button class="ptab active" data-pattern="dashboard" type="button">儀表板</button>
+        <button class="ptab" data-pattern="landing"   type="button">著陸頁</button>
+        <button class="ptab" data-pattern="admin"     type="button">後台管理</button>
+        <button class="ptab" data-pattern="blog"      type="button">部落格</button>
+        <button class="ptab" data-pattern="saas"      type="button">SaaS 設定</button>
       </div>
 
-      <button class="density-badge" id="densityBadge" type="button" title="密度を切替">⇕ <span id="densityBadgeLabel">cozy</span></button>
+      <button class="density-badge" id="densityBadge" type="button" title="切換密度">⇕ <span id="densityBadgeLabel">cozy</span></button>
 
       <div class="ds-root" id="previewRoot">
         <div class="dashboard-container preview-pattern" data-pattern="dashboard">
         <header class="dashboard-header">
-          <h1 class="dashboard-title">経営ダッシュボード</h1>
-          <p class="dashboard-subtitle">2026年上半期 売上・KPIサマリー</p>
+          <h1 class="dashboard-title">經營儀表板</h1>
+          <p class="dashboard-subtitle">2026 年上半年 銷售・KPI 摘要</p>
         </header>
 
         <section class="section">
@@ -1062,7 +1062,7 @@
               </div>
             </div>
             <div class="card kpi-card">
-              <div class="kpi-label">総契約数</div>
+              <div class="kpi-label">總合約數</div>
               <div class="kpi-value">12,450</div>
               <div class="kpi-trend">
                 <span class="text-positive kpi-delta">+5.1%</span>
@@ -1083,7 +1083,7 @@
         <section class="section">
           <div class="grid grid-2">
             <div class="card">
-              <div class="card-title">月次GMV × CVR（コンボ）</div>
+              <div class="card-title">月度 GMV × CVR (組合圖)</div>
               <div class="chart-box" id="chartCombo"></div>
               <div class="chart-legend">
                 <span><i class="legend-bar"></i>GMV</span>
@@ -1091,7 +1091,7 @@
               </div>
             </div>
             <div class="card">
-              <div class="card-title">累積売上トレンド（エリア）</div>
+              <div class="card-title">累積銷售趨勢 (區域圖)</div>
               <div class="chart-box" id="chartArea"></div>
             </div>
           </div>
@@ -1100,11 +1100,11 @@
         <section class="section">
           <div class="grid grid-2">
             <div class="card">
-              <div class="card-title">カテゴリ別売上（棒）</div>
+              <div class="card-title">分類別銷售 (長條圖)</div>
               <div class="chart-box" id="chartBar"></div>
             </div>
             <div class="card">
-              <div class="card-title">チャネル構成比（ドーナツ）</div>
+              <div class="card-title">通路組成比 (環圈圖)</div>
               <div class="chart-box" id="chartDonut"></div>
             </div>
           </div>
@@ -1113,16 +1113,16 @@
         <section class="section">
           <div class="grid grid-2">
             <div class="card">
-              <div class="card-title">月次×チャネル（積み上げ縦）</div>
+              <div class="card-title">月度 × 通路 (堆疊直條)</div>
               <div class="chart-box" id="chartStacked"></div>
               <div class="chart-legend">
-                <span><i class="legend-sw" style="background:var(--color-chart)"></i>EC</span>
-                <span><i class="legend-sw" style="background:var(--color-positive)"></i>TEL</span>
-                <span><i class="legend-sw" style="background:var(--color-warning)"></i>店舗</span>
+                <span><i class="legend-sw" style="background:var(--color-chart)"></i>電商</span>
+                <span><i class="legend-sw" style="background:var(--color-positive)"></i>電銷</span>
+                <span><i class="legend-sw" style="background:var(--color-warning)"></i>門市</span>
               </div>
             </div>
             <div class="card">
-              <div class="card-title">部門別予実（積み上げ横）</div>
+              <div class="card-title">部門別預算對實際 (堆疊橫條)</div>
               <div class="chart-box" id="chartStackedH"></div>
             </div>
           </div>
@@ -1130,36 +1130,36 @@
 
         <section class="section">
           <div class="card">
-            <div class="card-title">ステータス・アクション</div>
-            <p class="text-muted mb-16">バッジとボタン例。</p>
+            <div class="card-title">狀態・操作</div>
+            <p class="text-muted mb-16">標籤與按鈕範例。</p>
             <span class="badge badge-primary">主要</span>
             <span class="badge badge-positive">良好</span>
             <span class="badge badge-warning">注意</span>
             <span class="badge badge-negative">未達</span>
             <div class="mt-24">
-              <button class="button-primary">レポートを発行</button>
-              <button class="button-secondary">詳細を見る</button>
+              <button class="button-primary">發布報表</button>
+              <button class="button-secondary">查看詳情</button>
             </div>
           </div>
         </section>
 
         <section class="section">
           <div class="card">
-            <div class="card-title">月別売上サマリー</div>
+            <div class="card-title">月別銷售摘要</div>
             <table class="data-table">
               <thead>
                 <tr>
-                  <th>月</th>
-                  <th class="text-right">EC売上</th>
-                  <th class="text-right">TEL売上</th>
+                  <th>月份</th>
+                  <th class="text-right">電商銷售</th>
+                  <th class="text-right">電銷銷售</th>
                   <th class="text-right">合計</th>
-                  <th>評価</th>
+                  <th>評價</th>
                 </tr>
               </thead>
               <tbody>
-                <tr><td>4月</td><td class="text-right">3.2M</td><td class="text-right">2.8M</td><td class="text-right">6.0M</td><td><span class="badge badge-positive">達成</span></td></tr>
-                <tr><td>5月</td><td class="text-right">3.5M</td><td class="text-right">2.6M</td><td class="text-right">6.1M</td><td><span class="badge badge-warning">注意</span></td></tr>
-                <tr><td>6月</td><td class="text-right">3.8M</td><td class="text-right">3.1M</td><td class="text-right">6.9M</td><td><span class="badge badge-positive">良好</span></td></tr>
+                <tr><td>4 月</td><td class="text-right">3.2M</td><td class="text-right">2.8M</td><td class="text-right">6.0M</td><td><span class="badge badge-positive">達標</span></td></tr>
+                <tr><td>5 月</td><td class="text-right">3.5M</td><td class="text-right">2.6M</td><td class="text-right">6.1M</td><td><span class="badge badge-warning">注意</span></td></tr>
+                <tr><td>6 月</td><td class="text-right">3.8M</td><td class="text-right">3.1M</td><td class="text-right">6.9M</td><td><span class="badge badge-positive">良好</span></td></tr>
               </tbody>
             </table>
           </div>
@@ -1168,31 +1168,31 @@
         <section class="section">
           <div class="grid grid-2">
             <div class="insight-box">
-              <strong>インサイト</strong><br>
-              H2以降、EC CVRの改善によりGMVが回復傾向です。
+              <strong>洞察</strong><br>
+              H2 以後,電商 CVR 改善帶動 GMV 回升趨勢。
             </div>
             <div class="risk-box">
-              <strong>リスク・注意</strong><br>
-              TEL成約率は繁忙期依存が残っており、継続的な改善が必要です。
+              <strong>風險・注意</strong><br>
+              電銷成交率仍受旺季影響,需持續優化。
             </div>
           </div>
         </section>
         </div><!-- /pattern: dashboard -->
 
         <!-- ============================================
-             Pattern: ランディング
+             Pattern: 著陸頁
              ============================================ -->
         <div class="dashboard-container preview-pattern" data-pattern="landing" hidden>
           <section class="section" style="text-align:center; padding-top: var(--space-xl);">
             <h1 class="dashboard-title" style="font-size: calc(var(--fs-title) * 1.4); line-height:1.2;">
-              ビジネスを次の段階へ
+              將業務推向下一階段
             </h1>
             <p class="dashboard-subtitle" style="font-size: var(--fs-base); max-width: 560px; margin: var(--space-md) auto;">
-              AIネイティブな分析プラットフォームで、データドリブンな意思決定を加速します。
+              以 AI 原生分析平台,加速資料驅動的決策。
             </p>
             <div class="mt-24">
-              <button class="button-primary">無料で始める</button>
-              <button class="button-secondary">資料をダウンロード</button>
+              <button class="button-primary">免費開始使用</button>
+              <button class="button-secondary">下載資料</button>
             </div>
           </section>
 
@@ -1200,18 +1200,18 @@
             <div class="grid grid-3">
               <div class="card">
                 <span class="badge badge-primary">高速</span>
-                <div class="card-title mt-16">秒単位の分析</div>
-                <p class="text-muted">大規模データを並列処理で瞬時に集計。意思決定の遅延をゼロに。</p>
+                <div class="card-title mt-16">秒級分析</div>
+                <p class="text-muted">以平行處理瞬間彙整大規模資料,讓決策零延遲。</p>
               </div>
               <div class="card">
                 <span class="badge badge-positive">自動化</span>
-                <div class="card-title mt-16">レポート自動生成</div>
-                <p class="text-muted">毎日・毎週の経営レポートを定時にメール配信。手作業ゼロ。</p>
+                <div class="card-title mt-16">報表自動產生</div>
+                <p class="text-muted">每日、每週的經營報表定時 Email 寄送,零人工作業。</p>
               </div>
               <div class="card">
-                <span class="badge badge-warning">エンタープライズ</span>
+                <span class="badge badge-warning">企業級</span>
                 <div class="card-title mt-16">SOC2 / ISO 27001</div>
-                <p class="text-muted">国際標準のセキュリティ認証を取得。大企業の調達基準にも対応。</p>
+                <p class="text-muted">取得國際資安認證,符合大型企業採購標準。</p>
               </div>
             </div>
           </section>
@@ -1219,15 +1219,15 @@
           <section class="section">
             <div class="card insight-box" style="border-left-width: 0; padding: var(--space-xl);">
               <p style="font-size: calc(var(--fs-base) * 1.2); line-height: 1.7; font-style: italic;">
-                "導入から3週間で、月次レポート作成にかけていた工数を80%削減できました。
-                経営会議の質も大きく変わりました。"
+                「導入後僅 3 週,月度報表製作工時即減少 80%。
+                經營會議的品質也有顯著改變。」
               </p>
-              <div class="mt-16 text-muted">— 田中 太郎、株式会社ACME 取締役CFO</div>
+              <div class="mt-16 text-muted">— 王志明,ACME 股份有限公司 財務長</div>
             </div>
           </section>
 
           <section class="section" style="text-align:center;">
-            <p class="text-muted mb-16">信頼している企業</p>
+            <p class="text-muted mb-16">值得信賴的企業</p>
             <div style="display:flex; gap: var(--space-lg); justify-content:center; flex-wrap:wrap; opacity: 0.7;">
               <span class="text-muted" style="font-weight:700;">ACME</span>
               <span class="text-muted" style="font-weight:700;">Globex</span>
@@ -1239,33 +1239,33 @@
         </div><!-- /pattern: landing -->
 
         <!-- ============================================
-             Pattern: 管理画面
+             Pattern: 後台管理
              ============================================ -->
         <div class="dashboard-container preview-pattern" data-pattern="admin" hidden>
           <header class="dashboard-header">
-            <h1 class="dashboard-title">ユーザー管理</h1>
-            <p class="dashboard-subtitle">登録ユーザー一覧と権限管理</p>
+            <h1 class="dashboard-title">使用者管理</h1>
+            <p class="dashboard-subtitle">註冊使用者列表與權限管理</p>
           </header>
 
           <section class="section">
             <div class="grid grid-4">
               <div class="card kpi-card">
-                <div class="kpi-label">アクティブ</div>
+                <div class="kpi-label">活躍</div>
                 <div class="kpi-value">8,452</div>
                 <div class="text-positive kpi-delta">+2.4%</div>
               </div>
               <div class="card kpi-card">
-                <div class="kpi-label">本日の新規</div>
+                <div class="kpi-label">本日新增</div>
                 <div class="kpi-value">+124</div>
                 <div class="text-positive kpi-delta">+18%</div>
               </div>
               <div class="card kpi-card">
-                <div class="kpi-label">アカウント停止</div>
+                <div class="kpi-label">帳號停權</div>
                 <div class="kpi-value">3</div>
                 <div class="text-muted kpi-delta">±0</div>
               </div>
               <div class="card kpi-card">
-                <div class="kpi-label">未認証</div>
+                <div class="kpi-label">未驗證</div>
                 <div class="kpi-value">42</div>
                 <div class="text-negative kpi-delta">+5</div>
               </div>
@@ -1274,23 +1274,23 @@
 
           <section class="section">
             <div class="card">
-              <div class="card-title">ユーザー一覧</div>
+              <div class="card-title">使用者列表</div>
               <div class="mb-16">
-                <button class="button-primary">新規招待</button>
-                <button class="button-secondary">CSV エクスポート</button>
+                <button class="button-primary">新增邀請</button>
+                <button class="button-secondary">匯出 CSV</button>
               </div>
               <table class="data-table">
                 <thead>
                   <tr>
-                    <th>名前</th><th>メール</th><th>ロール</th><th>最終ログイン</th><th>状態</th>
+                    <th>姓名</th><th>Email</th><th>角色</th><th>最後登入</th><th>狀態</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr><td>佐藤 花子</td><td>sato@example.com</td><td><span class="badge badge-primary">Admin</span></td><td>2分前</td><td><span class="badge badge-positive">アクティブ</span></td></tr>
-                  <tr><td>鈴木 一郎</td><td>suzuki@example.com</td><td>Editor</td><td>1時間前</td><td><span class="badge badge-positive">アクティブ</span></td></tr>
-                  <tr><td>田中 次郎</td><td>tanaka@example.com</td><td>Viewer</td><td>3日前</td><td><span class="badge badge-warning">非アクティブ</span></td></tr>
-                  <tr><td>山田 三郎</td><td>yamada@example.com</td><td><span class="badge badge-primary">Admin</span></td><td>—</td><td><span class="badge badge-negative">停止</span></td></tr>
-                  <tr><td>高橋 四郎</td><td>takahashi@example.com</td><td>Editor</td><td>5分前</td><td><span class="badge badge-positive">アクティブ</span></td></tr>
+                  <tr><td>陳怡君</td><td>chen@example.com</td><td><span class="badge badge-primary">Admin</span></td><td>2 分鐘前</td><td><span class="badge badge-positive">活躍</span></td></tr>
+                  <tr><td>林志偉</td><td>lin@example.com</td><td>Editor</td><td>1 小時前</td><td><span class="badge badge-positive">活躍</span></td></tr>
+                  <tr><td>張惠雯</td><td>chang@example.com</td><td>Viewer</td><td>3 天前</td><td><span class="badge badge-warning">非活躍</span></td></tr>
+                  <tr><td>黃柏翰</td><td>huang@example.com</td><td><span class="badge badge-primary">Admin</span></td><td>—</td><td><span class="badge badge-negative">停權</span></td></tr>
+                  <tr><td>吳承恩</td><td>wu@example.com</td><td>Editor</td><td>5 分鐘前</td><td><span class="badge badge-positive">活躍</span></td></tr>
                 </tbody>
               </table>
             </div>
@@ -1298,32 +1298,32 @@
         </div><!-- /pattern: admin -->
 
         <!-- ============================================
-             Pattern: ブログ
+             Pattern: 部落格
              ============================================ -->
         <div class="dashboard-container preview-pattern" data-pattern="blog" hidden>
           <header class="dashboard-header">
-            <h1 class="dashboard-title">エンジニアリングブログ</h1>
-            <p class="dashboard-subtitle">最新の技術記事と社内事例</p>
+            <h1 class="dashboard-title">工程部落格</h1>
+            <p class="dashboard-subtitle">最新技術文章與內部案例</p>
           </header>
 
           <section class="section">
             <div class="card">
               <div class="text-muted" style="font-size: var(--fs-chart-legend);">
-                Featured · 2026年5月7日 · 田中 太郎
+                精選 · 2026 年 5 月 7 日 · 王志明
               </div>
               <div class="card-title" style="font-size: calc(var(--fs-card-title) * 1.5); margin: var(--space-sm) 0 var(--space-md);">
-                Rust と WASM で実現した高速ダッシュボード基盤
+                以 Rust 與 WASM 打造的高速儀表板平台
               </div>
               <p style="line-height: 1.7;">
-                従来 Node.js で実装していた集計処理を Rust + WASM に移行し、レスポンス速度を平均
-                <strong>45倍</strong> 改善した取り組みを紹介します。アーキテクチャの選定理由から、
-                移行時に直面した技術課題、運用後の数値まで網羅的に解説します。
+                介紹我們將原本以 Node.js 實作的彙整流程,遷移到 Rust + WASM 後,
+                平均回應速度提升 <strong>45 倍</strong> 的歷程。從架構選型理由、
+                遷移過程遭遇的技術挑戰,到上線後的實測數據,完整解析。
               </p>
               <div class="mt-24">
                 <span class="badge badge-primary">Rust</span>
                 <span class="badge badge-primary">WASM</span>
                 <span class="badge badge-primary">Performance</span>
-                <span class="badge">15分</span>
+                <span class="badge">15 分鐘</span>
               </div>
             </div>
           </section>
@@ -1331,30 +1331,30 @@
           <section class="section">
             <div class="grid grid-3">
               <div class="card">
-                <div class="text-muted" style="font-size: var(--fs-chart-legend);">2026年5月3日</div>
-                <div class="card-title" style="margin-top: 6px;">CI/CDを30秒短縮した話</div>
-                <p class="text-muted mt-16">並列化と差分ビルド戦略で、PR サイクルを大幅短縮。</p>
+                <div class="text-muted" style="font-size: var(--fs-chart-legend);">2026 年 5 月 3 日</div>
+                <div class="card-title" style="margin-top: 6px;">CI/CD 縮短 30 秒的祕訣</div>
+                <p class="text-muted mt-16">透過平行化與差異建置策略,大幅縮短 PR 週期。</p>
                 <div class="mt-16">
                   <span class="badge">DevOps</span>
-                  <span class="badge">5分</span>
+                  <span class="badge">5 分鐘</span>
                 </div>
               </div>
               <div class="card">
-                <div class="text-muted" style="font-size: var(--fs-chart-legend);">2026年4月28日</div>
-                <div class="card-title" style="margin-top: 6px;">PostgreSQL 16 への移行記録</div>
-                <p class="text-muted mt-16">ダウンタイム0で本番移行を実現したプロセスを公開。</p>
+                <div class="text-muted" style="font-size: var(--fs-chart-legend);">2026 年 4 月 28 日</div>
+                <div class="card-title" style="margin-top: 6px;">遷移到 PostgreSQL 16 的紀錄</div>
+                <p class="text-muted mt-16">公開零停機完成正式環境遷移的完整流程。</p>
                 <div class="mt-16">
                   <span class="badge">Database</span>
-                  <span class="badge">12分</span>
+                  <span class="badge">12 分鐘</span>
                 </div>
               </div>
               <div class="card">
-                <div class="text-muted" style="font-size: var(--fs-chart-legend);">2026年4月20日</div>
-                <div class="card-title" style="margin-top: 6px;">SREチームから見た開発文化</div>
-                <p class="text-muted mt-16">中途入社1ヶ月のエンジニアから見た弊社の開発フロー。</p>
+                <div class="text-muted" style="font-size: var(--fs-chart-legend);">2026 年 4 月 20 日</div>
+                <div class="card-title" style="margin-top: 6px;">從 SRE 視角看開發文化</div>
+                <p class="text-muted mt-16">轉職入社一個月的工程師眼中的我們的開發流程。</p>
                 <div class="mt-16">
                   <span class="badge">Culture</span>
-                  <span class="badge">8分</span>
+                  <span class="badge">8 分鐘</span>
                 </div>
               </div>
             </div>
@@ -1367,27 +1367,27 @@
         <div class="dashboard-container preview-pattern" data-pattern="saas" hidden>
           <header class="dashboard-header">
             <h1 class="dashboard-title">設定</h1>
-            <p class="dashboard-subtitle">アカウント・通知・セキュリティ・課金</p>
+            <p class="dashboard-subtitle">帳號・通知・安全性・帳務</p>
           </header>
 
           <section class="section">
             <div class="card">
-              <div class="card-title">プロフィール</div>
+              <div class="card-title">個人資料</div>
               <div style="display:flex; justify-content:space-between; padding: var(--row-pad) 0; border-bottom: 1px solid var(--color-border);">
-                <span class="text-muted">表示名</span>
-                <span>山田 太郎</span>
+                <span class="text-muted">顯示名稱</span>
+                <span>李大明</span>
               </div>
               <div style="display:flex; justify-content:space-between; padding: var(--row-pad) 0; border-bottom: 1px solid var(--color-border);">
-                <span class="text-muted">メールアドレス</span>
-                <span>yamada@example.com</span>
+                <span class="text-muted">電子郵件</span>
+                <span>li@example.com</span>
               </div>
               <div style="display:flex; justify-content:space-between; padding: var(--row-pad) 0;">
-                <span class="text-muted">タイムゾーン</span>
-                <span>Asia/Tokyo (UTC+9)</span>
+                <span class="text-muted">時區</span>
+                <span>Asia/Taipei (UTC+8)</span>
               </div>
               <div class="mt-16">
-                <button class="button-primary">変更を保存</button>
-                <button class="button-secondary">キャンセル</button>
+                <button class="button-primary">儲存變更</button>
+                <button class="button-secondary">取消</button>
               </div>
             </div>
           </section>
@@ -1397,22 +1397,22 @@
               <div class="card-title">通知</div>
               <div style="display:flex; justify-content:space-between; align-items:center; padding: var(--row-pad) 0; border-bottom: 1px solid var(--color-border);">
                 <div>
-                  <div>メール通知</div>
-                  <div class="text-muted" style="font-size: var(--fs-chart-legend);">日次サマリーをメールで受信</div>
+                  <div>Email 通知</div>
+                  <div class="text-muted" style="font-size: var(--fs-chart-legend);">每日摘要以 Email 寄送</div>
                 </div>
                 <span class="badge badge-positive">ON</span>
               </div>
               <div style="display:flex; justify-content:space-between; align-items:center; padding: var(--row-pad) 0; border-bottom: 1px solid var(--color-border);">
                 <div>
                   <div>Slack 通知</div>
-                  <div class="text-muted" style="font-size: var(--fs-chart-legend);">アラート発生時に Slack へ通知</div>
+                  <div class="text-muted" style="font-size: var(--fs-chart-legend);">告警觸發時推送到 Slack</div>
                 </div>
                 <span class="badge badge-positive">ON</span>
               </div>
               <div style="display:flex; justify-content:space-between; align-items:center; padding: var(--row-pad) 0;">
                 <div>
-                  <div>Push 通知</div>
-                  <div class="text-muted" style="font-size: var(--fs-chart-legend);">モバイルアプリへの即時通知</div>
+                  <div>推播通知</div>
+                  <div class="text-muted" style="font-size: var(--fs-chart-legend);">即時推送至行動 App</div>
                 </div>
                 <span class="badge">OFF</span>
               </div>
@@ -1421,20 +1421,20 @@
 
           <section class="section">
             <div class="card">
-              <div class="card-title">プラン</div>
+              <div class="card-title">方案</div>
               <div class="grid grid-2">
                 <div>
-                  <div class="text-muted" style="font-size: var(--fs-chart-legend);">現在のプラン</div>
+                  <div class="text-muted" style="font-size: var(--fs-chart-legend);">目前方案</div>
                   <div class="kpi-value" style="font-size: calc(var(--fs-kpi-value) * 0.7);">Pro</div>
                 </div>
                 <div>
-                  <div class="text-muted" style="font-size: var(--fs-chart-legend);">月額</div>
+                  <div class="text-muted" style="font-size: var(--fs-chart-legend);">月費</div>
                   <div class="kpi-value" style="font-size: calc(var(--fs-kpi-value) * 0.7);">$49</div>
                 </div>
               </div>
               <div class="mt-24">
-                <button class="button-primary">プランを変更</button>
-                <button class="button-secondary">請求書をダウンロード</button>
+                <button class="button-primary">變更方案</button>
+                <button class="button-secondary">下載發票</button>
               </div>
             </div>
           </section>
@@ -1445,7 +1445,7 @@
 
     <div class="css-output">
       <div class="css-output-header">
-        <span>生成CSS（dashboard-system.css）</span>
+        <span>產生的 CSS (dashboard-system.css)</span>
         <span id="cssLineCount" style="font-weight:400;opacity:0.7;"></span>
       </div>
       <pre><code id="cssCode"></code></pre>
@@ -1468,7 +1468,7 @@ const FONT_STACKS = {
   georgia:   'Georgia, "Times New Roman", "Yu Mincho", "游明朝", serif',
   'serif-editorial': '"Playfair Display", "Tiempos Text", Georgia, "Times New Roman", serif',
   mono:      '"SF Mono", "JetBrains Mono", Monaco, Menlo, Consolas, "Courier New", monospace',
-  meiryo:    'Meiryo, "メイリオ", sans-serif'
+  meiryo:    '"Microsoft JhengHei", "微軟正黑體", "PingFang TC", "Heiti TC", sans-serif'
 };
 const DENSITY_MAP = {
   compact:    { xs:'4px', sm:'8px',  md:'12px', lg:'16px', xl:'24px', row:'8px' },
@@ -1476,132 +1476,132 @@ const DENSITY_MAP = {
   comfortable:{ xs:'8px', sm:'16px', md:'24px', lg:'32px', xl:'48px', row:'16px' }
 };
 
-/* テーマ */
+/* 主題 */
 const THEMES = {
   // ----- 王道 -----
-  executive: { group:'王道', name:'Executive Blue', desc:'経営報告・王道', colorMain:'#2563eb',
+  executive: { group:'經典', name:'Executive Blue', desc:'經營報告・經典', colorMain:'#2563eb',
     colorPositive:'#059669', colorNegative:'#dc2626', colorWarning:'#d97706',
     light:{ bg:'#f7f8fa', card:'#ffffff', text:'#0f172a', muted:'#64748b', border:'#e2e8f0' }},
-  finance: { group:'王道', name:'Finance Navy', desc:'金融・信頼感', colorMain:'#1e40af',
+  finance: { group:'經典', name:'Finance Navy', desc:'金融・信賴感', colorMain:'#1e40af',
     colorPositive:'#065f46', colorNegative:'#991b1b', colorWarning:'#92400e',
     light:{ bg:'#f5f7fb', card:'#ffffff', text:'#0f172a', muted:'#475569', border:'#dbe2ec' }},
-  minimal: { group:'王道', name:'Minimal Gray', desc:'装飾控えめ・シック', colorMain:'#374151',
+  minimal: { group:'經典', name:'Minimal Gray', desc:'裝飾低調・簡約', colorMain:'#374151',
     colorPositive:'#059669', colorNegative:'#dc2626', colorWarning:'#d97706',
     light:{ bg:'#fafafa', card:'#ffffff', text:'#1f2937', muted:'#9ca3af', border:'#e5e7eb' }},
-  monochrome: { group:'王道', name:'Monochrome', desc:'黒基調・印刷向け', colorMain:'#111827',
+  monochrome: { group:'經典', name:'Monochrome', desc:'黑色基調・印刷導向', colorMain:'#111827',
     colorPositive:'#1f2937', colorNegative:'#7f1d1d', colorWarning:'#78350f',
     light:{ bg:'#ffffff', card:'#ffffff', text:'#111827', muted:'#6b7280', border:'#d1d5db' }},
 
-  // ----- パステル -----
-  pastelSky: { group:'パステル', name:'Pastel Sky', desc:'澄んだ空・爽やか', colorMain:'#7dd3fc',
+  // ----- 粉彩 -----
+  pastelSky: { group:'粉彩', name:'Pastel Sky', desc:'澄澈天空・清爽', colorMain:'#7dd3fc',
     colorPositive:'#86efac', colorNegative:'#fca5a5', colorWarning:'#fcd34d',
     light:{ bg:'#f0f9ff', card:'#ffffff', text:'#0c4a6e', muted:'#7c93a8', border:'#dbeafe' }},
-  pastelRose: { group:'パステル', name:'Pastel Rose', desc:'やさしいピンク', colorMain:'#f9a8d4',
+  pastelRose: { group:'粉彩', name:'Pastel Rose', desc:'溫柔粉色', colorMain:'#f9a8d4',
     colorPositive:'#86efac', colorNegative:'#fca5a5', colorWarning:'#fcd34d',
     light:{ bg:'#fff1f6', card:'#ffffff', text:'#831843', muted:'#9d7585', border:'#fce7f3' }},
-  pastelLemon: { group:'パステル', name:'Pastel Lemon', desc:'明るく親しみやすい', colorMain:'#fcd34d',
+  pastelLemon: { group:'粉彩', name:'Pastel Lemon', desc:'明亮親切', colorMain:'#fcd34d',
     colorPositive:'#86efac', colorNegative:'#fca5a5', colorWarning:'#fb923c',
     light:{ bg:'#fefce8', card:'#ffffff', text:'#713f12', muted:'#a08c5a', border:'#fef3c7' }},
 
-  // ----- マカロン -----
-  macaronMint: { group:'マカロン', name:'Macaron Mint', desc:'清涼・健康', colorMain:'#6ee7b7',
+  // ----- 馬卡龍 -----
+  macaronMint: { group:'馬卡龍', name:'Macaron Mint', desc:'清涼・健康', colorMain:'#6ee7b7',
     colorPositive:'#34d399', colorNegative:'#fb7185', colorWarning:'#fbbf24',
     light:{ bg:'#f0fdf4', card:'#ffffff', text:'#064e3b', muted:'#6b8e7f', border:'#d1fae5' }},
-  macaronPeach: { group:'マカロン', name:'Macaron Peach', desc:'温かみ・親近感', colorMain:'#fdba74',
+  macaronPeach: { group:'馬卡龍', name:'Macaron Peach', desc:'溫暖・親近', colorMain:'#fdba74',
     colorPositive:'#86efac', colorNegative:'#fb7185', colorWarning:'#fbbf24',
     light:{ bg:'#fff7ed', card:'#ffffff', text:'#7c2d12', muted:'#a08068', border:'#fed7aa' }},
-  macaronLavender: { group:'マカロン', name:'Macaron Lavender', desc:'上品・落ち着き', colorMain:'#c4b5fd',
+  macaronLavender: { group:'馬卡龍', name:'Macaron Lavender', desc:'優雅・沉穩', colorMain:'#c4b5fd',
     colorPositive:'#86efac', colorNegative:'#fda4af', colorWarning:'#fcd34d',
     light:{ bg:'#f5f3ff', card:'#ffffff', text:'#4c1d95', muted:'#8b80a8', border:'#ddd6fe' }},
 
-  // ----- ビビッド -----
-  vividOcean: { group:'ビビッド', name:'Vivid Ocean', desc:'鮮やか・若々しい', colorMain:'#06b6d4',
+  // ----- 鮮豔 -----
+  vividOcean: { group:'鮮豔', name:'Vivid Ocean', desc:'鮮明・年輕活力', colorMain:'#06b6d4',
     colorPositive:'#10b981', colorNegative:'#ef4444', colorWarning:'#f59e0b',
     light:{ bg:'#ecfeff', card:'#ffffff', text:'#164e63', muted:'#64748b', border:'#cffafe' }},
-  sunsetCoral: { group:'ビビッド', name:'Sunset Coral', desc:'情熱・エネルギッシュ', colorMain:'#fb7185',
+  sunsetCoral: { group:'鮮豔', name:'Sunset Coral', desc:'熱情・活力四射', colorMain:'#fb7185',
     colorPositive:'#10b981', colorNegative:'#dc2626', colorWarning:'#f59e0b',
     light:{ bg:'#fff1f2', card:'#ffffff', text:'#881337', muted:'#7c5564', border:'#ffe4e6' }},
 
-  // ----- ブランド風（テック・SaaS） -----
-  apple: { group:'ブランド風（テック）', name:'Apple', desc:'iOS的・クリーン', colorMain:'#007aff',
+  // ----- 品牌風 (科技・SaaS) -----
+  apple: { group:'品牌風 (科技)', name:'Apple', desc:'iOS 風・乾淨', colorMain:'#007aff',
     colorPositive:'#34c759', colorNegative:'#ff3b30', colorWarning:'#ff9500',
     light:{ bg:'#f5f5f7', card:'#ffffff', text:'#1d1d1f', muted:'#86868b', border:'#d2d2d7' },
     fontFamily:'system', styleVariant:'soft', cardAccent:'none', radius:'16px', density:'cozy' },
-  anthropic: { group:'ブランド風（テック）', name:'Anthropic', desc:'クリーム×コーラル', colorMain:'#c96442',
+  anthropic: { group:'品牌風 (科技)', name:'Anthropic', desc:'奶油 × 珊瑚', colorMain:'#c96442',
     colorPositive:'#5e8a4a', colorNegative:'#9b3a2e', colorWarning:'#b87333',
     light:{ bg:'#faf9f5', card:'#ffffff', text:'#181818', muted:'#6b6862', border:'#e8e4dc' },
     fontFamily:'serif-editorial', styleVariant:'editorial', cardAccent:'none', radius:'4px', density:'comfortable' },
-  stripe: { group:'ブランド風（テック）', name:'Stripe', desc:'インディゴ・洗練', colorMain:'#635bff',
+  stripe: { group:'品牌風 (科技)', name:'Stripe', desc:'靛藍・精緻', colorMain:'#635bff',
     colorPositive:'#0a8a5c', colorNegative:'#df1b41', colorWarning:'#bb6a00',
     light:{ bg:'#f6f9fc', card:'#ffffff', text:'#0a2540', muted:'#425466', border:'#e6e6f0' },
     fontFamily:'inter', styleVariant:'soft', cardAccent:'side-thin', radius:'12px', density:'cozy' },
-  linear: { group:'ブランド風（テック）', name:'Linear', desc:'紫×グレー・端正', colorMain:'#5e6ad2',
+  linear: { group:'品牌風 (科技)', name:'Linear', desc:'紫 × 灰・端整', colorMain:'#5e6ad2',
     colorPositive:'#10b981', colorNegative:'#eb5757', colorWarning:'#f2994a',
     light:{ bg:'#f7f8fa', card:'#ffffff', text:'#08090a', muted:'#6c6f7f', border:'#e0e1e6' },
     fontFamily:'inter', styleVariant:'standard', cardAccent:'none', radius:'8px', density:'compact' },
-  notion: { group:'ブランド風（テック）', name:'Notion', desc:'温かみ・余白', colorMain:'#2f3437',
+  notion: { group:'品牌風 (科技)', name:'Notion', desc:'溫暖・留白', colorMain:'#2f3437',
     colorPositive:'#0f7b6c', colorNegative:'#e03e3e', colorWarning:'#d9730d',
     light:{ bg:'#ffffff', card:'#ffffff', text:'#37352f', muted:'#9b9a97', border:'#e9e9e7' },
     fontFamily:'system', styleVariant:'standard', cardAccent:'none', radius:'4px', density:'comfortable' },
-  vercel: { group:'ブランド風（テック）', name:'Vercel', desc:'純黒×純白', colorMain:'#000000',
+  vercel: { group:'品牌風 (科技)', name:'Vercel', desc:'純黑 × 純白', colorMain:'#000000',
     colorPositive:'#0070f3', colorNegative:'#e00', colorWarning:'#f5a623',
     light:{ bg:'#fafafa', card:'#ffffff', text:'#000000', muted:'#666666', border:'#eaeaea' },
     fontFamily:'inter', styleVariant:'standard', cardAccent:'none', radius:'8px', density:'cozy' },
-  github: { group:'ブランド風（テック）', name:'GitHub', desc:'グリーン×ニュートラル', colorMain:'#2da44e',
+  github: { group:'品牌風 (科技)', name:'GitHub', desc:'綠色 × 中性', colorMain:'#2da44e',
     colorPositive:'#1a7f37', colorNegative:'#cf222e', colorWarning:'#9a6700',
     light:{ bg:'#ffffff', card:'#ffffff', text:'#1f2328', muted:'#656d76', border:'#d0d7de' },
     fontFamily:'system', styleVariant:'standard', cardAccent:'none', radius:'8px', density:'cozy' },
-  slack: { group:'ブランド風（テック）', name:'Slack', desc:'オーベルジン', colorMain:'#4a154b',
+  slack: { group:'品牌風 (科技)', name:'Slack', desc:'茄紫色', colorMain:'#4a154b',
     colorPositive:'#007a5a', colorNegative:'#e01e5a', colorWarning:'#ecb22e',
     light:{ bg:'#ffffff', card:'#ffffff', text:'#1d1c1d', muted:'#616061', border:'#dddddd' },
     fontFamily:'helvetica', styleVariant:'standard', cardAccent:'side-thick', radius:'8px', density:'cozy' },
-  discord: { group:'ブランド風（テック）', name:'Discord', desc:'紫×ライト・親しみ', colorMain:'#5865f2',
+  discord: { group:'品牌風 (科技)', name:'Discord', desc:'紫 × 明亮・親切', colorMain:'#5865f2',
     colorPositive:'#23a55a', colorNegative:'#f23f43', colorWarning:'#f0b232',
     light:{ bg:'#f2f3f5', card:'#ffffff', text:'#060607', muted:'#5c5e66', border:'#e3e5e8' },
     fontFamily:'rounded', styleVariant:'soft', cardAccent:'none', radius:'12px', density:'cozy' },
-  tailwind: { group:'ブランド風（テック）', name:'Tailwind', desc:'シアン×開発者', colorMain:'#06b6d4',
+  tailwind: { group:'品牌風 (科技)', name:'Tailwind', desc:'青色 × 開發者', colorMain:'#06b6d4',
     colorPositive:'#10b981', colorNegative:'#ef4444', colorWarning:'#f59e0b',
     light:{ bg:'#f8fafc', card:'#ffffff', text:'#0f172a', muted:'#64748b', border:'#e2e8f0' },
     fontFamily:'inter', styleVariant:'soft', cardAccent:'gradient', radius:'12px', density:'cozy' },
-  material: { group:'ブランド風（テック）', name:'Material', desc:'Google・エレベーション', colorMain:'#1976d2',
+  material: { group:'品牌風 (科技)', name:'Material', desc:'Google・層次感', colorMain:'#1976d2',
     colorPositive:'#388e3c', colorNegative:'#d32f2f', colorWarning:'#f57c00',
     light:{ bg:'#fafafa', card:'#ffffff', text:'#212121', muted:'#757575', border:'#e0e0e0' },
     fontFamily:'system', styleVariant:'soft', cardAccent:'top-thin', radius:'4px', density:'cozy' },
-  aws: { group:'ブランド風（テック）', name:'AWS', desc:'オレンジ×ネイビー', colorMain:'#ff9900',
+  aws: { group:'品牌風 (科技)', name:'AWS', desc:'橙色 × 海軍藍', colorMain:'#ff9900',
     colorPositive:'#1d8102', colorNegative:'#d13212', colorWarning:'#df7c00',
     light:{ bg:'#f2f3f3', card:'#ffffff', text:'#16191f', muted:'#545b64', border:'#d5dbdb' },
     fontFamily:'system', styleVariant:'standard', cardAccent:'top-thick', radius:'2px', density:'compact' },
 
-  // ----- ブランド風（B2C・メディア） -----
-  airbnb: { group:'ブランド風（メディア）', name:'Airbnb', desc:'コーラル・親しみ', colorMain:'#ff385c',
+  // ----- 品牌風 (B2C・媒體) -----
+  airbnb: { group:'品牌風 (媒體)', name:'Airbnb', desc:'珊瑚・親切', colorMain:'#ff385c',
     colorPositive:'#008a05', colorNegative:'#c13515', colorWarning:'#e07912',
     light:{ bg:'#ffffff', card:'#ffffff', text:'#222222', muted:'#717171', border:'#ebebeb' },
     fontFamily:'rounded', styleVariant:'soft', cardAccent:'none', radius:'12px', density:'comfortable' },
-  spotify: { group:'ブランド風（メディア）', name:'Spotify', desc:'グリーン×ホワイト', colorMain:'#1db954',
+  spotify: { group:'品牌風 (媒體)', name:'Spotify', desc:'綠色 × 白色', colorMain:'#1db954',
     colorPositive:'#0e8a3d', colorNegative:'#e22134', colorWarning:'#ffa42b',
     light:{ bg:'#ffffff', card:'#ffffff', text:'#191414', muted:'#6a6a6a', border:'#e6e6e6' },
     fontFamily:'helvetica', styleVariant:'standard', cardAccent:'none', radius:'8px', density:'cozy' },
-  twitch: { group:'ブランド風（メディア）', name:'Twitch', desc:'紫×ゲーミング', colorMain:'#9146ff',
+  twitch: { group:'品牌風 (媒體)', name:'Twitch', desc:'紫 × 遊戲', colorMain:'#9146ff',
     colorPositive:'#00b173', colorNegative:'#eb0400', colorWarning:'#ffa800',
     light:{ bg:'#f7f7f8', card:'#ffffff', text:'#0e0e10', muted:'#53535f', border:'#dedee3' },
     fontFamily:'inter', styleVariant:'standard', cardAccent:'side-thick', radius:'4px', density:'cozy' },
-  netflix: { group:'ブランド風（メディア）', name:'Netflix', desc:'赤×黒・シネマ的余白', colorMain:'#e50914',
+  netflix: { group:'品牌風 (媒體)', name:'Netflix', desc:'紅 × 黑・電影感留白', colorMain:'#e50914',
     colorPositive:'#46d369', colorNegative:'#b9090b', colorWarning:'#e87c03',
     light:{ bg:'#0b0b0b', card:'#181818', text:'#f5f5f1', muted:'#999999', border:'#2a2a2a' },
     fontFamily:'helvetica', styleVariant:'standard', cardAccent:'none', radius:'8px', density:'cozy', mode:'dark' },
-  tesla: { group:'ブランド風（メディア）', name:'Tesla', desc:'赤×極シャープ・工業的', colorMain:'#cc0000',
+  tesla: { group:'品牌風 (媒體)', name:'Tesla', desc:'紅 × 極銳利・工業風', colorMain:'#cc0000',
     colorPositive:'#3eb049', colorNegative:'#cc0000', colorWarning:'#ffa500',
     light:{ bg:'#000000', card:'#171a20', text:'#ffffff', muted:'#a0a4ad', border:'#2c2f36' },
     fontFamily:'helvetica', styleVariant:'standard', cardAccent:'side-thin', radius:'2px', density:'compact', mode:'dark' },
-  shopify: { group:'ブランド風（メディア）', name:'Shopify', desc:'ライムグリーン・コマース', colorMain:'#008060',
+  shopify: { group:'品牌風 (媒體)', name:'Shopify', desc:'萊姆綠・電商', colorMain:'#008060',
     colorPositive:'#1a7f4f', colorNegative:'#d72c0d', colorWarning:'#b98900',
     light:{ bg:'#f6f6f7', card:'#ffffff', text:'#202223', muted:'#6d7175', border:'#e1e3e5' },
     fontFamily:'inter', styleVariant:'standard', cardAccent:'none', radius:'8px', density:'cozy' },
-  bloomberg: { group:'ブランド風（メディア）', name:'Bloomberg', desc:'端末風・金融', colorMain:'#fa6900',
+  bloomberg: { group:'品牌風 (媒體)', name:'Bloomberg', desc:'終端機風・金融', colorMain:'#fa6900',
     colorPositive:'#00a650', colorNegative:'#ff2a3c', colorWarning:'#ffb900',
     light:{ bg:'#0a0a0a', card:'#141414', text:'#fafafa', muted:'#9b9b9b', border:'#2a2a2a' },
     fontFamily:'mono', styleVariant:'standard', cardAccent:'side-thin', radius:'2px', density:'compact', mode:'dark' },
-  economist: { group:'ブランド風（メディア）', name:'The Economist', desc:'雑誌風・赤×セリフ', colorMain:'#e3120b',
+  economist: { group:'品牌風 (媒體)', name:'The Economist', desc:'雜誌風・紅 × Serif', colorMain:'#e3120b',
     colorPositive:'#0a7d32', colorNegative:'#a4001b', colorWarning:'#b15c00',
     light:{ bg:'#ffffff', card:'#ffffff', text:'#121212', muted:'#666666', border:'#cfcfcf' },
     fontFamily:'serif-editorial', styleVariant:'editorial', cardAccent:'top-thick', radius:'2px', density:'comfortable' }
@@ -1650,10 +1650,10 @@ function buildScale(hex) {
 }
 
 /* =====================================================
-   テキストサイズ：自動算出 + 個別オーバーライド
+   文字字級: 自動計算 + 個別覆寫
    ===================================================== */
 
-// テキストキー一覧（id="ts_xxx" と対応）
+// 文字 key 列表 (對應 id="ts_xxx")
 const TEXT_KEYS = [
   'title','subtitle','cardTitle',
   'kpiLabel','kpiValue','kpiUnit','kpiDelta',
@@ -1661,8 +1661,8 @@ const TEXT_KEYS = [
   'tableHead','tableBody'
 ];
 
-// 各キーのスケール上の段（base=1.0 を基準に何段上下か）
-// 段数 -> ratio^段数 で計算
+// 各 key 在比例上的階數 (以 base=1.0 為基準)
+// 階數 -> ratio^階數 計算
 const TEXT_SCALE_STEPS = {
   title:       3,
   subtitle:   -1,
@@ -1678,7 +1678,7 @@ const TEXT_SCALE_STEPS = {
   tableBody:   0
 };
 
-// 個別selectの選択肢（px）— 要素ごとにレンジを変える
+// 個別 select 選項 (px) — 每個元素範圍不同
 const TEXT_OPTIONS = {
   title:      [16,18,20,22,24,26,28,30,32,36,40,44,48,56],
   subtitle:   [10,11,12,13,14,15,16],
@@ -1694,16 +1694,16 @@ const TEXT_OPTIONS = {
   tableBody:  [11,12,13,14,15,16,17,18]
 };
 
-// スケール基準で自動サイズを計算
+// 以比例基準計算自動字級
 function autoSize(key, base, ratio) {
   const step = TEXT_SCALE_STEPS[key];
   return Math.max(8, Math.round(base * Math.pow(ratio, step)));
 }
-// 自動サイズに最も近い選択肢にスナップ
+// 吸附到最接近的選項
 function snapTo(opts, target) {
   return opts.reduce((best, v) => Math.abs(v - target) < Math.abs(best - target) ? v : best, opts[0]);
 }
-// 全テキストサイズの自動値（pxの数値）を返す
+// 回傳所有文字的自動字級 (px 數值)
 function computeAutoTextSizes() {
   const base = parseFloat(state.fontSizeBase);
   const ratio = parseFloat(state.typeScale);
@@ -1715,14 +1715,14 @@ function computeAutoTextSizes() {
   return out;
 }
 
-/* カード装飾 */
+/* 卡片裝飾 */
 const CARD_ACCENTS = {
   none:        '',
   'top-thin':  'border-top: 3px solid var(--color-main);',
   'top-thick': 'border-top: 6px solid var(--color-main);',
   'side-thin': 'border-left: 3px solid var(--color-main);',
   'side-thick':'border-left: 6px solid var(--color-main);',
-  'gradient':  '' // ::before で実装
+  'gradient':  '' // 以 ::before 實作
 };
 
 /* =====================================================
@@ -1740,22 +1740,22 @@ const DEFAULT_STATE = {
   styleVariant: 'standard',
   cardAccent: 'none',
   mode: 'light',
-  textOverrides: {}, // { kpiValue: 36, ... } 個別上書き（数値, px）
+  textOverrides: {}, // { kpiValue: 36, ... } 個別覆寫 (數值, px)
   weightOverrides: {}, // { title: 700, kpiValue: 700, ... } V-1
   colorOverrides: {}, // { kpiValue:'#hex', buttonPrimary:'#hex', badge:'#hex' } V-2
   spacingOverrides: {} // { gap:'24px', cardPadding:'24px' } V-3
 };
 
-// V-1: ウェイトを上書きできるキーと、未指定時のフォールバック
+// V-1: 可覆寫字重的 key,以及未指定時的 fallback
 const WEIGHT_KEYS = ['title','kpiValue','cardTitle','tableBody'];
 const WEIGHT_OPTIONS = [300, 400, 500, 600, 700, 800, 900];
 const WEIGHT_LABELS = {
-  title:     'タイトル',
-  kpiValue:  'KPI数値',
-  cardTitle: 'カードタイトル',
-  tableBody: 'テーブル本文'
+  title:     '標題',
+  kpiValue:  'KPI 數值',
+  cardTitle: '卡片標題',
+  tableBody: '表格內文'
 };
-// 未上書き時の表示用「自動」値（heading-weight に追従するキーは後で variant から決定）
+// 未覆寫時顯示用的「自動」值 (跟隨 heading-weight 的 key 之後從 variant 決定)
 const WEIGHT_DEFAULTS = {
   title:     null,   // null = var(--font-heading-weight)
   kpiValue:  700,
@@ -1763,14 +1763,14 @@ const WEIGHT_DEFAULTS = {
   tableBody: 400
 };
 
-// V-2: 色を上書きできるキー
+// V-2: 可覆寫色彩的 key
 const COLOR_KEYS = ['kpiValue', 'buttonPrimary', 'badge'];
 const COLOR_LABELS = {
-  kpiValue:      'KPI数値',
-  buttonPrimary: 'プライマリボタン',
-  badge:         'バッジ'
+  kpiValue:      'KPI 數值',
+  buttonPrimary: '主要按鈕',
+  badge:         '標籤'
 };
-// 各キーの「未上書き時の」フォールバック色をテーマ・state から計算
+// 各 key「未覆寫時」的 fallback 色由主題與 state 計算
 function resolveDefaultColor(key) {
   const t = THEMES[state.themeKey] || THEMES.executive;
   const palette = state.mode === 'dark' ? deriveDark() : t.light;
@@ -1801,7 +1801,7 @@ let state = JSON.parse(JSON.stringify(DEFAULT_STATE));
    CSS 生成
    ===================================================== */
 // =============================================
-// WCAG コントラスト計算（Phase 1 / 1-5）
+// WCAG 對比計算 (Phase 1 / 1-5)
 // =============================================
 function relLuminance(hex) {
   const m = hex.replace('#','').match(/.{2}/g).map(x => parseInt(x,16)/255);
@@ -1814,7 +1814,7 @@ function contrastRatio(hex1, hex2) {
   const [hi, lo] = l1 > l2 ? [l1, l2] : [l2, l1];
   return (hi + 0.05) / (lo + 0.05);
 }
-// WCAG 2.1: 通常テキストは 4.5(AA) / 7(AAA)、大型テキストは 3(AA) / 4.5(AAA)
+// WCAG 2.1: 一般文字 4.5(AA) / 7(AAA),大型文字 3(AA) / 4.5(AAA)
 function wcagLevel(ratio, isLarge = false) {
   if (isLarge) {
     if (ratio >= 4.5) return 'aaa';
@@ -1827,16 +1827,16 @@ function wcagLevel(ratio, isLarge = false) {
 }
 function fmtRatio(r) { return r.toFixed(2); }
 
-// チャート・UI部品向けに、極端な明度/低彩度を補正した「安全アクセント色」を計算
-// HSL の L だけでは黄/緑系が視覚的に明るすぎるため、色相帯ごとに上限を変える
+// 為圖表與 UI 元件計算修正過明度/低彩度的「安全強調色」
+// 僅靠 HSL 的 L 會讓黃/綠系視覺過亮,因此依色相帶調整上限
 function clampForChart(hex) {
   const { h, s, l } = hexToHsl(hex);
-  // 黄〜緑〜シアン系（40〜200°）は知覚的に明るいので L 上限を厳しく
+  // 黃〜綠〜青系 (40〜200°) 知覺上較亮,L 上限較嚴格
   const isLightHue = h >= 40 && h <= 200;
   const lMax = isLightHue ? 42 : 56;
   const lMin = 36;
   const safeL = Math.max(lMin, Math.min(lMax, l));
-  // 彩度が低すぎるとグラフでただの灰色になるので底上げ
+  // 彩度太低圖表會變灰,需要墊高
   const safeS = Math.max(45, s);
   return hslToHex(h, safeS, safeL);
 }
@@ -1850,14 +1850,14 @@ function generateCSS() {
   const ff = FONT_STACKS[s.fontFamily];
   const d = DENSITY_MAP[s.density];
 
-  // 各テキストサイズ：自動 → オーバーライドあれば置換
+  // 各文字字級: 自動 → 若有覆寫則取代
   const auto = computeAutoTextSizes();
   const ts = {};
   TEXT_KEYS.forEach(k => {
     ts[k] = (s.textOverrides[k] || auto[k]) + 'px';
   });
 
-  // V-1: 個別ウェイト上書き → --fw-* を出力（未上書きキーは出力せずフォールバック）
+  // V-1: 個別字重覆寫 → 輸出 --fw-* (未覆寫的 key 不輸出,使用 fallback)
   const fwLines = [];
   const fwVarMap = { title:'--fw-title', kpiValue:'--fw-kpi-value',
                      cardTitle:'--fw-card-title', tableBody:'--fw-table-body' };
@@ -1867,7 +1867,7 @@ function generateCSS() {
   });
   const fwBlock = fwLines.length ? '\n' + fwLines.join('\n') : '';
 
-  // V-2: 個別カラー上書き → --co-* を出力
+  // V-2: 個別色彩覆寫 → 輸出 --co-*
   const coLines = [];
   const coVarMap = { kpiValue:'--co-kpi-value', buttonPrimary:'--co-button-primary', badge:'--co-badge' };
   COLOR_KEYS.forEach(k => {
@@ -1876,14 +1876,14 @@ function generateCSS() {
   });
   const coBlock = coLines.length ? '\n' + coLines.join('\n') : '';
 
-  // V-3: 余白上書き
+  // V-3: 間距覆寫
   const sp = s.spacingOverrides || {};
   const spLines = [];
   if (sp.gap)         spLines.push(`  --sp-grid-gap: ${sp.gap};`);
   if (sp.cardPadding) spLines.push(`  --sp-card-padding: ${sp.cardPadding};`);
   const spBlock = spLines.length ? '\n' + spLines.join('\n') : '';
 
-  // 装飾スタイル別
+  // 依裝飾風格分支
   const variants = {
     standard: { cardBg:'var(--color-card)', cardBorder:'1px solid var(--color-border)',
       cardShadow:'0 1px 2px rgba(15,23,42,0.04), 0 1px 3px rgba(15,23,42,0.06)',
@@ -1910,7 +1910,7 @@ function generateCSS() {
     : (v.radiusBoost ? `calc(${s.radius} + ${v.radiusBoost})` : s.radius);
 
   const accentCSS = CARD_ACCENTS[s.cardAccent] || '';
-  // .card は常に overflow:hidden + position:relative なので、グラデ帯は角丸を継承
+  // .card 固定為 overflow:hidden + position:relative,漸層條會繼承圓角
   const gradientCSS = s.cardAccent === 'gradient' ? `
 .ds-root .card::before {
   content: '';
@@ -1925,18 +1925,18 @@ function generateCSS() {
    Theme: ${theme.name} / Style: ${s.styleVariant} / Mode: ${s.mode}
    Card Accent: ${s.cardAccent}
 
-   使い方:
-     ダッシュボードのルート要素に class="ds-root" を付けてください。
-     全てのスタイルはこのスコープ内にのみ適用されます。
+   使用方式:
+     請在儀表板的根元素加上 class="ds-root"。
+     所有樣式僅作用於此 scope 內。
 
      <div class="ds-root">
        <div class="dashboard-container">
-         ... ダッシュボードのマークアップ ...
+         ... 儀表板的 HTML 結構 ...
        </div>
      </div>
    ===================================================== */
 
-/* 1. Design Tokens — グローバル変数（参照されない限り何にも影響しない） */
+/* 1. Design Tokens — 全域變數 (未被引用時不影響任何元素) */
 :root {
   /* Brand color scale */
   --color-main-50:  ${scale[50]};
@@ -1950,7 +1950,7 @@ function generateCSS() {
   --color-main-800: ${scale[800]};
   --color-main-900: ${scale[900]};
   --color-main: ${s.colorMain};
-  --color-chart: ${colorChart};   /* 視認性をクランプしたチャート用アクセント */
+  --color-chart: ${colorChart};   /* 已限制可視度的圖表用強調色 */
 
   /* Semantic */
   --color-bg: ${palette.bg};
@@ -1999,7 +1999,7 @@ function generateCSS() {
   --card-backdrop: ${v.cardBackdrop};
 }
 
-/* 2. Shell — .ds-root とその配下にのみ適用されるベーススタイル */
+/* 2. Shell — 僅作用於 .ds-root 與其後代的基礎樣式 */
 .ds-root {
   background: ${v.bodyBg};
   color: var(--color-text);
@@ -2057,7 +2057,7 @@ function generateCSS() {
   backdrop-filter: var(--card-backdrop);
   -webkit-backdrop-filter: var(--card-backdrop);
   position: relative;
-  overflow: hidden;   /* グラデ帯/装飾を角丸に追従させる */
+  overflow: hidden;   /* 讓漸層條/裝飾跟隨圓角 */
   ${v.cardExtra || ''}
   ${accentCSS}
 }
@@ -2238,13 +2238,13 @@ ${gradientCSS}
 }
 
 /* =====================================================
-   SVGチャート
+   SVG 圖表
    ===================================================== */
 const VB_W = 600, VB_H = 240;
 const svgWrap = (inner) => `<svg viewBox="0 0 ${VB_W} ${VB_H}" preserveAspectRatio="none">${inner}</svg>`;
 
 function renderComboChart(target) {
-  const months = ['1月','2月','3月','4月','5月','6月'];
+  const months = ['1 月','2 月','3 月','4 月','5 月','6 月'];
   const bars = [32,38,41,36,44,48], line = [2.1,2.3,2.6,2.4,2.9,3.2];
   const pad = { l:36, r:36, t:16, b:28 };
   const cw = VB_W-pad.l-pad.r, ch = VB_H-pad.t-pad.b;
@@ -2271,7 +2271,7 @@ function renderComboChart(target) {
   target.innerHTML = svgWrap(`${grid}${barEls}<path d="${path}" fill="none" stroke="var(--color-warning)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>${dots}${labels}`);
 }
 function renderBarChart(target) {
-  const cats = ['EC','TEL','店舗','法人','その他'], vals = [42,28,18,22,9];
+  const cats = ['電商','電銷','門市','企業','其他'], vals = [42,28,18,22,9];
   const pad = { l:40, r:16, t:16, b:28 };
   const cw = VB_W-pad.l-pad.r, ch = VB_H-pad.t-pad.b;
   const barW = cw/cats.length * 0.6;
@@ -2293,7 +2293,7 @@ function renderBarChart(target) {
   target.innerHTML = svgWrap(`${grid}${bars}${labels}`);
 }
 function renderStackedChart(target) {
-  const months = ['1月','2月','3月','4月','5月','6月'];
+  const months = ['1 月','2 月','3 月','4 月','5 月','6 月'];
   const data = [[18,12,6],[20,11,7],[22,13,6],[21,10,8],[25,14,7],[28,13,9]];
   const colors = ['var(--color-chart)','var(--color-positive)','var(--color-warning)'];
   const pad = { l:36, r:16, t:16, b:28 };
@@ -2319,8 +2319,8 @@ function renderStackedChart(target) {
 }
 function renderStackedHChart(target) {
   const rows = [
-    {name:'営業部',done:78}, {name:'EC事業',done:92},
-    {name:'法人営業',done:64}, {name:'海外',done:48}, {name:'店舗',done:71}
+    {name:'業務部',done:78}, {name:'電商事業',done:92},
+    {name:'企業業務',done:64}, {name:'海外',done:48}, {name:'門市',done:71}
   ];
   const pad = { l:70, r:40, t:12, b:12 };
   const cw = VB_W-pad.l-pad.r;
@@ -2337,7 +2337,7 @@ function renderStackedHChart(target) {
   target.innerHTML = svgWrap(bars);
 }
 function renderAreaChart(target) {
-  const months = ['1月','2月','3月','4月','5月','6月'];
+  const months = ['1 月','2 月','3 月','4 月','5 月','6 月'];
   const vals = [12,22,31,38,46,58];
   const pad = { l:36, r:16, t:16, b:28 };
   const cw = VB_W-pad.l-pad.r, ch = VB_H-pad.t-pad.b;
@@ -2372,10 +2372,10 @@ function renderAreaChart(target) {
 }
 function renderDonutChart(target) {
   const data = [
-    { label:'EC', value:42, color:'var(--color-chart)' },
-    { label:'TEL', value:28, color:'var(--color-main-400)' },
-    { label:'店舗', value:18, color:'var(--color-main-300)' },
-    { label:'その他', value:12, color:'var(--color-main-200)' }
+    { label:'電商', value:42, color:'var(--color-chart)' },
+    { label:'電銷', value:28, color:'var(--color-main-400)' },
+    { label:'門市', value:18, color:'var(--color-main-300)' },
+    { label:'其他', value:12, color:'var(--color-main-200)' }
   ];
   const total = data.reduce((s,d)=>s+d.value,0);
   const cx = VB_W/2 - 60, cy = VB_H/2;
@@ -2430,20 +2430,20 @@ function renderAllCharts() {
 }
 
 /* =====================================================
-   プレビュー / 入力バインド
+   預覽 / 輸入綁定
    ===================================================== */
 let styleEl = null;
 // =============================================
-// MVP: インライン・トークンポップオーバー
+// MVP: 行內 token popover
 // =============================================
 const TOKEN_LABELS = {
-  title:     'タイトル',
-  kpiValue:  'KPI数値',
-  cardTitle: 'カードタイトル',
-  tableBody: 'テーブル本文'
+  title:     '標題',
+  kpiValue:  'KPI 數值',
+  cardTitle: '卡片標題',
+  tableBody: '表格內文'
 };
 
-// 要素 → トークンキーへのマッチング（ホバー時に祖先まで遡る）
+// 元素 → token key 的對應 (hover 時往上追溯祖先)
 function matchTokenTrigger(el) {
   let cur = el;
   while (cur && cur !== document.body && cur.tagName) {
@@ -2491,20 +2491,20 @@ function renderTextPopoverContent() {
   const sizeRow = hasSize ? `
     <div class="tp-line">
       <span class="tp-label">${labelText}</span>
-      <button class="tp-btn" data-act="dec" type="button" aria-label="小さく">−</button>
+      <button class="tp-btn" data-act="dec" type="button" aria-label="縮小">−</button>
       <span class="tp-size"></span>
-      <button class="tp-btn" data-act="inc" type="button" aria-label="大きく">+</button>
-      <button class="tp-btn" data-act="reset" type="button" aria-label="自動に戻す" title="自動に戻す">↺</button>
+      <button class="tp-btn" data-act="inc" type="button" aria-label="放大">+</button>
+      <button class="tp-btn" data-act="reset" type="button" aria-label="重設為自動" title="重設為自動">↺</button>
     </div>
   ` : '';
 
   const weightRow = hasWeight ? `
     <div class="tp-line">
       <span class="tp-label">weight</span>
-      <button class="tp-btn" data-act="dec-w" type="button" aria-label="細く">−</button>
+      <button class="tp-btn" data-act="dec-w" type="button" aria-label="變細">−</button>
       <span class="tp-weight"></span>
-      <button class="tp-btn" data-act="inc-w" type="button" aria-label="太く">+</button>
-      <button class="tp-btn" data-act="reset-w" type="button" aria-label="自動に戻す" title="自動に戻す">↺</button>
+      <button class="tp-btn" data-act="inc-w" type="button" aria-label="變粗">+</button>
+      <button class="tp-btn" data-act="reset-w" type="button" aria-label="重設為自動" title="重設為自動">↺</button>
     </div>
   ` : '';
 
@@ -2515,8 +2515,8 @@ function renderTextPopoverContent() {
       <span class="tp-label">${hasSize ? 'color' : labelText}</span>
       <input class="tp-color" type="color" value="${cur}" />
       <input class="tp-hex" type="text" value="${cur}" maxlength="7" spellcheck="false" />
-      <button class="tp-btn" data-act="use-main" type="button" title="メイン色から生成">M</button>
-      <button class="tp-btn" data-act="reset-c" type="button" title="テーマ色に戻す">↺</button>
+      <button class="tp-btn" data-act="use-main" type="button" title="從主色產生">M</button>
+      <button class="tp-btn" data-act="reset-c" type="button" title="重設為主題色">↺</button>
     </div>
     `;
   })() : '';
@@ -2529,13 +2529,13 @@ function renderTextPopoverContent() {
     popoverEl.classList.remove('multi');
     popoverEl.innerHTML = `
       <span class="tp-label">${labelText}</span>
-      <button class="tp-btn" data-act="dec" type="button" aria-label="小さく">−</button>
+      <button class="tp-btn" data-act="dec" type="button" aria-label="縮小">−</button>
       <span class="tp-size"></span>
-      <button class="tp-btn" data-act="inc" type="button" aria-label="大きく">+</button>
-      <button class="tp-btn" data-act="reset" type="button" aria-label="自動に戻す" title="自動に戻す">↺</button>
+      <button class="tp-btn" data-act="inc" type="button" aria-label="放大">+</button>
+      <button class="tp-btn" data-act="reset" type="button" aria-label="重設為自動" title="重設為自動">↺</button>
     `;
   } else {
-    // color のみ（buttonPrimary / badge）
+    // 僅 color (buttonPrimary / badge)
     popoverEl.classList.remove('multi');
     popoverEl.innerHTML = colorRow.replace('<div class="tp-line">', '').replace(/<\/div>\s*$/, '');
   }
@@ -2553,7 +2553,7 @@ function refreshPopoverColor() {
   if (hInput) hInput.value = r.value;
 }
 
-// V-3: 余白の現在値（上書きなければ density プリセットの lg）を解決
+// V-3: 解析間距目前值 (未覆寫時為 density preset 的 lg)
 function resolveSpacing(prop) {
   const o = state.spacingOverrides || {};
   if (o[prop]) return { value: o[prop], overridden: true };
@@ -2584,13 +2584,13 @@ function renderSpacingPopoverContent() {
       <span class="tp-label">gap</span>
       <input class="tp-slider" data-spacing="gap" type="range" min="0" max="64" step="2" value="${gapN}" />
       <span class="tp-size" data-spacing-readout="gap">${gapN}px${gap.overridden ? '' : ' (auto)'}</span>
-      <button class="tp-btn" data-act="reset-sp-gap" type="button" title="自動に戻す">↺</button>
+      <button class="tp-btn" data-act="reset-sp-gap" type="button" title="重設為自動">↺</button>
     </div>
     <div class="tp-line">
       <span class="tp-label">padding</span>
       <input class="tp-slider" data-spacing="cardPadding" type="range" min="0" max="64" step="2" value="${padN}" />
       <span class="tp-size" data-spacing-readout="cardPadding">${padN}px${pad.overridden ? '' : ' (auto)'}</span>
-      <button class="tp-btn" data-act="reset-sp-pad" type="button" title="自動に戻す">↺</button>
+      <button class="tp-btn" data-act="reset-sp-pad" type="button" title="重設為自動">↺</button>
     </div>
     <div class="tp-line" style="justify-content:flex-start;">
       <span class="tp-label">scale</span>
@@ -2625,14 +2625,14 @@ function renderDensityPopoverContent() {
     chip('comfortable', 'comfortable');
 }
 
-// V-1: 表示用に「現在のウェイト」と「未上書き時のフォールバック数値」を解決
+// V-1: 解析顯示用的「目前字重」與「未覆寫時的 fallback 數值」
 function resolveWeight(key) {
   if (state.weightOverrides[key] !== undefined) {
     return { value: state.weightOverrides[key], overridden: true };
   }
   const fb = WEIGHT_DEFAULTS[key];
   if (fb !== null) return { value: fb, overridden: false };
-  // null = heading-weight に依存 → variant ごと
+  // null = 依賴 heading-weight → 由 variant 決定
   const headingMap = { standard: 600, editorial: 700, soft: 600, glass: 600 };
   return { value: headingMap[state.styleVariant] || 600, overridden: false };
 }
@@ -2677,7 +2677,7 @@ function showPopoverFor(targetEl, tokenKey) {
   pop.style.left = left + 'px';
   pop.classList.add('show');
 
-  // 既存ハイライトを外して付け替え
+  // 移除既有反白並重新套用
   document.querySelectorAll('.token-target-active').forEach(e => {
     if (e !== targetEl) e.classList.remove('token-target-active');
   });
@@ -2692,7 +2692,7 @@ function showDensityPopover(anchorEl) {
   renderDensityPopoverContent();
 
   const rect = anchorEl.getBoundingClientRect();
-  // バッジの下に出す
+  // 顯示在標記下方
   const top  = window.scrollY + rect.bottom + 8;
   const left = window.scrollX + Math.max(8, rect.right - 240);
   pop.style.top  = top + 'px';
@@ -2742,14 +2742,14 @@ function schedulePopoverHide() {
 }
 
 function handlePopoverClick(e) {
-  // 密度チップ（V-5）
+  // 密度 chip (V-5)
   const chip = e.target.closest('.tp-chip');
   if (chip && popoverEl.dataset.type === 'density') {
     e.stopPropagation();
     const next = chip.dataset.density;
     if (next && DENSITY_MAP[next] && next !== state.density) {
       state.density = next;
-      // V-3: 密度プリセット選び直しで余白カスタムを解除
+      // V-3: 重新選擇密度 preset 時解除間距自訂
       state.spacingOverrides = {};
       updatePreview();
       syncInputsFromState();
@@ -2758,7 +2758,7 @@ function handlePopoverClick(e) {
     }
     return;
   }
-  // V-3: 余白スケールチップ（gap と cardPadding を同時セット）
+  // V-3: 間距比例 chip (同時設定 gap 與 cardPadding)
   if (chip && popoverEl.dataset.type === 'spacing' && chip.dataset.spacingStop) {
     e.stopPropagation();
     const d = DENSITY_MAP[state.density] || DENSITY_MAP.cozy;
@@ -2772,7 +2772,7 @@ function handlePopoverClick(e) {
     }
     return;
   }
-  // 角丸チップ（V-4）
+  // 圓角 chip (V-4)
   if (chip && popoverEl.dataset.type === 'radius') {
     e.stopPropagation();
     const v = parseInt(chip.dataset.radius, 10);
@@ -2791,7 +2791,7 @@ function handlePopoverClick(e) {
   e.stopPropagation();
   const act = btn.dataset.act;
 
-  // V-3: 余白リセット（type=spacing）
+  // V-3: 間距重設 (type=spacing)
   if (popoverEl.dataset.type === 'spacing') {
     state.spacingOverrides = state.spacingOverrides || {};
     if (act === 'reset-sp-gap') delete state.spacingOverrides.gap;
@@ -2810,7 +2810,7 @@ function handlePopoverClick(e) {
     if (act === 'reset-c') {
       delete state.colorOverrides[key];
     } else {
-      // メイン色から生成 — kpi-value は text色なのでメイン色そのまま、その他は chart色（クランプ）
+      // 從主色產生 — kpi-value 是文字色所以直接用主色,其餘用 chart 色 (clamp)
       const v = key === 'kpiValue' ? state.colorMain : clampForChart(state.colorMain);
       state.colorOverrides[key] = v;
     }
@@ -2819,7 +2819,7 @@ function handlePopoverClick(e) {
     return;
   }
 
-  // V-1: ウェイト系
+  // V-1: 字重類
   if (act === 'dec-w' || act === 'inc-w' || act === 'reset-w') {
     if (!WEIGHT_KEYS.includes(key)) return;
     if (act === 'reset-w') {
@@ -2860,12 +2860,12 @@ function handlePopoverClick(e) {
   }
 
   updatePreview();
-  rebuildTextSelectOptions();   // 左パネル select を双方向同期
+  rebuildTextSelectOptions();   // 與左面板 select 雙向同步
   refreshPopoverSize();
 }
 
 function handlePopoverInput(e) {
-  // V-2: 色ピッカー / HEX入力
+  // V-2: 取色器 / HEX 輸入
   const colorInput = e.target.closest('.tp-color');
   const hexInput   = e.target.closest('.tp-hex');
   if (colorInput || hexInput) {
@@ -2876,7 +2876,7 @@ function handlePopoverInput(e) {
     const hex = normalizeHex(raw);
     if (!hex) return;
     state.colorOverrides[key] = hex;
-    // 入力欄同士を同期（ただし入力中の方はそのまま）
+    // 兩個欄位互相同步 (但保留正在輸入中的那個)
     if (colorInput) {
       const h = popoverEl.querySelector('.tp-hex');
       if (h) h.value = hex;
@@ -2891,7 +2891,7 @@ function handlePopoverInput(e) {
 
   const slider = e.target.closest('.tp-slider');
   if (!slider) return;
-  // V-3: 余白スライダー
+  // V-3: 間距 slider
   if (popoverEl.dataset.type === 'spacing' && slider.dataset.spacing) {
     const prop = slider.dataset.spacing;
     const v = parseInt(slider.value, 10);
@@ -2908,7 +2908,7 @@ function handlePopoverInput(e) {
     const v = parseInt(slider.value, 10);
     if (!isNaN(v)) {
       state.radius = v + 'px';
-      // チップ active 状態だけ軽く更新
+      // 僅輕量更新 chip 的 active 狀態
       popoverEl.querySelectorAll('.tp-chip[data-radius]').forEach(c => {
         c.classList.toggle('active', parseInt(c.dataset.radius, 10) === v);
       });
@@ -2946,21 +2946,21 @@ function bindPreviewTokenHover() {
   root.addEventListener('mouseout', (e) => {
     const m = matchTokenTrigger(e.target);
     if (!m) return;
-    // ポップオーバー or 同じ要素にカーソルが残っていれば消さない
+    // 若游標仍在 popover 或同元素上則不關閉
     const to = e.relatedTarget;
     if (to && (to === popoverEl || (popoverEl && popoverEl.contains(to)))) return;
     if (to && m.el.contains(to)) return;
     schedulePopoverHide();
   });
 
-  // タッチ対応：要素タップでもポップオーバーを開く
+  // 觸控支援: 點擊元素也能開啟 popover
   root.addEventListener('click', (e) => {
     const m = matchTokenTrigger(e.target);
     if (!m) return;
     showPopoverFor(m.el, m.key);
   });
 
-  // 外側クリックで閉じる
+  // 外部點擊關閉
   document.addEventListener('click', (e) => {
     if (!popoverEl || !popoverEl.classList.contains('show')) return;
     if (popoverEl.contains(e.target)) return;
@@ -2972,7 +2972,7 @@ function bindPreviewTokenHover() {
   });
 }
 
-// V-4: 角丸バッジ（カードホバーで出現、クリックでポップオーバー）
+// V-4: 圓角標記 (hover 卡片時出現,點擊開啟 popover)
 let radiusBadgeEl = null;
 let radiusBadgeHideTimer = null;
 let radiusBadgeAnchor = null;
@@ -2982,7 +2982,7 @@ function ensureRadiusBadge() {
   radiusBadgeEl.className = 'radius-badge';
   radiusBadgeEl.id = 'radiusBadge';
   radiusBadgeEl.type = 'button';
-  radiusBadgeEl.title = '角丸を編集';
+  radiusBadgeEl.title = '編輯圓角';
   radiusBadgeEl.innerHTML = `⌐ <span id="radiusBadgeLabel">${parseInt(state.radius,10)||0}px</span>`;
   document.body.appendChild(radiusBadgeEl);
   radiusBadgeEl.addEventListener('mouseenter', () => clearTimeout(radiusBadgeHideTimer));
@@ -3018,7 +3018,7 @@ function hideRadiusBadge() {
 function scheduleRadiusBadgeHide() {
   clearTimeout(radiusBadgeHideTimer);
   radiusBadgeHideTimer = setTimeout(() => {
-    // ポップオーバーが radius を編集中なら閉じない
+    // popover 正在編輯 radius 時不關閉
     if (popoverEl && popoverEl.classList.contains('show') &&
         popoverEl.dataset.type === 'radius') return;
     hideRadiusBadge();
@@ -3043,7 +3043,7 @@ function bindRadiusBadgeHover() {
   });
 }
 
-// V-3: 余白バッジ（.grid ホバーで gap/padding 編集）
+// V-3: 間距標記 (hover .grid 編輯 gap/padding)
 let spacingBadgeEl = null;
 let spacingBadgeHideTimer = null;
 let spacingBadgeAnchor = null;
@@ -3053,7 +3053,7 @@ function ensureSpacingBadge() {
   spacingBadgeEl.className = 'spacing-badge';
   spacingBadgeEl.id = 'spacingBadge';
   spacingBadgeEl.type = 'button';
-  spacingBadgeEl.title = '余白を編集';
+  spacingBadgeEl.title = '編輯間距';
   spacingBadgeEl.innerHTML = '⇄ spacing';
   document.body.appendChild(spacingBadgeEl);
   spacingBadgeEl.addEventListener('mouseenter', () => clearTimeout(spacingBadgeHideTimer));
@@ -3114,7 +3114,7 @@ function bindSpacingBadgeHover() {
   });
 }
 
-// V-5: 密度バッジのバインド
+// V-5: 密度標記綁定
 function updateDensityBadgeLabel() {
   const lbl = document.getElementById('densityBadgeLabel');
   if (lbl) lbl.textContent = state.density;
@@ -3150,7 +3150,7 @@ function maybeSchedulePush() {
   const cur = JSON.stringify(state);
   if (lastCommittedState && lastCommittedState !== cur) {
     if (!pendingForHistory) {
-      // 連続変更の最初の1回だけ「変更前」のスナップショットを保持
+      // 連續變更時僅在第一次保留「變更前」的快照
       pendingForHistory = lastCommittedState;
     }
     clearTimeout(pushTimer);
@@ -3175,8 +3175,8 @@ function flushPendingPush() {
 
 function syncAllFromState() {
   syncInputsFromState();
-  // syncInputsFromState は rebuildTextSelectOptions / rebuildWeightSelectOptions を含む
-  // popover が表示中なら閉じる（state差し替えで内容と乖離するため）
+  // syncInputsFromState 已包含 rebuildTextSelectOptions / rebuildWeightSelectOptions
+  // popover 開啟中時關閉 (避免內容與切換後的 state 不一致)
   hidePopover();
   hideRadiusBadge();
   hideSpacingBadge();
@@ -3225,7 +3225,7 @@ function bindUndoRedo() {
   if (r) r.addEventListener('click', redo);
 
   document.addEventListener('keydown', (e) => {
-    // input/textarea 内ではブラウザ既定の編集 undo を奪わない
+    // 在 input/textarea 內不奪取瀏覽器預設的 undo
     const t = e.target;
     const tag = t && t.tagName;
     const isEditable = tag === 'INPUT' || tag === 'TEXTAREA' ||
@@ -3256,15 +3256,15 @@ function updatePreview() {
   styleEl.textContent = css;
   document.getElementById('cssCode').textContent = css;
   document.getElementById('cssLineCount').textContent = `${css.split('\n').length} 行`;
-  // Phase 1: ステータス + A11y も同時更新
+  // Phase 1: 同時更新狀態列 + A11y
   renderThemeStatus();
   renderA11yPanel();
-  // V-6: 履歴用の "前回 commit" を更新
+  // V-6: 更新歷史用的「上次 commit」
   if (historyEnabled) lastCommittedState = JSON.stringify(state);
 }
 
 // =============================================
-// テーマステータスストリップ描画（Phase 1 / 1-3 バッジ）
+// 主題狀態列繪製 (Phase 1 / 1-3 標記)
 // =============================================
 function renderThemeStatus() {
   const t = THEMES[state.themeKey];
@@ -3272,7 +3272,7 @@ function renderThemeStatus() {
   const metaEl = document.getElementById('currentThemeMeta');
   if (!t || !nameEl || !metaEl) return;
   nameEl.textContent = t.name;
-  // テーマ名はそのブランドのフォントで表示
+  // 主題名稱以該品牌的字型顯示
   if (t.fontFamily) {
     nameEl.style.fontFamily = FONT_STACKS[t.fontFamily];
   } else {
@@ -3281,15 +3281,15 @@ function renderThemeStatus() {
   const pills = [
     state.mode === 'dark' ? '☾ Dark' : '☀ Light',
     state.styleVariant,
-    state.cardAccent === 'none' ? '装飾なし' : `帯: ${state.cardAccent}`,
-    `角丸 ${state.radius}`,
+    state.cardAccent === 'none' ? '無裝飾' : `強調條: ${state.cardAccent}`,
+    `圓角 ${state.radius}`,
     `密度 ${state.density}`
   ];
   metaEl.innerHTML = pills.map(p => `<span class="meta-pill">${p}</span>`).join('');
 }
 
 // =============================================
-// A11y コントラスト比パネル描画（Phase 1 / 1-5）
+// A11y 對比度面板繪製 (Phase 1 / 1-5)
 // =============================================
 function renderA11yPanel() {
   const panel = document.getElementById('a11yPanel');
@@ -3299,20 +3299,20 @@ function renderA11yPanel() {
   const palette = s.mode === 'dark' ? deriveDark() : theme.light;
   const chart = clampForChart(s.colorMain);
 
-  // V-2: 個別上書きを反映
+  // V-2: 反映個別覆寫
   const co = s.colorOverrides || {};
   const kpiColor    = co.kpiValue      || palette.text;
   const buttonColor = co.buttonPrimary || s.colorMain;
   const badgeColor  = co.badge         || chart;
 
-  // 検証する重要ペア
+  // 主要驗證配對
   const pairs = [
-    { label: '本文 / 背景',         fg: palette.text,    bg: palette.bg,    large: false },
-    { label: '本文 / カード',       fg: palette.text,    bg: palette.card,  large: false },
-    { label: '補足 / 背景',         fg: palette.muted,   bg: palette.bg,    large: false },
-    { label: 'KPI数値 / カード',    fg: kpiColor,        bg: palette.card,  large: true  },
-    { label: 'ボタン文字 / プライマリ', fg: '#ffffff',     bg: buttonColor,   large: false },
-    { label: 'バッジ色 / 背景',     fg: badgeColor,      bg: palette.bg,    large: true  }
+    { label: '內文 / 背景',         fg: palette.text,    bg: palette.bg,    large: false },
+    { label: '內文 / 卡片',         fg: palette.text,    bg: palette.card,  large: false },
+    { label: '輔助 / 背景',         fg: palette.muted,   bg: palette.bg,    large: false },
+    { label: 'KPI 數值 / 卡片',     fg: kpiColor,        bg: palette.card,  large: true  },
+    { label: '按鈕文字 / 主要色',   fg: '#ffffff',       bg: buttonColor,   large: false },
+    { label: '標籤色 / 背景',       fg: badgeColor,      bg: palette.bg,    large: true  }
   ];
 
   panel.innerHTML = pairs.map(p => {
@@ -3340,11 +3340,11 @@ function bindInputs() {
     if (!el) return;
     const handler = () => {
       state[key] = el.value;
-      // typeScale / fontSizeBase が変わったらテキストオーバーライドの選択肢を再描画
+      // typeScale / fontSizeBase 改變時重繪文字覆寫選項
       if (key === 'typeScale' || key === 'fontSizeBase') {
         rebuildTextSelectOptions();
       }
-      // V-3: 密度プリセット選び直しで余白カスタムを解除
+      // V-3: 重新選擇密度 preset 時解除間距自訂
       if (key === 'density') {
         state.spacingOverrides = {};
       }
@@ -3354,7 +3354,7 @@ function bindInputs() {
     el.addEventListener('change', handler);
   });
 
-  // テキスト個別調整：親要素にイベント委譲（innerHTML書き換えに強い）
+  // 文字個別調整: 委派事件給父元素 (對 innerHTML 重寫穩健)
   const handleTextChange = (e) => {
     const el = e.target;
     if (!el || el.tagName !== 'SELECT') return;
@@ -3380,12 +3380,12 @@ function bindInputs() {
         state.weightOverrides[key] = parseInt(val, 10);
       }
       updatePreview();
-      // popover 開いていれば値を更新
+      // popover 開啟時更新值
       refreshPopoverWeight();
       return;
     }
   };
-  // settings-panel 全体で受ける（details 内の select も拾う）
+  // 在整個 settings-panel 接收 (含 details 內的 select)
   const panel = document.querySelector('.settings-panel');
   if (panel) {
     panel.addEventListener('change', handleTextChange);
@@ -3393,9 +3393,9 @@ function bindInputs() {
   }
 }
 
-// テキストselect生成（autoオプション + 各レンジ + カスタム値）
-// MVP: ホバーポップオーバーで選択肢外の値が入る場合があるので
-//      カスタム値があればプレフィックス option として挿入
+// 文字 select 產生 (auto 選項 + 各範圍 + 自訂值)
+// MVP: hover popover 可能設入選項以外的值,
+//      所以若有自訂值則插入為前綴 option
 function rebuildTextSelectOptions() {
   const auto = computeAutoTextSizes();
   TEXT_KEYS.forEach(key => {
@@ -3405,10 +3405,10 @@ function rebuildTextSelectOptions() {
     const overridden = state.textOverrides[key];
     const value = overridden !== undefined ? String(overridden) : 'auto';
 
-    // 上書き値が標準選択肢に含まれない場合、カスタム option を先頭に追加
+    // 若覆寫值不在標準選項中,將自訂 option 加到最前
     let extraOpt = '';
     if (overridden !== undefined && !opts.includes(overridden)) {
-      extraOpt = `<option value="${overridden}">${overridden}px (カスタム)</option>`;
+      extraOpt = `<option value="${overridden}">${overridden}px (自訂)</option>`;
     }
 
     el.innerHTML =
@@ -3419,12 +3419,12 @@ function rebuildTextSelectOptions() {
   });
 }
 
-// V-1: ウェイト個別調整 select の構築（左パネル）
+// V-1: 字重個別調整 select 建構 (左面板)
 function rebuildWeightSelectOptions() {
   WEIGHT_KEYS.forEach(key => {
     const el = document.getElementById('fw_' + key);
     if (!el) return;
-    const fallback = resolveWeight(key); // overridden なし時の値
+    const fallback = resolveWeight(key); // 未覆寫時的值
     const overridden = state.weightOverrides[key];
     const value = overridden !== undefined ? String(overridden) : 'auto';
     el.innerHTML =
@@ -3453,10 +3453,10 @@ function syncInputsFromState() {
   document.querySelectorAll('#modeToggle button').forEach(b => {
     b.classList.toggle('active', b.dataset.mode === state.mode);
   });
-  // V-5: 密度バッジラベルも同期
+  // V-5: 同步密度標記文字
   const dlbl = document.getElementById('densityBadgeLabel');
   if (dlbl) dlbl.textContent = state.density;
-  // V-4: 角丸バッジラベルも同期
+  // V-4: 同步圓角標記文字
   const rlbl = document.getElementById('radiusBadgeLabel');
   if (rlbl) rlbl.textContent = (parseInt(state.radius,10)||0) + 'px';
 }
@@ -3464,22 +3464,22 @@ function syncInputsFromState() {
 function buildThemeGrid() {
   const container = document.getElementById('themeGrid');
 
-  // グループごとに集計
+  // 依群組統計
   const groups = {};
   Object.entries(THEMES).forEach(([key, t]) => {
-    const g = t.group || 'その他';
+    const g = t.group || '其他';
     (groups[g] = groups[g] || []).push([key, t]);
   });
 
-  // 現在選択中のテーマが属するグループは開く
+  // 展開目前選中主題所屬的群組
   const currentGroup = (THEMES[state.themeKey] || {}).group;
 
   const cardHTML = ([key, t]) => {
-    // テーマがフォントを指定していればテーマ名をそのフォントで表示（ブランドの匂いを出す）
+    // 若主題指定字型則以該字型顯示主題名 (帶出品牌氛圍)
     const nameFont = t.fontFamily ? FONT_STACKS[t.fontFamily] : '';
     const nameStyle = nameFont ? `font-family: ${nameFont.replace(/"/g, "'")};` : '';
-    // ダーク基調テーマは小さなドットで示す
-    const modeBadge = t.mode === 'dark' ? '<span class="theme-dark-badge" title="ダーク基調">●</span>' : '';
+    // 深色基底主題以小圓點標示
+    const modeBadge = t.mode === 'dark' ? '<span class="theme-dark-badge" title="深色基底">●</span>' : '';
     return `
     <button class="theme-card" data-theme="${key}" type="button">
       <div class="swatches">
@@ -3504,7 +3504,7 @@ function buildThemeGrid() {
     </details>
   `).join('');
 
-  // クリック委譲（再描画に強い）
+  // 點擊委派 (對重繪穩健)
   container.addEventListener('click', (e) => {
     const btn = e.target.closest('.theme-card');
     if (btn) applyTheme(btn.dataset.theme);
@@ -3513,26 +3513,26 @@ function buildThemeGrid() {
 function applyTheme(key) {
   const t = THEMES[key];
   if (!t) return;
-  // V-2: 色の個別上書きが残っている場合は確認してクリア
+  // V-2: 若仍有個別色彩覆寫,先確認再清除
   const hasColorOverrides = Object.keys(state.colorOverrides || {}).length > 0;
   if (hasColorOverrides) {
-    const ok = confirm('個別の色上書きが設定されています。\nテーマ「' + t.name + '」を適用すると、これらはクリアされます。続行しますか？');
+    const ok = confirm('已設定個別色彩覆寫。\n套用主題「' + t.name + '」會清除這些設定。是否繼續?');
     if (!ok) return;
     state.colorOverrides = {};
   }
   state.themeKey = key;
   state.colorMain = t.colorMain;
-  // テーマがフォント・装飾・カード装飾・角丸・密度・モードを定義していれば一括適用
+  // 若主題定義了字型/風格/卡片裝飾/圓角/密度/模式則一併套用
   if (t.fontFamily)   state.fontFamily   = t.fontFamily;
   if (t.styleVariant) state.styleVariant = t.styleVariant;
   if (t.cardAccent)   state.cardAccent   = t.cardAccent;
   if (t.radius)       state.radius       = t.radius;
   if (t.density)      state.density      = t.density;
-  state.mode = t.mode || 'light'; // 明示なければ light に戻す（ダーク残留防止）
-  // V-3: テーマ切替で密度プリセットが変わり得るので余白カスタムを解除
+  state.mode = t.mode || 'light'; // 未指定時回到 light (避免殘留 dark)
+  // V-3: 切換主題可能改變密度 preset,因此解除間距自訂
   state.spacingOverrides = {};
 
-  // 選択テーマが含まれるグループを自動展開
+  // 自動展開含選中主題的群組
   const card = document.querySelector(`.theme-card[data-theme="${key}"]`);
   if (card) {
     const parentDetails = card.closest('details.theme-group');
@@ -3571,9 +3571,9 @@ function bindModeToggle() {
 }
 
 function resetState() {
-  if (!confirm('現在の設定を破棄して初期値に戻しますか？\nこの操作は元に戻せません。')) return;
+  if (!confirm('要捨棄目前設定並回到預設值嗎?\n此操作無法復原。')) return;
   state = JSON.parse(JSON.stringify(DEFAULT_STATE));
-  // V-6: 履歴もクリア（明示的な「元に戻せない」操作）
+  // V-6: 也清除歷史 (這是明確「無法復原」的操作)
   history = [];
   future = [];
   pendingForHistory = null;
@@ -3597,11 +3597,11 @@ function showToast(text, ms = 1800) {
 async function copyCSS() {
   try {
     await navigator.clipboard.writeText(generateCSS());
-    showToast('✓ クリップボードにコピーしました');
+    showToast('✓ 已複製到剪貼簿');
     const msg = document.getElementById('copyMsg');
     msg.classList.add('show');
     setTimeout(() => msg.classList.remove('show'), 1800);
-  } catch (e) { alert('コピーに失敗しました: ' + e.message); }
+  } catch (e) { alert('複製失敗: ' + e.message); }
 }
 function downloadCSS() {
   const blob = new Blob([generateCSS()], { type: 'text/css' });
@@ -3626,28 +3626,28 @@ function init() {
   updatePreview();
   renderAllCharts();
 
-  // V-6: 初回 updatePreview 後に履歴記録を有効化
+  // V-6: 在首次 updatePreview 後啟用歷史記錄
   lastCommittedState = JSON.stringify(state);
   historyEnabled = true;
   bindUndoRedo();
   updateUndoRedoButtons();
 
-  // MVP: プレビュー上のホバーで ± トークン編集を有効化
+  // MVP: 在預覽 hover 啟用 ± token 編輯
   bindPreviewTokenHover();
-  // Phase 2: プレビューパターン切替 + AI/URL モーダル
+  // Phase 2: 預覽範本切換 + AI/URL 對話框
   bindPreviewTabs();
   bindAIModal();
   bindURLModal();
-  // Vision V-5: 密度バッジ
+  // Vision V-5: 密度標記
   bindDensityBadge();
-  // Vision V-4: 角丸バッジ（カードホバー）
+  // Vision V-4: 圓角標記 (hover 卡片)
   bindRadiusBadgeHover();
-  // Vision V-3: 余白バッジ（グリッドホバー）
+  // Vision V-3: 間距標記 (hover grid)
   bindSpacingBadgeHover();
 }
 
 // =============================================
-// Phase 2 / 2-3: プレビューパターン切替
+// Phase 2 / 2-3: 預覽範本切換
 // =============================================
 function bindPreviewTabs() {
   const tabs = document.querySelectorAll('#previewTabs .ptab');
@@ -3658,7 +3658,7 @@ function bindPreviewTabs() {
       document.querySelectorAll('.preview-pattern').forEach(p => {
         p.hidden = p.dataset.pattern !== target;
       });
-      hidePopover();   // 切替時にポップオーバーを閉じる
+      hidePopover();   // 切換時關閉 popover
       hideRadiusBadge();
       hideSpacingBadge();
     });
@@ -3666,13 +3666,13 @@ function bindPreviewTabs() {
 }
 
 // =============================================
-// Phase 2 共通: モーダル開閉
+// Phase 2 共用: 對話框開關
 // =============================================
 function openModal(name) {
   const el = document.getElementById(name + 'Backdrop');
   if (!el) return;
   el.classList.add('show');
-  // 結果欄を一旦リセット
+  // 暫先重設結果欄
   const res = document.getElementById(name + 'Result');
   if (res) { res.classList.remove('show','fail'); res.innerHTML = ''; }
 }
@@ -3680,60 +3680,60 @@ function closeModal(name) {
   const el = document.getElementById(name + 'Backdrop');
   if (el) el.classList.remove('show');
 }
-// 共通: 背景／✕／キャンセルで閉じる
+// 共用: 背景/✕/取消 皆可關閉
 document.addEventListener('click', (e) => {
   const closeBtn = e.target.closest('[data-close-modal]');
   if (closeBtn) { closeModal(closeBtn.dataset.closeModal); return; }
-  // 背景タップ
+  // 背景點擊
   if (e.target.classList && e.target.classList.contains('modal-backdrop')) {
     e.target.classList.remove('show');
   }
 });
 
 // =============================================
-// Phase 2 / 2-1: AI で雰囲気からテーマ生成（モック）
-// 自然言語のキーワードを既存テーマへマッピング
+// Phase 2 / 2-1: 用 AI 從氛圍產生主題 (mock)
+// 將自然語言關鍵字對應到既有主題
 // =============================================
 const AI_KEYWORD_MAP = [
-  // [マッチキーワード（小文字）, テーマキー, 説明]
-  [['apple','アップル','iOS','クリーン','上品で軽い'],          'apple',     'Apple 系のクリーンな雰囲気'],
-  [['anthropic','クリーム','ベージュ','落ち着いた','コーラル'], 'anthropic', 'Anthropic 風の編集的・温かみ'],
-  [['stripe','インディゴ','洗練','SaaS','決済'],                'stripe',    'Stripe 系の洗練インディゴ'],
-  [['linear','プロダクトSaaS','端正','エンジニア向け'],         'linear',    'Linear 風の端正なグレー'],
-  [['notion','ドキュメント','余白','ノート'],                   'notion',    'Notion 風のニュートラル'],
-  [['vercel','純黒','モノトーン','極限のミニマル'],             'vercel',    'Vercel 風の純黒×純白'],
-  [['github','開発','OSS','エンジニア','緑'],                   'github',    'GitHub 風グリーン'],
-  [['airbnb','コーラル','親しみ','コンシューマー','宿泊'],     'airbnb',    'Airbnb 風コーラル'],
-  [['slack','紫','コラボ','チーム','オーベルジン'],             'slack',     'Slack 風オーベルジン'],
-  [['spotify','音楽','ストリーミング','ライム'],                'spotify',   'Spotify 風グリーン'],
-  [['discord','ゲーミング','コミュニティ','親しみやすい紫'],    'discord',   'Discord 風カジュアル'],
-  [['twitch','ライブ','配信','ゲーム実況','紫'],                'twitch',    'Twitch 風ビビッド紫'],
-  [['tailwind','シアン','開発者','utility'],                    'tailwind',  'Tailwind 風シアン'],
-  [['material','google','elevation','エレベーション'],          'material',  'Material Design 風'],
-  [['aws','amazon','クラウド','オレンジ×ネイビー'],             'aws',       'AWS 風オレンジ'],
-  [['tesla','工業','シャープ','機械的'],                        'tesla',     'Tesla 風工業デザイン'],
-  [['netflix','映画','シネマ','エンタメ','映像'],               'netflix',   'Netflix 風シネマ的'],
-  [['shopify','EC','コマース','ライムグリーン','物販'],         'shopify',   'Shopify 風コマース'],
-  [['bloomberg','金融端末','監視','取引','tickers','ターミナル'], 'bloomberg', 'Bloomberg 風端末'],
-  [['economist','雑誌','editorial','セリフ','大人','落ち着き'], 'economist', 'The Economist 風編集'],
-  [['金融','信頼','堅め','銀行','ファイナンス'],                'finance',   '金融系の信頼感'],
-  [['ミニマル','控えめ','装飾少な','シンプル'],                 'minimal',   'ミニマルな印象'],
-  [['経営','王道','報告','コーポレート','executive'],           'executive', 'Executive Blue'],
-  [['印刷','モノクロ','黒','白黒','報告書'],                   'monochrome','モノクロ報告書'],
-  [['ピンク','ローズ','rose','花','春','可愛い'],               'pastelRose','パステルローズ'],
-  [['黄色','レモン','明るい','元気','イエロー'],                'pastelLemon','パステルレモン'],
-  [['パステル','やさしい','空','水色','ライトブルー'],          'pastelSky', 'パステル空色'],
-  [['ミント','清涼','健康','メディカル','green'],               'macaronMint','マカロンミント'],
-  [['ピーチ','桃','温かい','親近'],                             'macaronPeach','マカロンピーチ'],
-  [['ラベンダー','薄紫','上品','落ち着き'],                     'macaronLavender','マカロンラベンダー'],
-  [['ターコイズ','鮮やか','若々しい','海'],                     'vividOcean','ビビッドオーシャン'],
-  [['情熱','エネルギー','コーラル赤','サンセット'],             'sunsetCoral','サンセットコーラル'],
-  [['マーケティング','成長','ポジティブ','エコ'],               'marketing', 'マーケティンググリーン']
+  // [比對關鍵字 (小寫), 主題 key, 說明]
+  [['apple','蘋果','ios','乾淨','清爽','輕盈'],                 'apple',     'Apple 系的乾淨氛圍'],
+  [['anthropic','奶油','米色','沉穩','珊瑚'],                   'anthropic', 'Anthropic 風的編輯感與溫度'],
+  [['stripe','靛藍','精緻','saas','金流','支付'],               'stripe',    'Stripe 系的精緻靛藍'],
+  [['linear','產品','端整','工程師','開發者'],                  'linear',    'Linear 風的端整灰'],
+  [['notion','文件','留白','筆記'],                             'notion',    'Notion 風中性配色'],
+  [['vercel','純黑','黑白','單色','極簡'],                      'vercel',    'Vercel 風的純黑純白'],
+  [['github','開發','開源','oss','綠色'],                       'github',    'GitHub 風綠色'],
+  [['airbnb','珊瑚','親切','消費者','住宿'],                    'airbnb',    'Airbnb 風珊瑚色'],
+  [['slack','紫色','協作','團隊','茄紫'],                       'slack',     'Slack 風茄紫'],
+  [['spotify','音樂','串流','萊姆'],                            'spotify',   'Spotify 風綠'],
+  [['discord','遊戲','社群','親切的紫'],                        'discord',   'Discord 風休閒'],
+  [['twitch','直播','實況','遊戲實況'],                         'twitch',    'Twitch 風鮮豔紫'],
+  [['tailwind','青色','utility','開發者工具'],                  'tailwind',  'Tailwind 風青色'],
+  [['material','google','elevation','層次'],                    'material',  'Material Design 風'],
+  [['aws','amazon','雲端','橙色','海軍藍'],                     'aws',       'AWS 風橙色'],
+  [['tesla','工業','銳利','機械'],                              'tesla',     'Tesla 風工業設計'],
+  [['netflix','電影','戲劇','娛樂','影音'],                     'netflix',   'Netflix 風電影感'],
+  [['shopify','電商','商務','萊姆綠','零售'],                   'shopify',   'Shopify 風電商'],
+  [['bloomberg','金融終端','監控','交易','終端機'],             'bloomberg', 'Bloomberg 風終端'],
+  [['economist','雜誌','editorial','serif','成熟','沉穩'],      'economist', 'The Economist 風編輯'],
+  [['金融','信賴','沉穩','銀行','財務'],                        'finance',   '金融系的信賴感'],
+  [['極簡','低調','少裝飾','簡單','minimal'],                   'minimal',   '極簡印象'],
+  [['經營','經典','報告','企業','executive'],                   'executive', 'Executive Blue'],
+  [['印刷','黑白','黑色','單色','報告書'],                      'monochrome','黑白報告書'],
+  [['粉紅','玫瑰','rose','花','春','可愛'],                     'pastelRose','粉彩玫瑰'],
+  [['黃色','檸檬','明亮','活力','yellow'],                      'pastelLemon','粉彩檸檬'],
+  [['粉彩','溫柔','天空','水藍','淺藍'],                        'pastelSky', '粉彩天空藍'],
+  [['薄荷','清涼','健康','醫療','green'],                       'macaronMint','馬卡龍薄荷'],
+  [['蜜桃','桃','溫暖','親近'],                                 'macaronPeach','馬卡龍蜜桃'],
+  [['薰衣草','淺紫','優雅','沉穩'],                             'macaronLavender','馬卡龍薰衣草'],
+  [['土耳其藍','鮮明','年輕','海'],                             'vividOcean','鮮豔海洋'],
+  [['熱情','能量','珊瑚紅','日落'],                             'sunsetCoral','日落珊瑚'],
+  [['行銷','成長','正向','永續'],                               'marketing', '行銷綠']
 ];
 
 function aiMatchTheme(prompt) {
   const p = prompt.toLowerCase();
-  // マッチしたキーワードの数でスコアリング
+  // 以比對到的關鍵字數量計分
   let best = null, bestScore = 0;
   for (const [kws, themeKey, desc] of AI_KEYWORD_MAP) {
     const score = kws.filter(kw => p.includes(kw.toLowerCase())).length;
@@ -3749,26 +3749,26 @@ function bindAIModal() {
     const result = document.getElementById('aiResult');
     if (!prompt) {
       result.classList.add('show','fail');
-      result.innerHTML = '<strong>入力が空です。</strong>テーマの雰囲気を記述してください。';
+      result.innerHTML = '<strong>輸入為空。</strong>請描述主題的氛圍。';
       return;
     }
     const match = aiMatchTheme(prompt);
     if (!match) {
       result.classList.add('show','fail');
-      result.innerHTML = '<strong>マッチするテーマが見つかりませんでした。</strong><br>別のキーワード（業界名・色・印象）でお試しください。';
+      result.innerHTML = '<strong>找不到符合的主題。</strong><br>請改用其他關鍵字 (產業、顏色、印象) 再試一次。';
       return;
     }
     const t = THEMES[match.themeKey];
     applyTheme(match.themeKey);
     result.classList.add('show');
     result.classList.remove('fail');
-    result.innerHTML = `<strong>${t.name}</strong> を適用しました（${match.desc}）。<br>左パネルでさらに微調整できます。`;
+    result.innerHTML = `已套用 <strong>${t.name}</strong> (${match.desc})。<br>可在左側面板進一步微調。`;
   });
 }
 
 // =============================================
-// Phase 2 / 2-2: URL から取り込み（モック）
-// ホスト名から既知ブランドにマッチング
+// Phase 2 / 2-2: 從 URL 匯入 (mock)
+// 從主機名比對到已知品牌
 // =============================================
 const URL_HOST_MAP = {
   'apple.com': 'apple', 'anthropic.com': 'anthropic', 'claude.ai': 'anthropic',
@@ -3787,14 +3787,14 @@ const URL_HOST_MAP = {
 
 function urlMatchTheme(input) {
   const u = input.toLowerCase().trim();
-  // ホスト名抽出
+  // 抽取主機名
   let host = u;
   try {
     const url = new URL(u.startsWith('http') ? u : 'https://' + u);
     host = url.hostname.replace(/^www\./, '');
   } catch (e) { /* fallthrough */ }
 
-  // 完全一致 → サフィックス一致
+  // 完全比對 → 後綴比對
   if (URL_HOST_MAP[host]) return { themeKey: URL_HOST_MAP[host], host };
   for (const [k, v] of Object.entries(URL_HOST_MAP)) {
     if (host.endsWith(k) || host.includes(k.split('.')[0])) {
@@ -3811,21 +3811,21 @@ function bindURLModal() {
     const result = document.getElementById('urlResult');
     if (!url) {
       result.classList.add('show','fail');
-      result.innerHTML = '<strong>URL を入力してください。</strong>';
+      result.innerHTML = '<strong>請輸入 URL。</strong>';
       return;
     }
     const match = urlMatchTheme(url);
     if (!match) {
       result.classList.add('show','fail');
-      result.innerHTML = `<strong>${url} は未対応のドメインです。</strong><br>` +
-        '対応ドメイン例: apple.com / stripe.com / notion.so / github.com / netflix.com など';
+      result.innerHTML = `<strong>${url} 為不支援的網域。</strong><br>` +
+        '支援網域範例: apple.com / stripe.com / notion.so / github.com / netflix.com 等';
       return;
     }
     const t = THEMES[match.themeKey];
     applyTheme(match.themeKey);
     result.classList.add('show');
     result.classList.remove('fail');
-    result.innerHTML = `<strong>${match.host}</strong> から <strong>${t.name}</strong> テーマを取り込みました。`;
+    result.innerHTML = `已從 <strong>${match.host}</strong> 匯入 <strong>${t.name}</strong> 主題。`;
   });
 }
 document.addEventListener('DOMContentLoaded', init);
