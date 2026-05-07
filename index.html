@@ -5,9 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>CSS Design System Generator</title>
 <style>
-  /* ============================================
-     ジェネレーターUI（プレビューCSSとは別系統）
-     ============================================ */
+  /* ジェネレーターUI */
   * { box-sizing: border-box; }
   html, body { margin: 0; padding: 0; }
   body {
@@ -38,18 +36,13 @@
     padding: 3px;
   }
   .mode-toggle button {
-    border: none;
-    background: transparent;
-    padding: 6px 14px;
-    border-radius: 999px;
-    cursor: pointer;
-    font-size: 12px;
-    color: #6b7280;
-    font-weight: 600;
+    border: none; background: transparent;
+    padding: 6px 14px; border-radius: 999px;
+    cursor: pointer; font-size: 12px;
+    color: #6b7280; font-weight: 600;
   }
   .mode-toggle button.active {
-    background: #fff;
-    color: #1f2933;
+    background: #fff; color: #1f2933;
     box-shadow: 0 1px 2px rgba(0,0,0,0.08);
   }
 
@@ -59,7 +52,6 @@
     min-height: calc(100vh - 73px);
   }
 
-  /* 設定パネル */
   .settings-panel {
     background: #fff;
     border-right: 1px solid #e5e7eb;
@@ -71,21 +63,15 @@
   }
   .settings-section { margin-bottom: 24px; }
   .settings-section h2 {
-    font-size: 12px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: #374151;
-    margin: 0 0 10px;
-    padding-bottom: 6px;
-    border-bottom: 1px solid #e5e7eb;
+    font-size: 12px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.08em;
+    color: #374151; margin: 0 0 10px;
+    padding-bottom: 6px; border-bottom: 1px solid #e5e7eb;
   }
   .form-row {
-    display: flex;
-    align-items: center;
+    display: flex; align-items: center;
     justify-content: space-between;
-    gap: 12px;
-    margin-bottom: 8px;
+    gap: 12px; margin-bottom: 8px;
   }
   .form-row label { flex: 1; font-size: 13px; color: #374151; }
   .form-row input[type="color"] {
@@ -94,17 +80,41 @@
     padding: 2px; cursor: pointer; background: #fff;
   }
   .form-row select {
-    flex: 0 0 170px;
+    flex: 0 0 150px;
     padding: 6px 8px; font-size: 13px;
     border: 1px solid #d1d5db; border-radius: 6px;
     background: #fff; cursor: pointer;
   }
 
-  /* テーマカード */
+  details.sub-section {
+    margin-top: 8px;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    background: #fafafa;
+  }
+  details.sub-section summary {
+    padding: 8px 12px;
+    font-size: 12px; font-weight: 600;
+    color: #374151; cursor: pointer;
+    user-select: none;
+  }
+  details.sub-section[open] summary { border-bottom: 1px solid #e5e7eb; }
+  details.sub-section .sub-body { padding: 10px 12px 4px; }
+  details.sub-section .sub-group {
+    margin-bottom: 10px;
+    padding-bottom: 6px;
+    border-bottom: 1px dashed #e5e7eb;
+  }
+  details.sub-section .sub-group:last-child { border-bottom: none; }
+  details.sub-section .sub-group-title {
+    font-size: 11px; font-weight: 700;
+    color: #6b7280; letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+
   .theme-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
   }
   .theme-card {
     border: 2px solid #e5e7eb;
@@ -120,9 +130,7 @@
     border-color: #2563eb;
     box-shadow: 0 0 0 3px rgba(37,99,235,0.15);
   }
-  .theme-card .swatches {
-    display: flex; gap: 2px; margin-bottom: 6px;
-  }
+  .theme-card .swatches { display: flex; gap: 2px; margin-bottom: 6px; }
   .theme-card .swatches span {
     width: 14px; height: 14px;
     border-radius: 4px;
@@ -131,11 +139,10 @@
   .theme-card .name { font-size: 12px; font-weight: 600; color: #1f2933; line-height: 1.2; }
   .theme-card .desc { font-size: 11px; color: #6b7280; margin-top: 2px; }
 
-  /* 装飾スタイル：横スクロールチップ */
-  .style-chips {
+  .style-chips, .accent-chips {
     display: flex; flex-wrap: wrap; gap: 6px;
   }
-  .style-chip {
+  .style-chip, .accent-chip {
     padding: 6px 12px;
     border: 1px solid #d1d5db;
     border-radius: 999px;
@@ -144,7 +151,7 @@
     cursor: pointer;
     color: #374151;
   }
-  .style-chip.active {
+  .style-chip.active, .accent-chip.active {
     background: #1f2933;
     color: #fff;
     border-color: #1f2933;
@@ -165,12 +172,10 @@
   .copy-message {
     font-size: 12px; color: #047857;
     text-align: center; height: 16px;
-    margin-top: 4px;
-    opacity: 0; transition: opacity 0.2s;
+    margin-top: 4px; opacity: 0; transition: opacity 0.2s;
   }
   .copy-message.show { opacity: 1; }
 
-  /* プレビュー */
   .preview-area { padding: 24px; overflow-x: auto; }
   .preview-frame {
     background: #fff;
@@ -240,13 +245,11 @@
 
   <aside class="settings-panel">
 
-    <!-- テーマ -->
     <section class="settings-section">
       <h2>テーマ</h2>
       <div class="theme-grid" id="themeGrid"></div>
     </section>
 
-    <!-- メインカラー -->
     <section class="settings-section">
       <h2>メインカラー</h2>
       <div class="form-row">
@@ -254,11 +257,10 @@
         <input type="color" id="colorMain">
       </div>
       <p style="font-size:11px;color:#6b7280;margin:4px 0 0;">
-        メインカラーから50〜900の9階調を自動生成します。
+        50〜900の9階調を自動生成します。
       </p>
     </section>
 
-    <!-- 装飾スタイル -->
     <section class="settings-section">
       <h2>装飾スタイル</h2>
       <div class="style-chips" id="styleChips">
@@ -267,12 +269,20 @@
         <button class="style-chip" data-style="soft">Soft</button>
         <button class="style-chip" data-style="glass">Glass</button>
       </div>
-      <p style="font-size:11px;color:#6b7280;margin:8px 0 0;">
-        カードの形状・影・罫線・背景の質感が一括で変わります。
-      </p>
     </section>
 
-    <!-- フォント -->
+    <section class="settings-section">
+      <h2>カード装飾（アクセント帯）</h2>
+      <div class="accent-chips" id="accentChips">
+        <button class="accent-chip active" data-accent="none">なし</button>
+        <button class="accent-chip" data-accent="top-thin">上 細</button>
+        <button class="accent-chip" data-accent="top-thick">上 太</button>
+        <button class="accent-chip" data-accent="side-thin">左 細</button>
+        <button class="accent-chip" data-accent="side-thick">左 太</button>
+        <button class="accent-chip" data-accent="gradient">グラデ帯</button>
+      </div>
+    </section>
+
     <section class="settings-section">
       <h2>フォント</h2>
       <div class="form-row">
@@ -295,15 +305,88 @@
         </select>
       </div>
       <div class="form-row">
-        <label for="fontSizeBase">基本サイズ</label>
+        <label for="fontSizeBase">基本文字サイズ</label>
         <select id="fontSizeBase">
-          <option>13px</option><option>14px</option>
-          <option>15px</option><option>16px</option>
+          <option>12px</option><option>13px</option>
+          <option>14px</option><option>15px</option>
+          <option>16px</option><option>17px</option>
+          <option>18px</option>
         </select>
       </div>
+      <p style="font-size:11px;color:#6b7280;margin:4px 0 8px;">
+        スケール×基本サイズから各要素の文字サイズを自動算出します。下で個別に上書きできます。
+      </p>
+
+      <details class="sub-section">
+        <summary>テキスト個別調整</summary>
+        <div class="sub-body">
+          <div class="sub-group">
+            <div class="sub-group-title">ダッシュボード本体</div>
+            <div class="form-row">
+              <label for="ts_title">タイトル</label>
+              <select id="ts_title" data-text></select>
+            </div>
+            <div class="form-row">
+              <label for="ts_subtitle">説明文</label>
+              <select id="ts_subtitle" data-text></select>
+            </div>
+          </div>
+
+          <div class="sub-group">
+            <div class="sub-group-title">カード（KPI含む）</div>
+            <div class="form-row">
+              <label for="ts_cardTitle">カードタイトル</label>
+              <select id="ts_cardTitle" data-text></select>
+            </div>
+            <div class="form-row">
+              <label for="ts_kpiLabel">KPIラベル</label>
+              <select id="ts_kpiLabel" data-text></select>
+            </div>
+            <div class="form-row">
+              <label for="ts_kpiValue">KPI数値</label>
+              <select id="ts_kpiValue" data-text></select>
+            </div>
+            <div class="form-row">
+              <label for="ts_kpiUnit">単位</label>
+              <select id="ts_kpiUnit" data-text></select>
+            </div>
+            <div class="form-row">
+              <label for="ts_kpiDelta">増減（%）</label>
+              <select id="ts_kpiDelta" data-text></select>
+            </div>
+          </div>
+
+          <div class="sub-group">
+            <div class="sub-group-title">グラフ</div>
+            <div class="form-row">
+              <label for="ts_chartTitle">グラフタイトル</label>
+              <select id="ts_chartTitle" data-text></select>
+            </div>
+            <div class="form-row">
+              <label for="ts_chartText">軸/データラベル</label>
+              <select id="ts_chartText" data-text></select>
+            </div>
+            <div class="form-row">
+              <label for="ts_chartLegend">凡例</label>
+              <select id="ts_chartLegend" data-text></select>
+            </div>
+          </div>
+
+          <div class="sub-group">
+            <div class="sub-group-title">テーブル</div>
+            <div class="form-row">
+              <label for="ts_tableHead">ヘッダー</label>
+              <select id="ts_tableHead" data-text></select>
+            </div>
+            <div class="form-row">
+              <label for="ts_tableBody">本文</label>
+              <select id="ts_tableBody" data-text></select>
+            </div>
+          </div>
+        </div>
+      </details>
     </section>
 
-    <!-- レイアウト -->
     <section class="settings-section">
       <h2>レイアウト</h2>
       <div class="form-row">
@@ -330,7 +413,6 @@
       </div>
     </section>
 
-    <!-- 出力 -->
     <section class="settings-section">
       <h2>出力</h2>
       <div class="action-buttons">
@@ -342,7 +424,6 @@
     </section>
   </aside>
 
-  <!-- プレビュー -->
   <main class="preview-area">
     <div class="preview-frame">
       <div class="preview-label">プレビュー</div>
@@ -353,14 +434,13 @@
           <p class="dashboard-subtitle">2026年上半期 売上・KPIサマリー</p>
         </header>
 
-        <!-- KPI（スパークライン付き） -->
         <section class="section">
           <div class="grid grid-3">
             <div class="card kpi-card">
               <div class="kpi-label">GMV</div>
               <div class="kpi-value">43.8M <span class="kpi-note">NTD</span></div>
               <div class="kpi-trend">
-                <span class="text-positive">+8.2%</span>
+                <span class="text-positive kpi-delta">+8.2%</span>
                 <span class="kpi-spark" id="spark1"></span>
               </div>
             </div>
@@ -368,7 +448,7 @@
               <div class="kpi-label">総契約数</div>
               <div class="kpi-value">12,450</div>
               <div class="kpi-trend">
-                <span class="text-positive">+5.1%</span>
+                <span class="text-positive kpi-delta">+5.1%</span>
                 <span class="kpi-spark" id="spark2"></span>
               </div>
             </div>
@@ -376,14 +456,13 @@
               <div class="kpi-label">AOV</div>
               <div class="kpi-value">3,515 <span class="kpi-note">NTD</span></div>
               <div class="kpi-trend">
-                <span class="text-negative">-1.4%</span>
+                <span class="text-negative kpi-delta">-1.4%</span>
                 <span class="kpi-spark" id="spark3"></span>
               </div>
             </div>
           </div>
         </section>
 
-        <!-- グラフ：コンボ + エリア -->
         <section class="section">
           <div class="grid grid-2">
             <div class="card">
@@ -401,7 +480,6 @@
           </div>
         </section>
 
-        <!-- グラフ：単独棒 + ドーナツ -->
         <section class="section">
           <div class="grid grid-2">
             <div class="card">
@@ -415,7 +493,6 @@
           </div>
         </section>
 
-        <!-- 積み上げ棒 縦/横 -->
         <section class="section">
           <div class="grid grid-2">
             <div class="card">
@@ -434,7 +511,6 @@
           </div>
         </section>
 
-        <!-- バッジ・ボタン -->
         <section class="section">
           <div class="card">
             <div class="card-title">ステータス・アクション</div>
@@ -450,7 +526,6 @@
           </div>
         </section>
 
-        <!-- テーブル -->
         <section class="section">
           <div class="card">
             <div class="card-title">月別売上サマリー</div>
@@ -473,7 +548,6 @@
           </div>
         </section>
 
-        <!-- インサイト -->
         <section class="section">
           <div class="grid grid-2">
             <div class="insight-box">
@@ -511,113 +585,56 @@ const FONT_STACKS = {
   georgia:'Georgia, "Times New Roman", serif',
   meiryo: 'Meiryo, "メイリオ", sans-serif'
 };
-
-// 密度（余白と行間）
 const DENSITY_MAP = {
-  compact:    { xs:'4px',  sm:'8px',  md:'12px', lg:'16px', xl:'24px', row:'8px' },
-  cozy:       { xs:'6px',  sm:'12px', md:'16px', lg:'24px', xl:'32px', row:'12px' },
-  comfortable:{ xs:'8px',  sm:'16px', md:'24px', lg:'32px', xl:'48px', row:'16px' }
+  compact:    { xs:'4px', sm:'8px',  md:'12px', lg:'16px', xl:'24px', row:'8px' },
+  cozy:       { xs:'6px', sm:'12px', md:'16px', lg:'24px', xl:'32px', row:'12px' },
+  comfortable:{ xs:'8px', sm:'16px', md:'24px', lg:'32px', xl:'48px', row:'16px' }
 };
 
-/* =====================================================
-   テーマ12種（明るさ・パステル・マカロン込み）
-   ===================================================== */
+/* テーマ */
 const THEMES = {
-  // --- 王道 ---
-  executive: {
-    name: 'Executive Blue', desc: '経営報告・王道', group: '王道',
-    colorMain: '#2563eb',
-    colorPositive: '#059669', colorNegative: '#dc2626', colorWarning: '#d97706',
-    light: { bg:'#f7f8fa', card:'#ffffff', text:'#0f172a', muted:'#64748b', border:'#e2e8f0' }
-  },
-  finance: {
-    name: 'Finance Navy', desc: '金融・信頼感', group: '王道',
-    colorMain: '#1e40af',
-    colorPositive: '#065f46', colorNegative: '#991b1b', colorWarning: '#92400e',
-    light: { bg:'#f5f7fb', card:'#ffffff', text:'#0f172a', muted:'#475569', border:'#dbe2ec' }
-  },
-  minimal: {
-    name: 'Minimal Gray', desc: '装飾控えめ・シック', group: '王道',
-    colorMain: '#374151',
-    colorPositive: '#059669', colorNegative: '#dc2626', colorWarning: '#d97706',
-    light: { bg:'#fafafa', card:'#ffffff', text:'#1f2937', muted:'#9ca3af', border:'#e5e7eb' }
-  },
-  monochrome: {
-    name: 'Monochrome', desc: '黒基調・印刷向け', group: '王道',
-    colorMain: '#111827',
-    colorPositive: '#1f2937', colorNegative: '#7f1d1d', colorWarning: '#78350f',
-    light: { bg:'#ffffff', card:'#ffffff', text:'#111827', muted:'#6b7280', border:'#d1d5db' }
-  },
-
-  // --- パステル ---
-  pastelSky: {
-    name: 'Pastel Sky', desc: '澄んだ空・爽やか', group: 'パステル',
-    colorMain: '#7dd3fc',
-    colorPositive: '#86efac', colorNegative: '#fca5a5', colorWarning: '#fcd34d',
-    light: { bg:'#f0f9ff', card:'#ffffff', text:'#0c4a6e', muted:'#7c93a8', border:'#dbeafe' }
-  },
-  pastelRose: {
-    name: 'Pastel Rose', desc: 'やさしいピンク', group: 'パステル',
-    colorMain: '#f9a8d4',
-    colorPositive: '#86efac', colorNegative: '#fca5a5', colorWarning: '#fcd34d',
-    light: { bg:'#fff1f6', card:'#ffffff', text:'#831843', muted:'#9d7585', border:'#fce7f3' }
-  },
-  pastelLemon: {
-    name: 'Pastel Lemon', desc: '明るく親しみやすい', group: 'パステル',
-    colorMain: '#fcd34d',
-    colorPositive: '#86efac', colorNegative: '#fca5a5', colorWarning: '#fb923c',
-    light: { bg:'#fefce8', card:'#ffffff', text:'#713f12', muted:'#a08c5a', border:'#fef3c7' }
-  },
-
-  // --- マカロン ---
-  macaronMint: {
-    name: 'Macaron Mint', desc: '清涼・健康', group: 'マカロン',
-    colorMain: '#6ee7b7',
-    colorPositive: '#34d399', colorNegative: '#fb7185', colorWarning: '#fbbf24',
-    light: { bg:'#f0fdf4', card:'#ffffff', text:'#064e3b', muted:'#6b8e7f', border:'#d1fae5' }
-  },
-  macaronPeach: {
-    name: 'Macaron Peach', desc: '温かみ・親近感', group: 'マカロン',
-    colorMain: '#fdba74',
-    colorPositive: '#86efac', colorNegative: '#fb7185', colorWarning: '#fbbf24',
-    light: { bg:'#fff7ed', card:'#ffffff', text:'#7c2d12', muted:'#a08068', border:'#fed7aa' }
-  },
-  macaronLavender: {
-    name: 'Macaron Lavender', desc: '上品・落ち着き', group: 'マカロン',
-    colorMain: '#c4b5fd',
-    colorPositive: '#86efac', colorNegative: '#fda4af', colorWarning: '#fcd34d',
-    light: { bg:'#f5f3ff', card:'#ffffff', text:'#4c1d95', muted:'#8b80a8', border:'#ddd6fe' }
-  },
-
-  // --- ビビッド ---
-  vividOcean: {
-    name: 'Vivid Ocean', desc: '鮮やか・若々しい', group: 'ビビッド',
-    colorMain: '#06b6d4',
-    colorPositive: '#10b981', colorNegative: '#ef4444', colorWarning: '#f59e0b',
-    light: { bg:'#ecfeff', card:'#ffffff', text:'#164e63', muted:'#64748b', border:'#cffafe' }
-  },
-  sunsetCoral: {
-    name: 'Sunset Coral', desc: '情熱・エネルギッシュ', group: 'ビビッド',
-    colorMain: '#fb7185',
-    colorPositive: '#10b981', colorNegative: '#dc2626', colorWarning: '#f59e0b',
-    light: { bg:'#fff1f2', card:'#ffffff', text:'#881337', muted:'#7c5564', border:'#ffe4e6' }
-  }
+  executive: { name:'Executive Blue', desc:'経営報告・王道', colorMain:'#2563eb',
+    colorPositive:'#059669', colorNegative:'#dc2626', colorWarning:'#d97706',
+    light:{ bg:'#f7f8fa', card:'#ffffff', text:'#0f172a', muted:'#64748b', border:'#e2e8f0' }},
+  finance: { name:'Finance Navy', desc:'金融・信頼感', colorMain:'#1e40af',
+    colorPositive:'#065f46', colorNegative:'#991b1b', colorWarning:'#92400e',
+    light:{ bg:'#f5f7fb', card:'#ffffff', text:'#0f172a', muted:'#475569', border:'#dbe2ec' }},
+  minimal: { name:'Minimal Gray', desc:'装飾控えめ・シック', colorMain:'#374151',
+    colorPositive:'#059669', colorNegative:'#dc2626', colorWarning:'#d97706',
+    light:{ bg:'#fafafa', card:'#ffffff', text:'#1f2937', muted:'#9ca3af', border:'#e5e7eb' }},
+  monochrome: { name:'Monochrome', desc:'黒基調・印刷向け', colorMain:'#111827',
+    colorPositive:'#1f2937', colorNegative:'#7f1d1d', colorWarning:'#78350f',
+    light:{ bg:'#ffffff', card:'#ffffff', text:'#111827', muted:'#6b7280', border:'#d1d5db' }},
+  pastelSky: { name:'Pastel Sky', desc:'澄んだ空・爽やか', colorMain:'#7dd3fc',
+    colorPositive:'#86efac', colorNegative:'#fca5a5', colorWarning:'#fcd34d',
+    light:{ bg:'#f0f9ff', card:'#ffffff', text:'#0c4a6e', muted:'#7c93a8', border:'#dbeafe' }},
+  pastelRose: { name:'Pastel Rose', desc:'やさしいピンク', colorMain:'#f9a8d4',
+    colorPositive:'#86efac', colorNegative:'#fca5a5', colorWarning:'#fcd34d',
+    light:{ bg:'#fff1f6', card:'#ffffff', text:'#831843', muted:'#9d7585', border:'#fce7f3' }},
+  pastelLemon: { name:'Pastel Lemon', desc:'明るく親しみやすい', colorMain:'#fcd34d',
+    colorPositive:'#86efac', colorNegative:'#fca5a5', colorWarning:'#fb923c',
+    light:{ bg:'#fefce8', card:'#ffffff', text:'#713f12', muted:'#a08c5a', border:'#fef3c7' }},
+  macaronMint: { name:'Macaron Mint', desc:'清涼・健康', colorMain:'#6ee7b7',
+    colorPositive:'#34d399', colorNegative:'#fb7185', colorWarning:'#fbbf24',
+    light:{ bg:'#f0fdf4', card:'#ffffff', text:'#064e3b', muted:'#6b8e7f', border:'#d1fae5' }},
+  macaronPeach: { name:'Macaron Peach', desc:'温かみ・親近感', colorMain:'#fdba74',
+    colorPositive:'#86efac', colorNegative:'#fb7185', colorWarning:'#fbbf24',
+    light:{ bg:'#fff7ed', card:'#ffffff', text:'#7c2d12', muted:'#a08068', border:'#fed7aa' }},
+  macaronLavender: { name:'Macaron Lavender', desc:'上品・落ち着き', colorMain:'#c4b5fd',
+    colorPositive:'#86efac', colorNegative:'#fda4af', colorWarning:'#fcd34d',
+    light:{ bg:'#f5f3ff', card:'#ffffff', text:'#4c1d95', muted:'#8b80a8', border:'#ddd6fe' }},
+  vividOcean: { name:'Vivid Ocean', desc:'鮮やか・若々しい', colorMain:'#06b6d4',
+    colorPositive:'#10b981', colorNegative:'#ef4444', colorWarning:'#f59e0b',
+    light:{ bg:'#ecfeff', card:'#ffffff', text:'#164e63', muted:'#64748b', border:'#cffafe' }},
+  sunsetCoral: { name:'Sunset Coral', desc:'情熱・エネルギッシュ', colorMain:'#fb7185',
+    colorPositive:'#10b981', colorNegative:'#dc2626', colorWarning:'#f59e0b',
+    light:{ bg:'#fff1f2', card:'#ffffff', text:'#881337', muted:'#7c5564', border:'#ffe4e6' }}
 };
-
-/* テーマのダークモード版を、light設定から自動生成 */
-function deriveDark(theme) {
-  return {
-    bg:    '#0b1220',
-    card:  '#111827',
-    text:  '#f1f5f9',
-    muted: '#94a3b8',
-    border:'#1f2937'
-  };
+function deriveDark() {
+  return { bg:'#0b1220', card:'#111827', text:'#f1f5f9', muted:'#94a3b8', border:'#1f2937' };
 }
 
-/* =====================================================
-   カラーユーティリティ：HEX <-> HSL、階調生成
-   ===================================================== */
+/* HSL utils & 階調生成 */
 function hexToHsl(hex) {
   const m = hex.replace('#','').match(/.{2}/g).map(x => parseInt(x,16)/255);
   const [r,g,b] = m;
@@ -645,18 +662,92 @@ function hslToHex(h, s, l) {
   };
   return '#' + [f(0), f(8), f(4)].map(x => x.toString(16).padStart(2,'0')).join('');
 }
-// メインカラーから50〜900を生成
 function buildScale(hex) {
   const { h, s } = hexToHsl(hex);
   const stops = { 50:97, 100:94, 200:87, 300:78, 400:66, 500:54, 600:46, 700:38, 800:28, 900:18 };
   const out = {};
   for (const [k, l] of Object.entries(stops)) {
-    // 彩度はライト寄りで控えめに、ダーク寄りでやや強めに
     const adjS = Math.min(100, s * (l > 70 ? 0.9 : l < 30 ? 0.85 : 1));
     out[k] = hslToHex(h, adjS, l);
   }
   return out;
 }
+
+/* =====================================================
+   テキストサイズ：自動算出 + 個別オーバーライド
+   ===================================================== */
+
+// テキストキー一覧（id="ts_xxx" と対応）
+const TEXT_KEYS = [
+  'title','subtitle','cardTitle',
+  'kpiLabel','kpiValue','kpiUnit','kpiDelta',
+  'chartTitle','chartText','chartLegend',
+  'tableHead','tableBody'
+];
+
+// 各キーのスケール上の段（base=1.0 を基準に何段上下か）
+// 段数 -> ratio^段数 で計算
+const TEXT_SCALE_STEPS = {
+  title:       3,
+  subtitle:   -1,
+  cardTitle:   1,
+  kpiLabel:   -1,
+  kpiValue:    4,
+  kpiUnit:    -1,
+  kpiDelta:   -1,
+  chartTitle:  1,
+  chartText:  -2,
+  chartLegend:-1,
+  tableHead:  -1,
+  tableBody:   0
+};
+
+// 個別selectの選択肢（px）— 要素ごとにレンジを変える
+const TEXT_OPTIONS = {
+  title:      [16,18,20,22,24,26,28,30,32,36,40,44,48,56],
+  subtitle:   [10,11,12,13,14,15,16],
+  cardTitle:  [12,13,14,15,16,17,18,20,22,24],
+  kpiLabel:   [9,10,11,12,13,14],
+  kpiValue:   [20,22,24,26,28,30,32,36,40,44,48,56,64,72],
+  kpiUnit:    [9,10,11,12,13,14,15,16],
+  kpiDelta:   [9,10,11,12,13,14,15,16],
+  chartTitle: [12,13,14,15,16,17,18,20,22,24],
+  chartText:  [8,9,10,11,12,13,14],
+  chartLegend:[9,10,11,12,13,14],
+  tableHead:  [9,10,11,12,13,14],
+  tableBody:  [11,12,13,14,15,16,17,18]
+};
+
+// スケール基準で自動サイズを計算
+function autoSize(key, base, ratio) {
+  const step = TEXT_SCALE_STEPS[key];
+  return Math.max(8, Math.round(base * Math.pow(ratio, step)));
+}
+// 自動サイズに最も近い選択肢にスナップ
+function snapTo(opts, target) {
+  return opts.reduce((best, v) => Math.abs(v - target) < Math.abs(best - target) ? v : best, opts[0]);
+}
+// 全テキストサイズの自動値（pxの数値）を返す
+function computeAutoTextSizes() {
+  const base = parseFloat(state.fontSizeBase);
+  const ratio = parseFloat(state.typeScale);
+  const out = {};
+  TEXT_KEYS.forEach(k => {
+    const target = autoSize(k, base, ratio);
+    out[k] = snapTo(TEXT_OPTIONS[k], target);
+  });
+  return out;
+}
+
+/* カード装飾 */
+const CARD_ACCENTS = {
+  none:        '',
+  'top-thin':  'border-top: 3px solid var(--color-main);',
+  'top-thick': 'border-top: 6px solid var(--color-main);',
+  'side-thin': 'border-left: 3px solid var(--color-main);',
+  'side-thick':'border-left: 6px solid var(--color-main);',
+  'gradient':  '' // ::before で実装
+};
 
 /* =====================================================
    state
@@ -670,10 +761,12 @@ const DEFAULT_STATE = {
   radius: '12px',
   density: 'cozy',
   maxWidth: '1200px',
-  styleVariant: 'standard', // standard / editorial / soft / glass
-  mode: 'light'             // light / dark
+  styleVariant: 'standard',
+  cardAccent: 'none',
+  mode: 'light',
+  textOverrides: {} // { kpiValue: 36, ... } 個別上書き（数値, px）
 };
-let state = { ...DEFAULT_STATE };
+let state = JSON.parse(JSON.stringify(DEFAULT_STATE));
 
 /* =====================================================
    CSS 生成
@@ -681,76 +774,65 @@ let state = { ...DEFAULT_STATE };
 function generateCSS() {
   const s = state;
   const theme = THEMES[s.themeKey] || THEMES.executive;
-  const palette = s.mode === 'dark' ? deriveDark(theme) : theme.light;
+  const palette = s.mode === 'dark' ? deriveDark() : theme.light;
   const scale = buildScale(s.colorMain);
   const ff = FONT_STACKS[s.fontFamily];
   const d = DENSITY_MAP[s.density];
-  const ratio = parseFloat(s.typeScale);
-  const base = parseFloat(s.fontSizeBase);
 
-  // タイポスケール自動算出
-  const fsSmall = Math.round(base / ratio);
-  const fsBase  = base;
-  const fsLg    = Math.round(base * ratio);
-  const fsHeading = Math.round(base * ratio * ratio);
-  const fsKpi     = Math.round(base * ratio * ratio * ratio);
+  // 各テキストサイズ：自動 → オーバーライドあれば置換
+  const auto = computeAutoTextSizes();
+  const ts = {};
+  TEXT_KEYS.forEach(k => {
+    ts[k] = (s.textOverrides[k] || auto[k]) + 'px';
+  });
 
-  // 装飾スタイル別のトークン
-  const variantTokens = {
-    standard: {
-      cardBg: 'var(--color-card)',
-      cardBorder: '1px solid var(--color-border)',
-      cardShadow: '0 1px 2px rgba(15,23,42,0.04), 0 1px 3px rgba(15,23,42,0.06)',
-      cardBackdrop: 'none',
-      bodyBg: 'var(--color-bg)',
-      headingFamily: 'var(--font-family)',
-      headingWeight: '600'
-    },
-    editorial: {
-      cardBg: 'var(--color-card)',
-      cardBorder: 'none',
-      cardShadow: 'none',
-      cardBackdrop: 'none',
-      cardExtra: 'border-top: 3px solid var(--color-text);',
-      bodyBg: 'var(--color-bg)',
-      headingFamily: 'Georgia, "Times New Roman", serif',
-      headingWeight: '700',
-      radiusOverride: '2px'
-    },
-    soft: {
-      cardBg: 'var(--color-card)',
-      cardBorder: '1px solid transparent',
-      cardShadow: '0 6px 20px rgba(15,23,42,0.06), 0 2px 6px rgba(15,23,42,0.04)',
-      cardBackdrop: 'none',
-      bodyBg: 'var(--color-bg)',
-      headingFamily: 'var(--font-family)',
-      headingWeight: '600',
-      radiusBoost: '4px'
-    },
-    glass: {
-      cardBg: 'color-mix(in srgb, var(--color-card) 70%, transparent)',
-      cardBorder: '1px solid color-mix(in srgb, var(--color-text) 8%, transparent)',
-      cardShadow: '0 8px 32px rgba(15,23,42,0.08)',
-      cardBackdrop: 'blur(12px) saturate(140%)',
-      bodyBg: `linear-gradient(135deg, ${scale[100]} 0%, ${scale[50]} 50%, ${palette.bg} 100%)`,
-      headingFamily: 'var(--font-family)',
-      headingWeight: '600'
-    }
+  // 装飾スタイル別
+  const variants = {
+    standard: { cardBg:'var(--color-card)', cardBorder:'1px solid var(--color-border)',
+      cardShadow:'0 1px 2px rgba(15,23,42,0.04), 0 1px 3px rgba(15,23,42,0.06)',
+      cardBackdrop:'none', bodyBg:'var(--color-bg)',
+      headingFamily:'var(--font-family)', headingWeight:'600' },
+    editorial: { cardBg:'var(--color-card)', cardBorder:'none',
+      cardShadow:'none', cardBackdrop:'none', bodyBg:'var(--color-bg)',
+      headingFamily:'Georgia, "Times New Roman", serif', headingWeight:'700',
+      cardExtra:'border-top: 3px solid var(--color-text);', radiusOverride:'2px' },
+    soft: { cardBg:'var(--color-card)', cardBorder:'1px solid transparent',
+      cardShadow:'0 6px 20px rgba(15,23,42,0.06), 0 2px 6px rgba(15,23,42,0.04)',
+      cardBackdrop:'none', bodyBg:'var(--color-bg)',
+      headingFamily:'var(--font-family)', headingWeight:'600', radiusBoost:'4px' },
+    glass: { cardBg:'color-mix(in srgb, var(--color-card) 70%, transparent)',
+      cardBorder:'1px solid color-mix(in srgb, var(--color-text) 8%, transparent)',
+      cardShadow:'0 8px 32px rgba(15,23,42,0.08)',
+      cardBackdrop:'blur(12px) saturate(140%)',
+      bodyBg:`linear-gradient(135deg, ${scale[100]} 0%, ${scale[50]} 50%, ${palette.bg} 100%)`,
+      headingFamily:'var(--font-family)', headingWeight:'600' }
   };
-  const v = variantTokens[s.styleVariant];
+  const v = variants[s.styleVariant];
   const radiusFinal = v.radiusOverride
     ? v.radiusOverride
     : (v.radiusBoost ? `calc(${s.radius} + ${v.radiusBoost})` : s.radius);
 
+  const accentCSS = CARD_ACCENTS[s.cardAccent] || '';
+  const gradientCSS = s.cardAccent === 'gradient' ? `
+.card { position: relative; }
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--color-main), var(--color-main-300));
+  border-radius: var(--radius) var(--radius) 0 0;
+}` : '';
+
   return `/* =====================================================
    Dashboard Design System
    Theme: ${theme.name} / Style: ${s.styleVariant} / Mode: ${s.mode}
-   Generated by CSS Design System Generator
+   Card Accent: ${s.cardAccent}
    ===================================================== */
 
 /* 1. Design Tokens */
 :root {
-  /* Brand scale (auto-generated from main color) */
+  /* Brand color scale */
   --color-main-50:  ${scale[50]};
   --color-main-100: ${scale[100]};
   --color-main-200: ${scale[200]};
@@ -773,15 +855,25 @@ function generateCSS() {
   --color-negative: ${theme.colorNegative};
   --color-warning: ${theme.colorWarning};
 
-  /* Typography */
+  /* Fonts */
   --font-family: ${ff};
   --font-heading-family: ${v.headingFamily};
   --font-heading-weight: ${v.headingWeight};
-  --font-size-small:   ${fsSmall}px;
-  --font-size-base:    ${fsBase}px;
-  --font-size-lg:      ${fsLg}px;
-  --font-size-heading: ${fsHeading}px;
-  --font-size-kpi:     ${fsKpi}px;
+
+  /* Text sizes (per element) */
+  --fs-base:         ${s.fontSizeBase};
+  --fs-title:        ${ts.title};
+  --fs-subtitle:     ${ts.subtitle};
+  --fs-card-title:   ${ts.cardTitle};
+  --fs-kpi-label:    ${ts.kpiLabel};
+  --fs-kpi-value:    ${ts.kpiValue};
+  --fs-kpi-unit:     ${ts.kpiUnit};
+  --fs-kpi-delta:    ${ts.kpiDelta};
+  --fs-chart-title:  ${ts.chartTitle};
+  --fs-chart-text:   ${ts.chartText};
+  --fs-chart-legend: ${ts.chartLegend};
+  --fs-table-head:   ${ts.tableHead};
+  --fs-table-body:   ${ts.tableBody};
 
   /* Layout */
   --radius: ${radiusFinal};
@@ -807,7 +899,7 @@ body {
   background: ${v.bodyBg};
   color: var(--color-text);
   font-family: var(--font-family);
-  font-size: var(--font-size-base);
+  font-size: var(--fs-base);
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
 }
@@ -827,12 +919,13 @@ table { border-collapse: collapse; width: 100%; }
 }
 .dashboard-header { margin-bottom: var(--space-xl); }
 .dashboard-title {
-  font-size: var(--font-size-heading);
+  font-size: var(--fs-title);
   color: var(--color-text);
   margin-bottom: var(--space-xs);
+  letter-spacing: -0.01em;
 }
 .dashboard-subtitle {
-  font-size: var(--font-size-small);
+  font-size: var(--fs-subtitle);
   color: var(--color-muted);
 }
 .section { margin-bottom: var(--space-xl); }
@@ -851,9 +944,11 @@ table { border-collapse: collapse; width: 100%; }
   backdrop-filter: var(--card-backdrop);
   -webkit-backdrop-filter: var(--card-backdrop);
   ${v.cardExtra || ''}
+  ${accentCSS}
 }
+${gradientCSS}
 .card-title {
-  font-size: var(--font-size-lg);
+  font-size: var(--fs-card-title);
   font-weight: var(--font-heading-weight);
   font-family: var(--font-heading-family);
   color: var(--color-text);
@@ -863,20 +958,20 @@ table { border-collapse: collapse; width: 100%; }
 /* KPI */
 .kpi-card { display: flex; flex-direction: column; gap: var(--space-xs); }
 .kpi-label {
-  font-size: var(--font-size-small);
+  font-size: var(--fs-kpi-label);
   color: var(--color-muted);
   letter-spacing: 0.04em;
   text-transform: uppercase;
 }
 .kpi-value {
-  font-size: var(--font-size-kpi);
+  font-size: var(--fs-kpi-value);
   font-weight: 700;
   color: var(--color-text);
   line-height: 1.1;
   letter-spacing: -0.02em;
 }
 .kpi-note {
-  font-size: var(--font-size-small);
+  font-size: var(--fs-kpi-unit);
   color: var(--color-muted);
   font-weight: 500;
   margin-left: 4px;
@@ -886,13 +981,9 @@ table { border-collapse: collapse; width: 100%; }
   align-items: center;
   justify-content: space-between;
   gap: var(--space-sm);
-  font-size: var(--font-size-small);
 }
-.kpi-spark {
-  display: inline-block;
-  width: 80px;
-  height: 24px;
-}
+.kpi-delta { font-size: var(--fs-kpi-delta); }
+.kpi-spark { display: inline-block; width: 80px; height: 24px; }
 
 /* Chart */
 .chart-box {
@@ -901,6 +992,7 @@ table { border-collapse: collapse; width: 100%; }
   background: var(--color-main-50);
   padding: var(--space-md);
   position: relative;
+  font-size: var(--fs-chart-text);
 }
 .chart-box svg { width: 100%; height: 100%; display: block; }
 .chart-legend {
@@ -908,7 +1000,7 @@ table { border-collapse: collapse; width: 100%; }
   gap: var(--space-md);
   flex-wrap: wrap;
   margin-top: var(--space-sm);
-  font-size: var(--font-size-small);
+  font-size: var(--fs-chart-legend);
   color: var(--color-muted);
 }
 .chart-legend span { display: inline-flex; align-items: center; gap: 6px; }
@@ -920,7 +1012,7 @@ table { border-collapse: collapse; width: 100%; }
 }
 
 /* Table */
-.data-table { font-size: var(--font-size-base); }
+.data-table { font-size: var(--fs-table-body); }
 .data-table th,
 .data-table td {
   padding: var(--row-pad) var(--space-md);
@@ -928,7 +1020,7 @@ table { border-collapse: collapse; width: 100%; }
   text-align: left;
 }
 .data-table th {
-  font-size: var(--font-size-small);
+  font-size: var(--fs-table-head);
   color: var(--color-muted);
   font-weight: 600;
   text-transform: uppercase;
@@ -943,7 +1035,7 @@ table { border-collapse: collapse; width: 100%; }
   display: inline-block;
   padding: 3px 10px;
   border-radius: 999px;
-  font-size: var(--font-size-small);
+  font-size: var(--fs-chart-legend);
   font-weight: 600;
   margin-right: 4px;
   background: var(--color-main-100);
@@ -958,12 +1050,11 @@ table { border-collapse: collapse; width: 100%; }
 /* Buttons */
 .button-primary {
   display: inline-block;
-  background: var(--color-main);
-  color: #fff;
+  background: var(--color-main); color: #fff;
   border: none;
   border-radius: calc(var(--radius) / 2);
   padding: var(--space-sm) var(--space-lg);
-  font-size: var(--font-size-base);
+  font-size: var(--fs-base);
   font-weight: 600;
   cursor: pointer;
   transition: filter 0.15s, transform 0.1s;
@@ -978,7 +1069,7 @@ table { border-collapse: collapse; width: 100%; }
   border: 1px solid var(--color-border);
   border-radius: calc(var(--radius) / 2);
   padding: var(--space-sm) var(--space-lg);
-  font-size: var(--font-size-base);
+  font-size: var(--fs-base);
   font-weight: 600;
   cursor: pointer;
 }
@@ -990,7 +1081,7 @@ table { border-collapse: collapse; width: 100%; }
   border-left: 4px solid var(--color-main);
   padding: var(--space-md) var(--space-lg);
   border-radius: calc(var(--radius) / 2);
-  font-size: var(--font-size-base);
+  font-size: var(--fs-base);
   color: var(--color-text);
 }
 .risk-box {
@@ -998,7 +1089,7 @@ table { border-collapse: collapse; width: 100%; }
   border-left: 4px solid var(--color-warning);
   padding: var(--space-md) var(--space-lg);
   border-radius: calc(var(--radius) / 2);
-  font-size: var(--font-size-base);
+  font-size: var(--fs-base);
   color: var(--color-text);
 }
 
@@ -1021,35 +1112,30 @@ table { border-collapse: collapse; width: 100%; }
   .kpi-spark { width: 60px; }
   .data-table th, .data-table td {
     padding: var(--space-xs) var(--space-sm);
-    font-size: var(--font-size-small);
   }
 }
 `;
 }
 
 /* =====================================================
-   SVG チャート
+   SVGチャート
    ===================================================== */
 const VB_W = 600, VB_H = 240;
+const svgWrap = (inner) => `<svg viewBox="0 0 ${VB_W} ${VB_H}" preserveAspectRatio="none">${inner}</svg>`;
 
-function svgWrap(inner, w = VB_W, h = VB_H) {
-  return `<svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="none">${inner}</svg>`;
-}
-
-// コンボ
 function renderComboChart(target) {
   const months = ['1月','2月','3月','4月','5月','6月'];
   const bars = [32,38,41,36,44,48], line = [2.1,2.3,2.6,2.4,2.9,3.2];
   const pad = { l:36, r:36, t:16, b:28 };
-  const cw = VB_W - pad.l - pad.r, ch = VB_H - pad.t - pad.b;
-  const barW = cw / bars.length * 0.55;
+  const cw = VB_W-pad.l-pad.r, ch = VB_H-pad.t-pad.b;
+  const barW = cw/bars.length * 0.55;
   const grid = [0,.25,.5,.75,1].map(t => {
-    const y = pad.t + ch * (1 - t);
+    const y = pad.t + ch*(1-t);
     return `<line x1="${pad.l}" y1="${y}" x2="${pad.l+cw}" y2="${y}" stroke="var(--color-border)"/>`;
   }).join('');
   const barEls = bars.map((v,i) => {
-    const x = pad.l + (cw/bars.length)*i + (cw/bars.length - barW)/2;
-    const h = (v/50) * ch, y = pad.t + ch - h;
+    const x = pad.l + (cw/bars.length)*i + (cw/bars.length-barW)/2;
+    const h = (v/50)*ch, y = pad.t+ch-h;
     return `<rect x="${x}" y="${y}" width="${barW}" height="${h}" rx="4" fill="var(--color-main)"/>`;
   }).join('');
   const linePts = line.map((v,i) => [
@@ -1060,89 +1146,81 @@ function renderComboChart(target) {
   const dots = linePts.map(p => `<circle cx="${p[0]}" cy="${p[1]}" r="4" fill="var(--color-warning)" stroke="var(--color-card)" stroke-width="2"/>`).join('');
   const labels = months.map((m,i) => {
     const x = pad.l + (cw/bars.length)*i + (cw/bars.length)/2;
-    return `<text x="${x}" y="${VB_H-8}" text-anchor="middle" font-size="11" fill="var(--color-muted)">${m}</text>`;
+    return `<text x="${x}" y="${VB_H-8}" text-anchor="middle" fill="var(--color-muted)">${m}</text>`;
   }).join('');
   target.innerHTML = svgWrap(`${grid}${barEls}<path d="${path}" fill="none" stroke="var(--color-warning)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>${dots}${labels}`);
 }
-
-// 単独棒
 function renderBarChart(target) {
   const cats = ['EC','TEL','店舗','法人','その他'], vals = [42,28,18,22,9];
   const pad = { l:40, r:16, t:16, b:28 };
-  const cw = VB_W - pad.l - pad.r, ch = VB_H - pad.t - pad.b;
-  const barW = cw / cats.length * 0.6;
+  const cw = VB_W-pad.l-pad.r, ch = VB_H-pad.t-pad.b;
+  const barW = cw/cats.length * 0.6;
   const grid = [0,.5,1].map(t => {
-    const y = pad.t + ch * (1 - t);
+    const y = pad.t + ch*(1-t);
     return `<line x1="${pad.l}" y1="${y}" x2="${pad.l+cw}" y2="${y}" stroke="var(--color-border)"/>`;
   }).join('');
   const bars = vals.map((v,i) => {
-    const x = pad.l + (cw/cats.length)*i + (cw/cats.length - barW)/2;
-    const h = (v/50) * ch, y = pad.t + ch - h;
-    const fill = i === 0 ? 'var(--color-main)' : `var(--color-main-${600 - i*100})`;
+    const x = pad.l + (cw/cats.length)*i + (cw/cats.length-barW)/2;
+    const h = (v/50)*ch, y = pad.t+ch-h;
+    const fill = i===0 ? 'var(--color-main)' : `var(--color-main-${600-i*100})`;
     return `<rect x="${x}" y="${y}" width="${barW}" height="${h}" rx="4" fill="${fill}"/>
-      <text x="${x+barW/2}" y="${y-4}" text-anchor="middle" font-size="10" fill="var(--color-text)" font-weight="600">${v}</text>`;
+      <text x="${x+barW/2}" y="${y-4}" text-anchor="middle" fill="var(--color-text)" font-weight="600">${v}</text>`;
   }).join('');
   const labels = cats.map((c,i) => {
     const x = pad.l + (cw/cats.length)*i + (cw/cats.length)/2;
-    return `<text x="${x}" y="${VB_H-8}" text-anchor="middle" font-size="11" fill="var(--color-muted)">${c}</text>`;
+    return `<text x="${x}" y="${VB_H-8}" text-anchor="middle" fill="var(--color-muted)">${c}</text>`;
   }).join('');
   target.innerHTML = svgWrap(`${grid}${bars}${labels}`);
 }
-
-// 積み上げ縦
 function renderStackedChart(target) {
   const months = ['1月','2月','3月','4月','5月','6月'];
   const data = [[18,12,6],[20,11,7],[22,13,6],[21,10,8],[25,14,7],[28,13,9]];
   const colors = ['var(--color-main)','var(--color-positive)','var(--color-warning)'];
   const pad = { l:36, r:16, t:16, b:28 };
-  const cw = VB_W - pad.l - pad.r, ch = VB_H - pad.t - pad.b;
-  const barW = cw / data.length * 0.55;
+  const cw = VB_W-pad.l-pad.r, ch = VB_H-pad.t-pad.b;
+  const barW = cw/data.length * 0.55;
   const grid = [0,.5,1].map(t => {
-    const y = pad.t + ch * (1 - t);
+    const y = pad.t + ch*(1-t);
     return `<line x1="${pad.l}" y1="${y}" x2="${pad.l+cw}" y2="${y}" stroke="var(--color-border)"/>`;
   }).join('');
   const stacks = data.map((vals,i) => {
-    const x = pad.l + (cw/data.length)*i + (cw/data.length - barW)/2;
-    let y = pad.t + ch;
+    const x = pad.l + (cw/data.length)*i + (cw/data.length-barW)/2;
+    let y = pad.t+ch;
     return vals.map((v,k) => {
-      const h = (v/50) * ch; y -= h;
+      const h = (v/50)*ch; y -= h;
       return `<rect x="${x}" y="${y}" width="${barW}" height="${h}" fill="${colors[k]}" ${k===vals.length-1?'rx="4"':''}/>`;
     }).join('');
   }).join('');
   const labels = months.map((m,i) => {
     const x = pad.l + (cw/data.length)*i + (cw/data.length)/2;
-    return `<text x="${x}" y="${VB_H-8}" text-anchor="middle" font-size="11" fill="var(--color-muted)">${m}</text>`;
+    return `<text x="${x}" y="${VB_H-8}" text-anchor="middle" fill="var(--color-muted)">${m}</text>`;
   }).join('');
   target.innerHTML = svgWrap(`${grid}${stacks}${labels}`);
 }
-
-// 積み上げ横
 function renderStackedHChart(target) {
   const rows = [
     {name:'営業部',done:78}, {name:'EC事業',done:92},
     {name:'法人営業',done:64}, {name:'海外',done:48}, {name:'店舗',done:71}
   ];
   const pad = { l:70, r:40, t:12, b:12 };
-  const cw = VB_W - pad.l - pad.r;
-  const rowH = (VB_H - pad.t - pad.b) / rows.length;
-  const barH = rowH * 0.55;
+  const cw = VB_W-pad.l-pad.r;
+  const rowH = (VB_H-pad.t-pad.b)/rows.length;
+  const barH = rowH*0.55;
   const bars = rows.map((r,i) => {
     const y = pad.t + rowH*i + (rowH-barH)/2;
-    const doneW = cw * (r.done/100);
+    const doneW = cw*(r.done/100);
     return `<rect x="${pad.l}" y="${y}" width="${cw}" height="${barH}" rx="4" fill="var(--color-main-100)"/>
       <rect x="${pad.l}" y="${y}" width="${doneW}" height="${barH}" rx="4" fill="var(--color-main)"/>
-      <text x="${pad.l-8}" y="${y+barH/2+4}" text-anchor="end" font-size="11" fill="var(--color-text)">${r.name}</text>
-      <text x="${pad.l+cw+6}" y="${y+barH/2+4}" font-size="11" fill="var(--color-muted)" font-weight="600">${r.done}%</text>`;
+      <text x="${pad.l-8}" y="${y+barH/2+4}" text-anchor="end" fill="var(--color-text)">${r.name}</text>
+      <text x="${pad.l+cw+6}" y="${y+barH/2+4}" fill="var(--color-muted)" font-weight="600">${r.done}%</text>`;
   }).join('');
   target.innerHTML = svgWrap(bars);
 }
-
-// エリアチャート
 function renderAreaChart(target) {
   const months = ['1月','2月','3月','4月','5月','6月'];
-  const vals = [12, 22, 31, 38, 46, 58];
+  const vals = [12,22,31,38,46,58];
   const pad = { l:36, r:16, t:16, b:28 };
-  const cw = VB_W - pad.l - pad.r, ch = VB_H - pad.t - pad.b;
+  const cw = VB_W-pad.l-pad.r, ch = VB_H-pad.t-pad.b;
   const max = 70;
   const pts = vals.map((v,i) => [
     pad.l + (cw/(vals.length-1))*i,
@@ -1151,13 +1229,13 @@ function renderAreaChart(target) {
   const linePath = pts.map((p,i)=>(i?'L':'M')+p[0]+','+p[1]).join(' ');
   const areaPath = `${linePath} L${pts[pts.length-1][0]},${pad.t+ch} L${pts[0][0]},${pad.t+ch} Z`;
   const grid = [0,.5,1].map(t => {
-    const y = pad.t + ch * (1 - t);
+    const y = pad.t + ch*(1-t);
     return `<line x1="${pad.l}" y1="${y}" x2="${pad.l+cw}" y2="${y}" stroke="var(--color-border)"/>`;
   }).join('');
   const dots = pts.map(p => `<circle cx="${p[0]}" cy="${p[1]}" r="3.5" fill="var(--color-main)" stroke="var(--color-card)" stroke-width="2"/>`).join('');
   const labels = months.map((m,i) => {
     const x = pad.l + (cw/(vals.length-1))*i;
-    return `<text x="${x}" y="${VB_H-8}" text-anchor="middle" font-size="11" fill="var(--color-muted)">${m}</text>`;
+    return `<text x="${x}" y="${VB_H-8}" text-anchor="middle" fill="var(--color-muted)">${m}</text>`;
   }).join('');
   target.innerHTML = svgWrap(`
     <defs>
@@ -1172,18 +1250,16 @@ function renderAreaChart(target) {
     ${dots}${labels}
   `);
 }
-
-// ドーナツ
 function renderDonutChart(target) {
   const data = [
-    { label:'EC',   value:42, color:'var(--color-main)' },
-    { label:'TEL',  value:28, color:'var(--color-main-400)' },
+    { label:'EC', value:42, color:'var(--color-main)' },
+    { label:'TEL', value:28, color:'var(--color-main-400)' },
     { label:'店舗', value:18, color:'var(--color-main-300)' },
     { label:'その他', value:12, color:'var(--color-main-200)' }
   ];
   const total = data.reduce((s,d)=>s+d.value,0);
-  const cx = VB_W/2, cy = VB_H/2;
-  const r = 80, ir = 50;
+  const cx = VB_W/2 - 60, cy = VB_H/2;
+  const r = 78, ir = 48;
   let angle = -Math.PI/2;
   const arcs = data.map(d => {
     const a = (d.value/total) * Math.PI*2;
@@ -1195,21 +1271,18 @@ function renderDonutChart(target) {
     angle += a;
     return `<path d="M${x1},${y1} A${r},${r} 0 ${large} 1 ${x2},${y2} L${x3},${y3} A${ir},${ir} 0 ${large} 0 ${x4},${y4} Z" fill="${d.color}"/>`;
   }).join('');
-  // 凡例
   const legend = data.map((d,i) =>
-    `<g transform="translate(${VB_W-130}, ${30 + i*22})">
+    `<g transform="translate(${VB_W-150}, ${50 + i*26})">
       <rect width="12" height="12" rx="2" fill="${d.color}"/>
-      <text x="18" y="10" font-size="11" fill="var(--color-text)">${d.label} ${Math.round(d.value/total*100)}%</text>
+      <text x="18" y="10" fill="var(--color-text)">${d.label} ${Math.round(d.value/total*100)}%</text>
     </g>`
   ).join('');
   target.innerHTML = svgWrap(`${arcs}
-    <text x="${cx}" y="${cy-4}" text-anchor="middle" font-size="11" fill="var(--color-muted)">合計</text>
-    <text x="${cx}" y="${cy+16}" text-anchor="middle" font-size="20" font-weight="700" fill="var(--color-text)">${total}M</text>
+    <text x="${cx}" y="${cy-4}" text-anchor="middle" fill="var(--color-muted)">合計</text>
+    <text x="${cx}" y="${cy+18}" text-anchor="middle" font-size="20" font-weight="700" fill="var(--color-text)">${total}M</text>
     ${legend}
   `);
 }
-
-// スパークライン
 function renderSpark(target, vals, color) {
   const w = 80, h = 24;
   const min = Math.min(...vals), max = Math.max(...vals);
@@ -1224,7 +1297,6 @@ function renderSpark(target, vals, color) {
     <circle cx="${pts[pts.length-1][0]}" cy="${pts[pts.length-1][1]}" r="2.5" fill="${color}"/>
   </svg>`;
 }
-
 function renderAllCharts() {
   renderComboChart(document.getElementById('chartCombo'));
   renderAreaChart(document.getElementById('chartArea'));
@@ -1238,7 +1310,7 @@ function renderAllCharts() {
 }
 
 /* =====================================================
-   プレビュー更新
+   プレビュー / 入力バインド
    ===================================================== */
 let styleEl = null;
 function updatePreview() {
@@ -1253,18 +1325,52 @@ function updatePreview() {
   document.getElementById('cssLineCount').textContent = `${css.split('\n').length} 行`;
 }
 
-/* =====================================================
-   入力バインド
-   ===================================================== */
 const FREE_KEYS = ['colorMain','fontFamily','typeScale','fontSizeBase','radius','density','maxWidth'];
 
 function bindInputs() {
   FREE_KEYS.forEach(key => {
     const el = document.getElementById(key);
     if (!el) return;
-    const handler = () => { state[key] = el.value; updatePreview(); };
+    const handler = () => {
+      state[key] = el.value;
+      // typeScale / fontSizeBase が変わったらテキストオーバーライドの選択肢を再描画
+      if (key === 'typeScale' || key === 'fontSizeBase') {
+        rebuildTextSelectOptions();
+      }
+      updatePreview();
+    };
     el.addEventListener('input', handler);
     el.addEventListener('change', handler);
+  });
+
+  // テキスト個別調整
+  TEXT_KEYS.forEach(key => {
+    const el = document.getElementById('ts_' + key);
+    if (!el) return;
+    el.addEventListener('change', () => {
+      const val = el.value;
+      if (val === 'auto') {
+        delete state.textOverrides[key];
+      } else {
+        state.textOverrides[key] = parseInt(val, 10);
+      }
+      updatePreview();
+    });
+  });
+}
+
+// テキストselect生成（autoオプション + 各レンジ）
+function rebuildTextSelectOptions() {
+  const auto = computeAutoTextSizes();
+  TEXT_KEYS.forEach(key => {
+    const el = document.getElementById('ts_' + key);
+    if (!el) return;
+    const opts = TEXT_OPTIONS[key];
+    const current = state.textOverrides[key] || 'auto';
+    el.innerHTML =
+      `<option value="auto">自動 (${auto[key]}px)</option>` +
+      opts.map(v => `<option value="${v}">${v}px</option>`).join('');
+    el.value = String(current);
   });
 }
 
@@ -1273,20 +1379,21 @@ function syncInputsFromState() {
     const el = document.getElementById(key);
     if (el) el.value = state[key];
   });
+  rebuildTextSelectOptions();
   document.querySelectorAll('.theme-card').forEach(c => {
     c.classList.toggle('active', c.dataset.theme === state.themeKey);
   });
   document.querySelectorAll('.style-chip').forEach(c => {
     c.classList.toggle('active', c.dataset.style === state.styleVariant);
   });
+  document.querySelectorAll('.accent-chip').forEach(c => {
+    c.classList.toggle('active', c.dataset.accent === state.cardAccent);
+  });
   document.querySelectorAll('#modeToggle button').forEach(b => {
     b.classList.toggle('active', b.dataset.mode === state.mode);
   });
 }
 
-/* =====================================================
-   テーマグリッド
-   ===================================================== */
 function buildThemeGrid() {
   const grid = document.getElementById('themeGrid');
   grid.innerHTML = Object.entries(THEMES).map(([key, t]) => `
@@ -1305,7 +1412,6 @@ function buildThemeGrid() {
     btn.addEventListener('click', () => applyTheme(btn.dataset.theme));
   });
 }
-
 function applyTheme(key) {
   const t = THEMES[key];
   if (!t) return;
@@ -1314,14 +1420,19 @@ function applyTheme(key) {
   syncInputsFromState();
   updatePreview();
 }
-
-/* =====================================================
-   装飾スタイル / モード
-   ===================================================== */
 function bindStyleChips() {
   document.querySelectorAll('.style-chip').forEach(btn => {
     btn.addEventListener('click', () => {
       state.styleVariant = btn.dataset.style;
+      syncInputsFromState();
+      updatePreview();
+    });
+  });
+}
+function bindAccentChips() {
+  document.querySelectorAll('.accent-chip').forEach(btn => {
+    btn.addEventListener('click', () => {
+      state.cardAccent = btn.dataset.accent;
       syncInputsFromState();
       updatePreview();
     });
@@ -1337,15 +1448,11 @@ function bindModeToggle() {
   });
 }
 
-/* =====================================================
-   その他
-   ===================================================== */
 function resetState() {
-  state = { ...DEFAULT_STATE };
+  state = JSON.parse(JSON.stringify(DEFAULT_STATE));
   syncInputsFromState();
   updatePreview();
 }
-
 async function copyCSS() {
   try {
     await navigator.clipboard.writeText(generateCSS());
@@ -1363,13 +1470,11 @@ function downloadCSS() {
   URL.revokeObjectURL(url);
 }
 
-/* =====================================================
-   初期化
-   ===================================================== */
 function init() {
   buildThemeGrid();
   bindInputs();
   bindStyleChips();
+  bindAccentChips();
   bindModeToggle();
   document.getElementById('copyBtn').addEventListener('click', copyCSS);
   document.getElementById('downloadBtn').addEventListener('click', downloadCSS);
