@@ -1,0 +1,961 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CSS Design System Generator</title>
+<style>
+  /* ============================================
+     ジェネレーター本体のスタイル（プレビューCSSとは別）
+     ============================================ */
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans JP", sans-serif;
+    background: #f4f5f7;
+    color: #1f2933;
+    line-height: 1.6;
+    font-size: 14px;
+  }
+
+  /* ヘッダー */
+  .app-header {
+    background: #ffffff;
+    border-bottom: 1px solid #e5e7eb;
+    padding: 20px 32px;
+  }
+  .app-header h1 {
+    margin: 0 0 4px;
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+  }
+  .app-header p {
+    margin: 0;
+    color: #6b7280;
+    font-size: 13px;
+  }
+
+  /* レイアウト */
+  .app-layout {
+    display: grid;
+    grid-template-columns: 360px 1fr;
+    gap: 0;
+    min-height: calc(100vh - 73px);
+  }
+
+  /* 左：設定パネル */
+  .settings-panel {
+    background: #ffffff;
+    border-right: 1px solid #e5e7eb;
+    padding: 24px;
+    overflow-y: auto;
+    max-height: calc(100vh - 73px);
+    position: sticky;
+    top: 0;
+  }
+  .settings-section {
+    margin-bottom: 28px;
+  }
+  .settings-section h2 {
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #374151;
+    margin: 0 0 12px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid #e5e7eb;
+  }
+  .form-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 10px;
+  }
+  .form-row label {
+    flex: 1;
+    font-size: 13px;
+    color: #374151;
+  }
+  .form-row input[type="color"] {
+    width: 48px;
+    height: 30px;
+    border: 1px solid #d1d5db;
+    border-radius: 4px;
+    padding: 2px;
+    cursor: pointer;
+    background: #fff;
+  }
+  .form-row select {
+    flex: 0 0 160px;
+    padding: 6px 8px;
+    font-size: 13px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    background: #fff;
+    cursor: pointer;
+  }
+  .preset-buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .preset-buttons button {
+    padding: 8px 10px;
+    font-size: 12px;
+    border: 1px solid #d1d5db;
+    background: #fff;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .preset-buttons button:hover {
+    background: #f3f4f6;
+    border-color: #9ca3af;
+  }
+  .action-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .action-buttons button {
+    padding: 10px 12px;
+    font-size: 13px;
+    border-radius: 6px;
+    cursor: pointer;
+    border: 1px solid transparent;
+    font-weight: 500;
+  }
+  .btn-primary {
+    background: #2563eb;
+    color: #fff;
+  }
+  .btn-primary:hover { background: #1d4ed8; }
+  .btn-secondary {
+    background: #fff;
+    color: #1f2933;
+    border-color: #d1d5db !important;
+  }
+  .btn-secondary:hover { background: #f3f4f6; }
+  .btn-ghost {
+    background: transparent;
+    color: #6b7280;
+    border-color: #e5e7eb !important;
+  }
+  .btn-ghost:hover { background: #f9fafb; }
+  .copy-message {
+    font-size: 12px;
+    color: #047857;
+    text-align: center;
+    height: 16px;
+    margin-top: 4px;
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  .copy-message.show { opacity: 1; }
+
+  /* 右：プレビュー */
+  .preview-area {
+    padding: 24px;
+    overflow-x: auto;
+  }
+  .preview-frame {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .preview-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: #6b7280;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 8px 16px;
+    background: #f9fafb;
+    border-bottom: 1px solid #e5e7eb;
+  }
+
+  /* 生成CSS表示エリア */
+  .css-output {
+    margin-top: 24px;
+    background: #1e293b;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .css-output-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 16px;
+    background: #0f172a;
+    color: #cbd5e1;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+  }
+  .css-output pre {
+    margin: 0;
+    padding: 16px;
+    max-height: 400px;
+    overflow: auto;
+    color: #e2e8f0;
+    font-family: "SF Mono", Menlo, Consolas, monospace;
+    font-size: 12px;
+    line-height: 1.6;
+  }
+
+  /* レスポンシブ */
+  @media (max-width: 960px) {
+    .app-layout {
+      grid-template-columns: 1fr;
+    }
+    .settings-panel {
+      position: static;
+      max-height: none;
+      border-right: none;
+      border-bottom: 1px solid #e5e7eb;
+    }
+  }
+  @media (max-width: 600px) {
+    .app-header { padding: 16px; }
+    .settings-panel, .preview-area { padding: 16px; }
+    .form-row select { flex: 0 0 130px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ヘッダー -->
+<header class="app-header">
+  <h1>CSS Design System Generator</h1>
+  <p>HTMLダッシュボード用のCSSを、プレビューしながら生成できます。</p>
+</header>
+
+<div class="app-layout">
+
+  <!-- 左：設定パネル -->
+  <aside class="settings-panel">
+
+    <!-- プリセット -->
+    <section class="settings-section">
+      <h2>プリセット</h2>
+      <div class="preset-buttons">
+        <button data-preset="executive">Executive Blue</button>
+        <button data-preset="minimal">Minimal Gray</button>
+        <button data-preset="marketing">Marketing Green</button>
+        <button data-preset="finance">Finance Navy</button>
+        <button data-preset="warm">Warm Beige</button>
+      </div>
+    </section>
+
+    <!-- カラー設定 -->
+    <section class="settings-section">
+      <h2>カラー設定</h2>
+      <div class="form-row"><label for="colorMain">メインカラー</label><input type="color" id="colorMain"></div>
+      <div class="form-row"><label for="colorBg">背景色</label><input type="color" id="colorBg"></div>
+      <div class="form-row"><label for="colorCard">カード背景色</label><input type="color" id="colorCard"></div>
+      <div class="form-row"><label for="colorText">本文文字色</label><input type="color" id="colorText"></div>
+      <div class="form-row"><label for="colorMuted">補足文字色</label><input type="color" id="colorMuted"></div>
+      <div class="form-row"><label for="colorBorder">ボーダー色</label><input type="color" id="colorBorder"></div>
+      <div class="form-row"><label for="colorPositive">ポジティブ</label><input type="color" id="colorPositive"></div>
+      <div class="form-row"><label for="colorNegative">ネガティブ</label><input type="color" id="colorNegative"></div>
+      <div class="form-row"><label for="colorWarning">注意</label><input type="color" id="colorWarning"></div>
+    </section>
+
+    <!-- フォント設定 -->
+    <section class="settings-section">
+      <h2>フォント設定</h2>
+      <div class="form-row">
+        <label for="fontFamily">フォント種類</label>
+        <select id="fontFamily">
+          <option value="system">System UI</option>
+          <option value="noto">Noto Sans JP</option>
+          <option value="segoe">Segoe UI</option>
+          <option value="arial">Arial</option>
+          <option value="georgia">Georgia</option>
+          <option value="meiryo">Meiryo</option>
+        </select>
+      </div>
+    </section>
+
+    <!-- 文字サイズ -->
+    <section class="settings-section">
+      <h2>文字サイズ</h2>
+      <div class="form-row">
+        <label for="fontSizeBase">基本</label>
+        <select id="fontSizeBase">
+          <option>13px</option><option>14px</option>
+          <option>15px</option><option>16px</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <label for="fontSizeHeading">見出し</label>
+        <select id="fontSizeHeading">
+          <option>20px</option><option>24px</option>
+          <option>28px</option><option>32px</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <label for="fontSizeKpi">KPI数値</label>
+        <select id="fontSizeKpi">
+          <option>28px</option><option>32px</option>
+          <option>36px</option><option>40px</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <label for="fontSizeSmall">小文字</label>
+        <select id="fontSizeSmall">
+          <option>11px</option><option>12px</option><option>13px</option>
+        </select>
+      </div>
+    </section>
+
+    <!-- レイアウト設定 -->
+    <section class="settings-section">
+      <h2>レイアウト設定</h2>
+      <div class="form-row">
+        <label for="radius">角丸サイズ</label>
+        <select id="radius">
+          <option>4px</option><option>8px</option>
+          <option>12px</option><option>16px</option><option>20px</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <label for="spacing">余白サイズ</label>
+        <select id="spacing">
+          <option value="compact">compact</option>
+          <option value="standard">standard</option>
+          <option value="spacious">spacious</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <label for="shadow">カードの影</label>
+        <select id="shadow">
+          <option value="none">none</option>
+          <option value="soft">soft</option>
+          <option value="medium">medium</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <label for="maxWidth">最大幅</label>
+        <select id="maxWidth">
+          <option>960px</option><option>1080px</option>
+          <option>1200px</option><option>1440px</option>
+        </select>
+      </div>
+    </section>
+
+    <!-- アクションボタン -->
+    <section class="settings-section">
+      <h2>出力</h2>
+      <div class="action-buttons">
+        <button class="btn-primary" id="copyBtn">CSSをコピー</button>
+        <div class="copy-message" id="copyMsg">コピーしました</div>
+        <button class="btn-secondary" id="downloadBtn">CSSファイルをダウンロード</button>
+        <button class="btn-ghost" id="resetBtn">設定をリセット</button>
+      </div>
+    </section>
+  </aside>
+
+  <!-- 右：プレビュー -->
+  <main class="preview-area">
+    <div class="preview-frame">
+      <div class="preview-label">プレビュー</div>
+
+      <!-- ここにプレビュー対象のダッシュボードを描画。生成CSSが適用される -->
+      <div id="previewRoot" class="dashboard-container">
+        <header class="dashboard-header">
+          <h1 class="dashboard-title">経営ダッシュボード</h1>
+          <p class="dashboard-subtitle">2026年上半期 売上・KPIサマリー</p>
+        </header>
+
+        <!-- KPIカード -->
+        <section class="section">
+          <div class="grid grid-3">
+            <div class="card kpi-card">
+              <div class="kpi-label">GMV</div>
+              <div class="kpi-value">43.8M <span class="kpi-note">NTD</span></div>
+              <div class="text-positive">+8.2% vs 前年</div>
+            </div>
+            <div class="card kpi-card">
+              <div class="kpi-label">総契約数</div>
+              <div class="kpi-value">12,450</div>
+              <div class="text-positive">+5.1% vs 前年</div>
+            </div>
+            <div class="card kpi-card">
+              <div class="kpi-label">AOV</div>
+              <div class="kpi-value">3,515 <span class="kpi-note">NTD</span></div>
+              <div class="text-negative">-1.4% vs 前年</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- グラフ + 通常カード -->
+        <section class="section">
+          <div class="grid grid-2">
+            <div class="card">
+              <div class="card-title">月次売上推移</div>
+              <div class="chart-box">[ Chart Placeholder ]</div>
+            </div>
+            <div class="card">
+              <div class="card-title">主要バッジ</div>
+              <p class="text-muted mb-16">カテゴリ別ステータスの表示例です。</p>
+              <span class="badge badge-primary">主要</span>
+              <span class="badge badge-positive">良好</span>
+              <span class="badge badge-warning">注意</span>
+              <span class="badge badge-negative">未達</span>
+              <div class="mt-24">
+                <button class="button-primary">レポートを発行</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- データテーブル -->
+        <section class="section">
+          <div class="card">
+            <div class="card-title">月別売上サマリー</div>
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>月</th>
+                  <th class="text-right">EC売上</th>
+                  <th class="text-right">TEL売上</th>
+                  <th class="text-right">合計</th>
+                  <th>評価</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>4月</td>
+                  <td class="text-right">3.2M</td>
+                  <td class="text-right">2.8M</td>
+                  <td class="text-right">6.0M</td>
+                  <td><span class="badge badge-positive">達成</span></td>
+                </tr>
+                <tr>
+                  <td>5月</td>
+                  <td class="text-right">3.5M</td>
+                  <td class="text-right">2.6M</td>
+                  <td class="text-right">6.1M</td>
+                  <td><span class="badge badge-warning">注意</span></td>
+                </tr>
+                <tr>
+                  <td>6月</td>
+                  <td class="text-right">3.8M</td>
+                  <td class="text-right">3.1M</td>
+                  <td class="text-right">6.9M</td>
+                  <td><span class="badge badge-positive">良好</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- インサイト・リスク -->
+        <section class="section">
+          <div class="grid grid-2">
+            <div class="insight-box">
+              <strong>インサイト</strong><br>
+              H2以降、EC CVRの改善によりGMVが回復傾向です。
+            </div>
+            <div class="risk-box">
+              <strong>リスク・注意</strong><br>
+              TEL成約率は繁忙期依存が残っており、継続的な改善が必要です。
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <!-- 生成CSS表示 -->
+    <div class="css-output">
+      <div class="css-output-header">
+        <span>生成CSS（dashboard-system.css）</span>
+        <span id="cssLineCount" style="font-weight:400;opacity:0.7;"></span>
+      </div>
+      <pre><code id="cssCode"></code></pre>
+    </div>
+  </main>
+</div>
+
+<script>
+/* =====================================================
+   状態（state）：設定値を一元管理
+   ===================================================== */
+
+// フォント定義（select 値 → 実 CSS）
+const FONT_STACKS = {
+  system: '-apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif',
+  noto:   '"Noto Sans JP", -apple-system, sans-serif',
+  segoe:  '"Segoe UI", Tahoma, Geneva, Verdana, sans-serif',
+  arial:  'Arial, Helvetica, sans-serif',
+  georgia:'Georgia, "Times New Roman", serif',
+  meiryo: 'Meiryo, "メイリオ", sans-serif'
+};
+
+// 余白プリセット
+const SPACING_MAP = {
+  compact:  { xs: '4px',  sm: '8px',  md: '12px', lg: '16px', xl: '24px' },
+  standard: { xs: '6px',  sm: '12px', md: '16px', lg: '24px', xl: '32px' },
+  spacious: { xs: '8px',  sm: '16px', md: '24px', lg: '32px', xl: '48px' }
+};
+
+// 影プリセット
+const SHADOW_MAP = {
+  none:   'none',
+  soft:   '0 1px 2px rgba(15,23,42,0.04), 0 1px 3px rgba(15,23,42,0.06)',
+  medium: '0 4px 6px rgba(15,23,42,0.05), 0 10px 15px rgba(15,23,42,0.08)'
+};
+
+// 初期設定
+const DEFAULT_STATE = {
+  colorMain:     '#2563eb',
+  colorBg:       '#f7f8fa',
+  colorCard:     '#ffffff',
+  colorText:     '#1f2933',
+  colorMuted:    '#6b7280',
+  colorBorder:   '#e5e7eb',
+  colorPositive: '#047857',
+  colorNegative: '#b91c1c',
+  colorWarning:  '#b45309',
+  fontFamily:    'system',
+  fontSizeBase:  '15px',
+  fontSizeHeading:'24px',
+  fontSizeKpi:   '32px',
+  fontSizeSmall: '12px',
+  radius:        '16px',
+  spacing:       'standard',
+  shadow:        'soft',
+  maxWidth:      '1200px'
+};
+
+// プリセット定義
+const PRESETS = {
+  executive: {
+    colorMain: '#1d4ed8', colorBg: '#f7f8fa', colorCard: '#ffffff',
+    colorText: '#0f172a', colorMuted: '#64748b', colorBorder: '#e2e8f0',
+    colorPositive: '#047857', colorNegative: '#b91c1c', colorWarning: '#b45309',
+    fontFamily: 'system', radius: '12px', spacing: 'standard', shadow: 'soft'
+  },
+  minimal: {
+    colorMain: '#374151', colorBg: '#fafafa', colorCard: '#ffffff',
+    colorText: '#1f2937', colorMuted: '#9ca3af', colorBorder: '#e5e7eb',
+    colorPositive: '#059669', colorNegative: '#dc2626', colorWarning: '#d97706',
+    fontFamily: 'system', radius: '8px', spacing: 'spacious', shadow: 'none'
+  },
+  marketing: {
+    colorMain: '#059669', colorBg: '#f6faf7', colorCard: '#ffffff',
+    colorText: '#1f2933', colorMuted: '#6b7280', colorBorder: '#e5e7eb',
+    colorPositive: '#047857', colorNegative: '#b91c1c', colorWarning: '#b45309',
+    fontFamily: 'noto', radius: '16px', spacing: 'standard', shadow: 'soft'
+  },
+  finance: {
+    colorMain: '#1e3a8a', colorBg: '#f5f7fb', colorCard: '#ffffff',
+    colorText: '#0f172a', colorMuted: '#475569', colorBorder: '#dbe2ec',
+    colorPositive: '#065f46', colorNegative: '#991b1b', colorWarning: '#92400e',
+    fontFamily: 'georgia', radius: '4px', spacing: 'standard', shadow: 'medium'
+  },
+  warm: {
+    colorMain: '#a16207', colorBg: '#faf7f2', colorCard: '#ffffff',
+    colorText: '#3f2d1c', colorMuted: '#8a7866', colorBorder: '#ece4d6',
+    colorPositive: '#65a30d', colorNegative: '#b91c1c', colorWarning: '#b45309',
+    fontFamily: 'meiryo', radius: '20px', spacing: 'spacious', shadow: 'soft'
+  }
+};
+
+// state を初期値で複製
+let state = { ...DEFAULT_STATE };
+
+/* =====================================================
+   入力 ID と state キーの対応
+   ===================================================== */
+const INPUT_KEYS = [
+  'colorMain','colorBg','colorCard','colorText','colorMuted','colorBorder',
+  'colorPositive','colorNegative','colorWarning',
+  'fontFamily','fontSizeBase','fontSizeHeading','fontSizeKpi','fontSizeSmall',
+  'radius','spacing','shadow','maxWidth'
+];
+
+/* =====================================================
+   CSS 生成
+   ===================================================== */
+function generateCSS() {
+  const s = state;
+  const sp = SPACING_MAP[s.spacing];
+  const sh = SHADOW_MAP[s.shadow];
+  const ff = FONT_STACKS[s.fontFamily];
+
+  return `/* =====================================================
+   Dashboard Design System
+   Generated by CSS Design System Generator
+   ===================================================== */
+
+/* 1. Design Tokens */
+:root {
+  /* Colors */
+  --color-main: ${s.colorMain};
+  --color-bg: ${s.colorBg};
+  --color-card: ${s.colorCard};
+  --color-text: ${s.colorText};
+  --color-muted: ${s.colorMuted};
+  --color-border: ${s.colorBorder};
+  --color-positive: ${s.colorPositive};
+  --color-negative: ${s.colorNegative};
+  --color-warning: ${s.colorWarning};
+
+  /* Typography */
+  --font-family: ${ff};
+  --font-size-base: ${s.fontSizeBase};
+  --font-size-heading: ${s.fontSizeHeading};
+  --font-size-kpi: ${s.fontSizeKpi};
+  --font-size-small: ${s.fontSizeSmall};
+
+  /* Layout */
+  --radius: ${s.radius};
+  --max-width: ${s.maxWidth};
+
+  /* Spacing */
+  --space-xs: ${sp.xs};
+  --space-sm: ${sp.sm};
+  --space-md: ${sp.md};
+  --space-lg: ${sp.lg};
+  --space-xl: ${sp.xl};
+
+  /* Shadow */
+  --shadow-card: ${sh};
+}
+
+/* 2. Base Styles */
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-family);
+  font-size: var(--font-size-base);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+h1, h2, h3, h4 { margin: 0; font-weight: 600; }
+p { margin: 0; }
+table { border-collapse: collapse; width: 100%; }
+
+/* 3. Layout */
+.dashboard-container {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: var(--space-xl) var(--space-lg);
+}
+.dashboard-header {
+  margin-bottom: var(--space-xl);
+}
+.dashboard-title {
+  font-size: var(--font-size-heading);
+  color: var(--color-text);
+  margin-bottom: var(--space-xs);
+}
+.dashboard-subtitle {
+  font-size: var(--font-size-small);
+  color: var(--color-muted);
+}
+.section {
+  margin-bottom: var(--space-xl);
+}
+.grid {
+  display: grid;
+  gap: var(--space-lg);
+}
+.grid-2 { grid-template-columns: repeat(2, 1fr); }
+.grid-3 { grid-template-columns: repeat(3, 1fr); }
+.grid-4 { grid-template-columns: repeat(4, 1fr); }
+
+/* 4. Components */
+.card {
+  background: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: var(--space-lg);
+  box-shadow: var(--shadow-card);
+}
+.card-title {
+  font-size: calc(var(--font-size-base) + 1px);
+  font-weight: 600;
+  color: var(--color-text);
+  margin-bottom: var(--space-md);
+}
+
+/* KPI */
+.kpi-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+.kpi-label {
+  font-size: var(--font-size-small);
+  color: var(--color-muted);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.kpi-value {
+  font-size: var(--font-size-kpi);
+  font-weight: 700;
+  color: var(--color-text);
+  line-height: 1.2;
+}
+.kpi-note {
+  font-size: var(--font-size-small);
+  color: var(--color-muted);
+  font-weight: 500;
+  margin-left: 4px;
+}
+
+/* Chart */
+.chart-box {
+  height: 220px;
+  border: 1px dashed var(--color-border);
+  border-radius: calc(var(--radius) / 2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-muted);
+  font-size: var(--font-size-small);
+  background: var(--color-bg);
+}
+
+/* Table */
+.data-table {
+  font-size: var(--font-size-base);
+}
+.data-table th,
+.data-table td {
+  padding: var(--space-sm) var(--space-md);
+  border-bottom: 1px solid var(--color-border);
+  text-align: left;
+}
+.data-table th {
+  font-size: var(--font-size-small);
+  color: var(--color-muted);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  background: var(--color-bg);
+}
+.data-table tbody tr:last-child td { border-bottom: none; }
+
+/* Badge */
+.badge {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-size: var(--font-size-small);
+  font-weight: 600;
+  margin-right: 4px;
+  background: var(--color-bg);
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+}
+.badge-primary {
+  background: color-mix(in srgb, var(--color-main) 12%, transparent);
+  color: var(--color-main);
+  border-color: transparent;
+}
+.badge-positive {
+  background: color-mix(in srgb, var(--color-positive) 12%, transparent);
+  color: var(--color-positive);
+  border-color: transparent;
+}
+.badge-negative {
+  background: color-mix(in srgb, var(--color-negative) 12%, transparent);
+  color: var(--color-negative);
+  border-color: transparent;
+}
+.badge-warning {
+  background: color-mix(in srgb, var(--color-warning) 14%, transparent);
+  color: var(--color-warning);
+  border-color: transparent;
+}
+
+/* Button */
+.button-primary {
+  display: inline-block;
+  background: var(--color-main);
+  color: #fff;
+  border: none;
+  border-radius: calc(var(--radius) / 2);
+  padding: var(--space-sm) var(--space-lg);
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  cursor: pointer;
+  transition: filter 0.15s;
+}
+.button-primary:hover { filter: brightness(0.92); }
+
+/* Insight / Risk */
+.insight-box {
+  background: color-mix(in srgb, var(--color-main) 6%, var(--color-card));
+  border-left: 4px solid var(--color-main);
+  padding: var(--space-md) var(--space-lg);
+  border-radius: calc(var(--radius) / 2);
+  font-size: var(--font-size-base);
+  color: var(--color-text);
+}
+.risk-box {
+  background: color-mix(in srgb, var(--color-warning) 8%, var(--color-card));
+  border-left: 4px solid var(--color-warning);
+  padding: var(--space-md) var(--space-lg);
+  border-radius: calc(var(--radius) / 2);
+  font-size: var(--font-size-base);
+  color: var(--color-text);
+}
+
+/* 5. Utilities */
+.text-muted { color: var(--color-muted); }
+.text-positive { color: var(--color-positive); font-weight: 600; }
+.text-negative { color: var(--color-negative); font-weight: 600; }
+.text-right { text-align: right; }
+.mt-16 { margin-top: 16px; }
+.mt-24 { margin-top: 24px; }
+.mb-16 { margin-bottom: 16px; }
+
+/* 6. Responsive */
+@media (max-width: 960px) {
+  .grid-3, .grid-4 { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 640px) {
+  .dashboard-container { padding: var(--space-lg) var(--space-md); }
+  .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+  .data-table th, .data-table td {
+    padding: var(--space-xs) var(--space-sm);
+    font-size: var(--font-size-small);
+  }
+}
+`;
+}
+
+/* =====================================================
+   プレビュー更新（CSS変数 + style要素を入れ替え）
+   ===================================================== */
+let styleEl = null;
+function updatePreview() {
+  const css = generateCSS();
+
+  // プレビュー専用 <style> をスコープ風に注入（:root 変数はグローバルでも問題なし）
+  if (!styleEl) {
+    styleEl = document.createElement('style');
+    styleEl.id = 'preview-style';
+    document.head.appendChild(styleEl);
+  }
+  styleEl.textContent = css;
+
+  // 生成コードを表示
+  const codeEl = document.getElementById('cssCode');
+  codeEl.textContent = css;
+
+  const lineCount = css.split('\n').length;
+  document.getElementById('cssLineCount').textContent = `${lineCount} 行`;
+}
+
+/* =====================================================
+   入力反映：UI → state
+   ===================================================== */
+function bindInputs() {
+  INPUT_KEYS.forEach(key => {
+    const el = document.getElementById(key);
+    if (!el) return;
+    el.addEventListener('input', () => {
+      state[key] = el.value;
+      updatePreview();
+    });
+    el.addEventListener('change', () => {
+      state[key] = el.value;
+      updatePreview();
+    });
+  });
+}
+
+/* =====================================================
+   state → UI 反映
+   ===================================================== */
+function syncInputsFromState() {
+  INPUT_KEYS.forEach(key => {
+    const el = document.getElementById(key);
+    if (!el) return;
+    el.value = state[key];
+  });
+}
+
+/* =====================================================
+   プリセット適用
+   ===================================================== */
+function applyPreset(name) {
+  const p = PRESETS[name];
+  if (!p) return;
+  state = { ...state, ...p };
+  syncInputsFromState();
+  updatePreview();
+}
+
+/* =====================================================
+   リセット
+   ===================================================== */
+function resetState() {
+  state = { ...DEFAULT_STATE };
+  syncInputsFromState();
+  updatePreview();
+}
+
+/* =====================================================
+   コピー＆ダウンロード
+   ===================================================== */
+async function copyCSS() {
+  const css = generateCSS();
+  try {
+    await navigator.clipboard.writeText(css);
+    const msg = document.getElementById('copyMsg');
+    msg.classList.add('show');
+    setTimeout(() => msg.classList.remove('show'), 1800);
+  } catch (e) {
+    alert('コピーに失敗しました: ' + e.message);
+  }
+}
+
+function downloadCSS() {
+  const css = generateCSS();
+  const blob = new Blob([css], { type: 'text/css' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'dashboard-system.css';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+/* =====================================================
+   イベント登録 & 初期化
+   ===================================================== */
+function init() {
+  // プリセットボタン
+  document.querySelectorAll('.preset-buttons button').forEach(btn => {
+    btn.addEventListener('click', () => applyPreset(btn.dataset.preset));
+  });
+
+  // アクションボタン
+  document.getElementById('copyBtn').addEventListener('click', copyCSS);
+  document.getElementById('downloadBtn').addEventListener('click', downloadCSS);
+  document.getElementById('resetBtn').addEventListener('click', resetState);
+
+  bindInputs();
+  syncInputsFromState();
+  updatePreview();
+}
+
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>
