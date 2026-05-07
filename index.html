@@ -46,6 +46,24 @@
     box-shadow: 0 1px 2px rgba(0,0,0,0.08);
   }
 
+  .header-actions { display: inline-flex; gap: 12px; align-items: center; }
+  .undo-redo { display: inline-flex; gap: 4px; }
+  .ur-btn {
+    border: 1px solid #d1d5db;
+    background: #fff;
+    color: #374151;
+    padding: 6px 10px;
+    font-size: 12px; font-weight: 600;
+    border-radius: 6px;
+    cursor: pointer;
+    line-height: 1;
+  }
+  .ur-btn:hover:not([disabled]) { background: #f9fafb; }
+  .ur-btn[disabled] {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
   .app-layout {
     display: grid;
     grid-template-columns: 380px 1fr;
@@ -763,9 +781,15 @@
     <h1>CSS Design System Generator</h1>
     <p>HTMLダッシュボード用のCSSを、プレビューしながら生成できます。</p>
   </div>
-  <div class="mode-toggle" id="modeToggle">
-    <button data-mode="light" class="active">☀ Light</button>
-    <button data-mode="dark">☾ Dark</button>
+  <div class="header-actions">
+    <div class="undo-redo">
+      <button class="ur-btn" id="undoBtn" type="button" title="元に戻す (Cmd/Ctrl+Z)" disabled>↶ Undo</button>
+      <button class="ur-btn" id="redoBtn" type="button" title="やり直す (Cmd/Ctrl+Shift+Z)" disabled>↷ Redo</button>
+    </div>
+    <div class="mode-toggle" id="modeToggle">
+      <button data-mode="light" class="active">☀ Light</button>
+      <button data-mode="dark">☾ Dark</button>
+    </div>
   </div>
 </header>
 
@@ -3110,7 +3134,119 @@ function bindDensityBadge() {
   });
 }
 
+// =============================================
+// V-6: Undo / Redo
+// =============================================
+const MAX_HISTORY = 20;
+let history = [];
+let future = [];
+let lastCommittedState = null;
+let pendingForHistory = null;
+let pushTimer = null;
+let historyEnabled = false;
+
+function maybeSchedulePush() {
+  if (!historyEnabled) return;
+  const cur = JSON.stringify(state);
+  if (lastCommittedState && lastCommittedState !== cur) {
+    if (!pendingForHistory) {
+      // 連続変更の最初の1回だけ「変更前」のスナップショットを保持
+      pendingForHistory = lastCommittedState;
+    }
+    clearTimeout(pushTimer);
+    pushTimer = setTimeout(commitPendingPush, 200);
+  }
+}
+
+function commitPendingPush() {
+  clearTimeout(pushTimer);
+  if (!pendingForHistory) return;
+  history.push(pendingForHistory);
+  if (history.length > MAX_HISTORY) history.shift();
+  future = [];
+  pendingForHistory = null;
+  updateUndoRedoButtons();
+}
+
+function flushPendingPush() {
+  if (pushTimer) clearTimeout(pushTimer);
+  if (pendingForHistory) commitPendingPush();
+}
+
+function syncAllFromState() {
+  syncInputsFromState();
+  // syncInputsFromState は rebuildTextSelectOptions / rebuildWeightSelectOptions を含む
+  // popover が表示中なら閉じる（state差し替えで内容と乖離するため）
+  hidePopover();
+  hideRadiusBadge();
+  hideSpacingBadge();
+}
+
+function undo() {
+  flushPendingPush();
+  if (history.length === 0) return;
+  const cur = JSON.stringify(state);
+  const prev = history.pop();
+  future.push(cur);
+  state = JSON.parse(prev);
+  historyEnabled = false;
+  syncAllFromState();
+  updatePreview();
+  historyEnabled = true;
+  lastCommittedState = JSON.stringify(state);
+  updateUndoRedoButtons();
+}
+function redo() {
+  flushPendingPush();
+  if (future.length === 0) return;
+  const cur = JSON.stringify(state);
+  const next = future.pop();
+  history.push(cur);
+  state = JSON.parse(next);
+  historyEnabled = false;
+  syncAllFromState();
+  updatePreview();
+  historyEnabled = true;
+  lastCommittedState = JSON.stringify(state);
+  updateUndoRedoButtons();
+}
+
+function updateUndoRedoButtons() {
+  const u = document.getElementById('undoBtn');
+  const r = document.getElementById('redoBtn');
+  if (u) u.disabled = history.length === 0 && !pendingForHistory;
+  if (r) r.disabled = future.length === 0;
+}
+
+function bindUndoRedo() {
+  const u = document.getElementById('undoBtn');
+  const r = document.getElementById('redoBtn');
+  if (u) u.addEventListener('click', undo);
+  if (r) r.addEventListener('click', redo);
+
+  document.addEventListener('keydown', (e) => {
+    // input/textarea 内ではブラウザ既定の編集 undo を奪わない
+    const t = e.target;
+    const tag = t && t.tagName;
+    const isEditable = tag === 'INPUT' || tag === 'TEXTAREA' ||
+      (t && t.isContentEditable);
+    if (isEditable) return;
+
+    const meta = e.ctrlKey || e.metaKey;
+    if (!meta) return;
+    const k = e.key.toLowerCase();
+    if (k === 'z' && !e.shiftKey) {
+      e.preventDefault();
+      undo();
+    } else if ((k === 'z' && e.shiftKey) || k === 'y') {
+      e.preventDefault();
+      redo();
+    }
+  });
+}
+
 function updatePreview() {
+  maybeSchedulePush();
   const css = generateCSS();
   if (!styleEl) {
     styleEl = document.createElement('style');
@@ -3123,6 +3259,8 @@ function updatePreview() {
   // Phase 1: ステータス + A11y も同時更新
   renderThemeStatus();
   renderA11yPanel();
+  // V-6: 履歴用の "前回 commit" を更新
+  if (historyEnabled) lastCommittedState = JSON.stringify(state);
 }
 
 // =============================================
@@ -3435,8 +3573,18 @@ function bindModeToggle() {
 function resetState() {
   if (!confirm('現在の設定を破棄して初期値に戻しますか？\nこの操作は元に戻せません。')) return;
   state = JSON.parse(JSON.stringify(DEFAULT_STATE));
+  // V-6: 履歴もクリア（明示的な「元に戻せない」操作）
+  history = [];
+  future = [];
+  pendingForHistory = null;
+  if (pushTimer) clearTimeout(pushTimer);
   syncInputsFromState();
+  hidePopover();
+  hideRadiusBadge();
+  hideSpacingBadge();
   updatePreview();
+  lastCommittedState = JSON.stringify(state);
+  updateUndoRedoButtons();
 }
 function showToast(text, ms = 1800) {
   const t = document.getElementById('copyToast');
@@ -3477,6 +3625,12 @@ function init() {
   syncInputsFromState();
   updatePreview();
   renderAllCharts();
+
+  // V-6: 初回 updatePreview 後に履歴記録を有効化
+  lastCommittedState = JSON.stringify(state);
+  historyEnabled = true;
+  bindUndoRedo();
+  updateUndoRedoButtons();
 
   // MVP: プレビュー上のホバーで ± トークン編集を有効化
   bindPreviewTokenHover();
